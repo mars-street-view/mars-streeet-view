@@ -3,9 +3,12 @@ from sqlalchemy import (
     Index,
     Integer,
     Text,
+    String,
+    ForeignKey,
     )
 
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 from sqlalchemy.orm import (
     scoped_session,
@@ -34,17 +37,36 @@ class Rover(Base):
     max_sol = Column(String, nullable=False)
     total_photos = Column(Integer, nullable=False)
     photos = relationship('Photo', back_populates='rover')
-
+    cameras = relationship('Camera', back_populates='rover')
 
 
 class Photo(Base):
+    def __init__(self, camera=None, rover=None, **kwargs):
+        if camera:
+            kwargs['camera_id'] = camera['id']
+        if rover:
+            kwargs['rover_id'] = rover['id']
+        super(Photo, self).__init__(**kwargs)
+
     __tablename__ = 'photos'
     id = Column(Integer, primary_key=True)
     img_src = Column(String, nullable=False)
     sol = Column(Integer, nullable=False)
     earth_date = Column(String, nullable=False)
-    rover = relationship('Rover', back_populates='photos')
     rover_id = Column(Integer, ForeignKey('rovers.id'))
+    camera_id = Column(Integer, ForeignKey('cameras.id'))
+    rover = relationship('Rover', back_populates='photos')
+    camera = relationship('Camera', back_populates='photos')
+
+
+class Camera(Base):
+    __tablename__ = 'cameras'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    rover_id = Column(Integer, ForeignKey('rovers.id'))
+    full_name = Column(String, nullable=False)
+    photos = relationship('Photo', back_populates='camera')
+    rover = relationship('Rover', back_populates='cameras')
 
 # Index('my_index', MyModel.name, unique=True, mysql_length=255)
 # TODO: write indexes for forthcoming tables.
