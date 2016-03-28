@@ -1,6 +1,6 @@
 """Setup for Mars Street View project."""
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 REQUIRES = [
     'pyramid',
@@ -36,9 +36,11 @@ setup(name='mars-street-view',
       author='Will Weatherford',
       author_email='weatherford.william@gmail.com',
       license='MIT',
-      packages=[],  # all your python packages with an __init__ file
-      py_modules=[],
-      package_dir={'': ''},
+      packages=find_packages(),
+      include_package_data=True,
+      zip_safe=False,
+      # py_modules=[],
+      # package_dir={'': ''},
       install_requires=[],
       extras_require={'test': TEST,
                       'dev': DEV}
