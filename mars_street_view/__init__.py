@@ -1,3 +1,6 @@
+"""Initialize Mars Street View app and connection to database."""
+import os
+import sys
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 
@@ -9,6 +12,17 @@ from .models import (
 
 def main(global_config, **settings):
     """Return a Pyramid WSGI application."""
+    try:
+        settings['sqlalchemy.url'] = os.environ['MARS_DATABASE_URL']
+    except KeyError:
+        print('Required MARS_DATABASE_URL not set in global os environment.')
+        sys.exit()
+    try:
+        settings['mars_api_key'] = os.environ['MARS_API_KEY']
+    except KeyError:
+        print('Required MARS_API_KEY not set in global os environment.')
+        sys.exit()
+
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
