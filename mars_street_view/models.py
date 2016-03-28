@@ -3,9 +3,12 @@ from sqlalchemy import (
     Index,
     Integer,
     Text,
+    String,
+    ForeignKey,
     )
 
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 from sqlalchemy.orm import (
     scoped_session,
@@ -34,7 +37,6 @@ class Rover(Base):
     max_sol = Column(String, nullable=False)
     total_photos = Column(Integer, nullable=False)
     photos = relationship('Photo', back_populates='rover')
-
 
 
 class Photo(Base):

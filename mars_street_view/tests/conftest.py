@@ -58,6 +58,30 @@ def dbtransaction(request, sqlengine):
 
 
 @pytest.fixture()
+def test_rover_params():
+    test_rover = {
+        'id': 99,
+        'name': "Optimism",
+        'landing_date': "2016-03-28",
+        'max_sol': 1,
+        'max_date': "2016-03-28",
+        'total_photos': 9,
+    }
+    return test_rover
+
+
+@pytest.fixture()
+def test_photo_params():
+    test_photo = {
+        'id': 99,
+        'sol': 1,
+        'img_src': "image_source",
+        'earth_date': "2016-03-28",
+    }
+    return test_photo
+
+
+@pytest.fixture()
 def app(request, global_environ, config_uri):
     """Create pretend app fixture of our main app."""
     from mars_street_view import main
