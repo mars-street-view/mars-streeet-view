@@ -58,6 +58,66 @@ def dbtransaction(request, sqlengine):
 
 
 @pytest.fixture()
+def test_rover_params():
+    test_rover = {
+        'id': 99,
+        'name': "Optimism",
+        'landing_date': "2016-03-28",
+        'max_sol': 1,
+        'max_date': "2016-03-28",
+        'total_photos': 9,
+    }
+    return test_rover
+
+
+@pytest.fixture()
+def test_camera_params():
+    test_camera = {
+        'id': 29,
+        'name': "NAVCAM",
+        'rover_id': 7,
+        'full_name': "Navigation Camera"
+    }
+    return test_camera
+
+
+@pytest.fixture()
+def test_photo_params():
+    test_photo = {
+        'id': 99,
+        'sol': 1,
+        'img_src': "image_source",
+        'earth_date': "2016-03-28",
+    }
+    return test_photo
+
+
+@pytest.fixture()
+def full_photo_params():
+    full_params = {
+        'id': 549762,
+        'sol': 1294,
+        'camera': {
+            'id': 20,
+            'name': "FHAZ",
+            'rover_id': 5,
+            'full_name': "Front Hazard Avoidance Camera"
+        },
+        'img_src': "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01294/opgs/edr/fcam/FLB_512366594EDR_F0532406FHAZ00323M_.JPG",
+        'earth_date': "2016-03-27",
+        'rover': {
+            'id': 5,
+            'name': "Curiosity",
+            'landing_date': "2012-08-06",
+            'max_sol': 1294,
+            'max_date': "2016-03-27",
+            'total_photos': 246214,
+        }
+    }
+    return full_params
+
+
+@pytest.fixture()
 def app(request, global_environ, config_uri):
     """Create pretend app fixture of our main app."""
     from mars_street_view import main
