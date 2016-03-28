@@ -19,6 +19,17 @@ def home_view(request):
         return Response(conn_err_msg, content_type='text/plain', status_int=500)
     return {'one': one, 'project': 'mars-street-view'}
 
+@view_config(route_name='rover', renderer='templates/rover.jinja2')
+def rover_view(request):
+    """Return appropriate pictures for a rover request."""
+    try:
+        rover = DBSession.query(Rover).filter(name == request.matchdict['rover_name'])
+        sol = request.matchdict['sol']
+        nav = rover.cameras.filter(name='NAVCAM')
+        nav_today = nav.photos.filter(sol=sol)
+    except:
+        pass
+        
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
