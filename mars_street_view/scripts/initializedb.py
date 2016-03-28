@@ -42,7 +42,7 @@ def main(argv=sys.argv):
             print('Required MARS_DATABASE_URL not set in global os environ.')
             sys.exit()
         try:
-            settings['mars_api_key'] = os.environ['MARS_API_KEY']
+            settings['nasa_api_key'] = os.environ['NASA_API_KEY']
         except KeyError:
             print('Required NASA_API_KEY not set in global os environment.')
             sys.exit()
