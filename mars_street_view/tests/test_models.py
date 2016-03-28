@@ -35,3 +35,25 @@ def test_photo_rover_relationship(dbtransaction,
     DBSession.add_all([photo, rover])
     DBSession.flush()
     assert photo.rover_id == rover_id == rover.id
+
+
+def test_photo_rover_details(dbtransaction,
+                             test_rover_params,
+                             test_photo_params):
+    rover = Rover(**test_rover_params)
+    rover_id = rover.id
+    rover_landing_date = rover.landing_date
+    test_photo_params['rover_id'] = rover_id
+    photo = Photo(**test_photo_params)
+    DBSession.add_all([photo, rover])
+    DBSession.flush()
+    assert photo.rover.landing_date == rover_landing_date
+
+
+def test_full_params(dbtransaction,
+                     full_photo_params):
+    rover_id = full_photo_params['rover']['id']
+    photo = Photo(**full_photo_params)
+    DBSession.add(photo)
+    DBSession.flush()
+    assert photo.rover_id == rover_id

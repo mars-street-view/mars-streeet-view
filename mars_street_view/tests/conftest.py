@@ -82,6 +82,31 @@ def test_photo_params():
 
 
 @pytest.fixture()
+def full_photo_params():
+    full_params = {
+        'id': 549762,
+        'sol': 1294,
+        'camera': {
+            'id': 20,
+            'name': "FHAZ",
+            'rover_id': 5,
+            'full_name': "Front Hazard Avoidance Camera"
+        },
+        'img_src': "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01294/opgs/edr/fcam/FLB_512366594EDR_F0532406FHAZ00323M_.JPG",
+        'earth_date': "2016-03-27",
+        'rover': {
+            'id': 5,
+            'name': "Curiosity",
+            'landing_date': "2012-08-06",
+            'max_sol': 1294,
+            'max_date': "2016-03-27",
+            'total_photos': 246214,
+        }
+    }
+    return full_params
+
+
+@pytest.fixture()
 def app(request, global_environ, config_uri):
     """Create pretend app fixture of our main app."""
     from mars_street_view import main

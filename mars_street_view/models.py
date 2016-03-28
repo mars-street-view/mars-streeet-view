@@ -40,6 +40,13 @@ class Rover(Base):
 
 
 class Photo(Base):
+    def __init__(self, camera=None, rover=None, **kwargs):
+        # if camera:
+        #     kwargs['camera_id'] = camera['id']
+        if rover:
+            kwargs['rover_id'] = rover['id']
+        super(Photo, self).__init__(**kwargs)
+
     __tablename__ = 'photos'
     id = Column(Integer, primary_key=True)
     img_src = Column(String, nullable=False)
