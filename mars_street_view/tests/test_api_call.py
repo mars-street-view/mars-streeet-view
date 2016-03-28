@@ -17,7 +17,7 @@ def test_read_json():
     from api_call import read_json
     data = read_json('sample_data.json')
     assert isinstance(data, list)
-    assert data[0]['id'] == 1735
+    assert data[0]['id'] == 103389
 
 # def test_scrub_data():
 #     """Test that our function will return """
