@@ -1,4 +1,5 @@
 from mars_street_view.models import DBSession, Rover, Photo, Camera
+from mars_street_view.api_call import get_one_sol
 
 
 def test_rover_db_is_empty(dbtransaction):
@@ -76,3 +77,12 @@ def test_photo_camera_relationship(dbtransaction,
     DBSession.add_all([photo, camera])
     DBSession.flush()
     assert photo.camera_id == camera_id == camera.id
+
+
+def test_api_photo_result(dbtransaction):
+    test_list = get_one_sol('curiosity', 1)
+    photos = [Photo(**item) for item in test_list]
+    DBSession.add_all(photos)
+    DBSession.flush()
+    db_len = len(DBSession.query())
+    assert len(test_list) == db_len
