@@ -21,7 +21,7 @@ def main(global_config, **settings):
         try:
             settings['mars_api_key'] = os.environ['MARS_API_KEY']
         except KeyError:
-            print('Required MARS_API_KEY not set in global os environment.')
+            print('Required NASA_API_KEY not set in global os environment.')
             sys.exit()
 
     engine = engine_from_config(settings, 'sqlalchemy.')
