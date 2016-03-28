@@ -2,6 +2,31 @@
 
 from setuptools import setup
 
+REQUIRES = [
+    'pyramid',
+    'pyramid_jinja2',
+    'pyramid_tm',
+    'SQLAlchemy',
+    'transaction',
+    'zope.sqlalchemy',
+    'waitress',
+    'psycopg2',
+    'requests',
+]
+
+TEST = [
+    'pytest',
+    'pytest-watch',
+    'tox',
+    'coverage',
+    'pytest-cov',
+    'webtest']
+
+DEV = [
+    'ipython',
+    'pyramid-ipython',
+    'pyramid_debugtoolbar'
+]
 
 setup(name='mars-street-view',
       description='Command line program to manage mars-street-view.',
@@ -15,9 +40,6 @@ setup(name='mars-street-view',
       py_modules=[],
       package_dir={'': ''},
       install_requires=[],
-      extras_require={'test': ['pytest',
-                               'pytest-watch',
-                               'tox',
-                               'coverage',
-                               'pytest-cov']}
+      extras_require={'test': TEST,
+                      'dev': DEV}
       )
