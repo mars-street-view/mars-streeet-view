@@ -71,6 +71,17 @@ def test_rover_params():
 
 
 @pytest.fixture()
+def test_camera_params():
+    test_camera = {
+        'id': 29,
+        'name': "NAVCAM",
+        'rover_id': 7,
+        'full_name': "Navigation Camera"
+    }
+    return test_camera
+
+
+@pytest.fixture()
 def test_photo_params():
     test_photo = {
         'id': 99,

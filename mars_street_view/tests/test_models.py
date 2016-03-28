@@ -1,4 +1,4 @@
-from mars_street_view.models import DBSession, Rover, Photo
+from mars_street_view.models import DBSession, Rover, Photo, Camera
 
 
 def test_rover_db_is_empty(dbtransaction):
@@ -57,3 +57,22 @@ def test_full_params(dbtransaction,
     DBSession.add(photo)
     DBSession.flush()
     assert photo.rover_id == rover_id
+
+
+def test_camera_add(dbtransaction, test_camera_params):
+    camera = Camera(**test_camera_params)
+    DBSession.add(camera)
+    DBSession.flush()
+    assert DBSession.query(Camera).count() == 1
+
+
+def test_photo_camera_relationship(dbtransaction,
+                                   test_camera_params,
+                                   test_photo_params):
+    camera = Camera(**test_camera_params)
+    camera_id = camera.id
+    test_photo_params['camera_id'] = camera.id
+    photo = Photo(**test_photo_params)
+    DBSession.add_all([photo, camera])
+    DBSession.flush()
+    assert photo.camera_id == camera_id == camera.id
