@@ -1,3 +1,4 @@
+"""Establish view functions for Mars Street View web app."""
 from pyramid.response import Response
 from pyramid.view import view_config
 
@@ -6,11 +7,12 @@ from sqlalchemy.exc import DBAPIError
 from .models import (
     DBSession,
     MyModel,
-    )
+)
 
 
-@view_config(route_name='home', renderer='templates/mytemplate.pt')
-def my_view(request):
+@view_config(route_name='home', renderer='templates/home.jinja2')
+def home_view(request):
+    """Home page view."""
     try:
         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
     except DBAPIError:
@@ -33,4 +35,3 @@ might be caused by one of the following things:
 After you fix the problem, please restart the Pyramid application to
 try it again.
 """
-
