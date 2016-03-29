@@ -4,7 +4,7 @@ tomorrow = $('#tomorrow');
 next = $('#next');
 prev = $('#prev');
 
-yeserday.addEventListener()
+yeserday.addEventListener();
 
 function getMorePictures(rover, sol){
     $.ajax({
