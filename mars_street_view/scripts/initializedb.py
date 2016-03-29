@@ -14,7 +14,6 @@ from pyramid.scripts.common import parse_vars
 
 from ..models import (
     DBSession,
-    # MyModel,
     Base,
 )
 
@@ -28,13 +27,14 @@ def usage(argv):
 
 
 def main(argv=sys.argv):
-    """Initialize database."""
-    if len(argv) < 2:
-        usage(argv)
-    config_uri = argv[1]
-    options = parse_vars(argv[2:])
-    setup_logging(config_uri)
-    settings = get_appsettings(config_uri, options=options)
+    """Initialize database, optionally with settings from config uri."""
+    if len(argv) > 1:
+        config_uri = argv[1]
+        options = parse_vars(argv[2:])
+        setup_logging(config_uri)
+        settings = get_appsettings(config_uri, options=options)
+    else:
+        settings = {}
     if not settings.get('sqlalchemy.url'):
         try:
             settings['sqlalchemy.url'] = os.environ['MARS_DATABASE_URL']
@@ -46,6 +46,7 @@ def main(argv=sys.argv):
         except KeyError:
             print('Required NASA_API_KEY not set in global os environment.')
             sys.exit()
+    # import pdb; pdb.set_trace()
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)

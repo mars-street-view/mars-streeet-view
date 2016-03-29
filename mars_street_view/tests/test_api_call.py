@@ -1,8 +1,5 @@
 # _*_ coding utf-8 _*_
 """Test the api calls."""
-# import os
-# import pytest
-# from mars_street_view.models import DBSession, Rover, Photo, Camera
 
 
 def test_fetch_photo_data():

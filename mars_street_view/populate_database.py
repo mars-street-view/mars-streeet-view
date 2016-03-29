@@ -3,25 +3,28 @@ import sys
 from mars_street_view.scripts import initializedb
 from mars_street_view.api_call import get_one_sol, load_full_sample_data
 from mars_street_view.models import DBSession, Photo, Rover, Camera
+import transaction
 
 
-def main(config_uri, rover, sol, fetch):
+def main(rover, sol, fetch, config_uri=None):
     """Initialize database, query API and write models to database."""
-    initializedb.main(['initializedb', config_uri])
+    if config_uri:
+        args = ['', config_uri]
+    else:
+        args = []
+    initializedb.main(args)
     results = get_one_sol(rover, sol, fetch)
-    new_photos = [Photo(**result) for result in results]
-    DBSession.add_all(new_photos)
-    DBSession.flush()
+    populate_from_data(results)
 
 
-def populate_sample_data(argv=sys.argv):
+def populate_sample_data(args=sys.argv):
     """Put all photos from sample json data into database."""
-    if len(argv) < 2:
-        print('Specify a config .ini file.')
-        sys.exit()
-    config_uri = argv[1]
-    initializedb.main(['initializedb', config_uri])
+    initializedb.main(args)
     results = load_full_sample_data()
+    populate_from_data(results)
+
+
+def populate_from_data(results):
     obj_list = []
     for obj_name in ('rover', 'camera'):
         found_ids = set()
@@ -36,4 +39,7 @@ def populate_sample_data(argv=sys.argv):
     obj_list.extend([Photo(**result) for result in results])
 
     DBSession.add_all(obj_list)
+    # import pdb;pdb.set_trace()
     DBSession.flush()
+    transaction.commit()
+

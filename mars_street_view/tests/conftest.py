@@ -2,9 +2,9 @@
 """Configure fixtures for unit and functional tests."""
 import os
 import pytest
-# from webob import multidict
+from webob import multidict
 from sqlalchemy import create_engine
-# from pyramid import testing
+from pyramid import testing
 from mars_street_view.models import DBSession, Base
 
 
@@ -54,6 +54,24 @@ def dbtransaction(request, sqlengine):
     connection = sqlengine.connect()
     transaction = connection.begin()
     DBSession.configure(bind=connection, expire_on_commit=False)
+
+    def teardown():
+        transaction.rollback()
+        connection.close()
+        DBSession.remove()
+
+    request.addfinalizer(teardown)
+    return connection
+
+
+@pytest.fixture()
+def pre_pop_transaction(request, sqlengine):
+    """Create database transaction connection."""
+    from mars_street_view.populate_database import populate_sample_data
+    connection = sqlengine.connect()
+    transaction = connection.begin()
+    DBSession.configure(bind=connection, expire_on_commit=False)
+    populate_sample_data()
 
     def teardown():
         transaction.rollback()
@@ -162,3 +180,37 @@ def app(request, global_environ, config_uri):
 
     request.addfinalizer(teardown)
     return test_app
+
+
+
+@pytest.fixture()
+def dummy_request():
+    """Make a base generic dummy request to be used."""
+    request = testing.DummyRequest()
+    config = testing.setUp()
+    config.add_route('home', '/')
+    config.add_route('rover', '/{rover_name}/{sol}')
+    return request
+
+
+@pytest.fixture()
+def dummy_get_request(dummy_request):
+    """Make a dummy GET request to test views."""
+    dummy_request.method = 'GET'
+    dummy_request.matchdict = {'rover_name': 'curiosity', 'sol': 1}
+    # dummy_request.POST = multidict.NoVars()
+    return dummy_request
+
+
+# @pytest.fixture()
+# def dummy_post_request(request, dummy_request):
+#     """Make a dummy POST request to test views."""
+#     dummy_request.method = 'POST'
+#     dummy_request.POST = multidict.MultiDict([('title', 'TESTadd'),
+#                                               ('text', 'TESTadd')])
+
+#     def teardown():
+#         DBSession.query(Entry).filter(Entry.title == 'TESTadd').delete()
+
+#     request.addfinalizer(teardown)
+#     return dummy_request
