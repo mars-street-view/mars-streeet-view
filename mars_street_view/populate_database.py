@@ -41,5 +41,5 @@ def populate_from_data(results):
     DBSession.add_all(obj_list)
     # import pdb;pdb.set_trace()
     DBSession.flush()
-    transaction.commit()
+    # transaction.commit()
 
