@@ -57,6 +57,14 @@ def dbtransaction(request, sqlengine):
     return connection
 
 
+ROVER_NAMES = ['Spirit', 'Curiosity', 'Opportunity']
+
+
+@pytest.fixture(params=ROVER_NAMES)
+def rover_name(request):
+    return request.param
+
+
 @pytest.fixture()
 def test_rover_params():
     test_rover = {
