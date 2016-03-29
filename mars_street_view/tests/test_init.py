@@ -1,8 +1,6 @@
 """Test SQLAlchemy database and Pyramid app initialization."""
 import os
-import pytest
-from mars_street_view.scripts.initializedb import main
-from mars_street_view.models import DBSession, MyModel
+from mars_street_view.models import DBSession, Rover, Camera, Photo
 
 
 def test_db_url(global_environ):
@@ -19,16 +17,14 @@ def test_test_app(app):
 
 def test_db_empty(app, dbtransaction, global_environ):
     """Check that test database initializes empty each time."""
-    assert DBSession.query(MyModel).count() == 0
+    assert all([DBSession.query(Rover).count() == 0,
+                DBSession.query(Camera).count() == 0,
+                DBSession.query(Photo).count() == 0])
 
 
-def test_main(config_uri, global_environ, dbtransaction):
-    """Test that main runs."""
-    main(['initialize_db',
-          config_uri])
-
-
-def test_main_error(config_uri, global_environ, dbtransaction):
-    """Test that main does not run without an .ini file."""
-    with pytest.raises(SystemExit):
-        main(['initialize_db'])
+def test_initialize_db(config_uri, global_environ, dbtransaction):
+    """Test that initialize_db runs and populates Rovers and cameras."""
+    from mars_street_view.scripts.initializedb import main
+    main(['initialize_db', config_uri])
+    assert DBSession.query(Rover).count() == 3
+    assert DBSession.query(Camera).count() == 19
