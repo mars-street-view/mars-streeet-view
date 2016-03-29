@@ -59,20 +59,16 @@ def read_json(file):
 
 def get_one_sol(rover, sol):
     """Return all photos for one sol, given rover and sol."""
-    page = 0
-    content, encoding = get_inspection_page(rover, sol, page)
-    content = content.decode('utf-8')
-    pcontent = json.loads(content)
-    lst = list(pcontent['photos'])
-    while pcontent['photos'] != []:
-        page += 1
+    page = 1
+    lst = []
+    while True:
         new_content, encoding = get_inspection_page(rover, sol, page)
         new_content = new_content.decode('utf-8')
         pcontent = json.loads(new_content)
         lst.extend(pcontent['photos'])
-        # print("test 25: " + str(pcontent))
-        # print("******************")
-        # print('len: ' + str(len(lst)))
+        page += 1
+        if not pcontent['photos']:
+            break
     print(lst[-1])
     print('length of list:')
     print(len(lst))
