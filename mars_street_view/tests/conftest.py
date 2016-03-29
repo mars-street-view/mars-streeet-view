@@ -2,7 +2,7 @@
 """Configure fixtures for unit and functional tests."""
 import os
 import pytest
-from webob import multidict
+# from webob import multidict
 from sqlalchemy import create_engine
 from pyramid import testing
 from mars_street_view.models import DBSession, Base
@@ -12,9 +12,15 @@ TEST_DATABASE_URL = 'sqlite:////tmp/test_db.sqlite'
 
 
 @pytest.fixture(scope='session')
-def global_environ():
+def global_environ(request):
     """Establish test database url as a fixture for entire session."""
+    prior = os.environ.get('MARS_DATABASE_URL', '')
     os.environ['MARS_DATABASE_URL'] = TEST_DATABASE_URL
+
+    def revert():
+        os.environ['MARS_DATABASE_URL'] = prior
+
+    request.addfinalizer(revert)
     return True
 
 
@@ -101,17 +107,19 @@ ROVER_PARAMS = {
     'max_date': "2016-03-28",
     'total_photos': 9,
 }
+CAMERA_PARAMS = {
+    'id': 29,
+    'name': "NAVCAM",
+    'rover_name': 'Optimism',
+    'full_name': "Navigation Camera"
+}
 PHOTO_PARAMS = {
     'id': 99,
     'sol': 1,
     'img_src': "image_source",
     'earth_date': "2016-03-28",
-}
-CAMERA_PARAMS = {
-    'id': 29,
-    'name': "NAVCAM",
-    'rover_id': 7,
-    'full_name': "Navigation Camera"
+    'rover': ROVER_PARAMS,
+    'camera': CAMERA_PARAMS
 }
 TEST_PARAMS = [
     ('Photo', PHOTO_PARAMS),

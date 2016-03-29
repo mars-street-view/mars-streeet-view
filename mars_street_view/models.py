@@ -5,7 +5,7 @@ from sqlalchemy import (
     Text,
     String,
     ForeignKey,
-    )
+)
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -13,7 +13,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
-    )
+)
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -28,6 +28,28 @@ class MyModel(Base):
     value = Column(Integer)
 
 
+class Photo(Base):
+    def __init__(self, id=None, camera=None, rover=None, **kwargs):
+        if rover:
+            rover_name = rover['name']
+            kwargs['rover_name'] = rover_name
+        if camera:
+            kwargs['camera_name'] = '_'.join((rover_name, camera['name']))
+        else:
+            raise KeyError('Photo must be initialized with a rover obj.')
+        super(Photo, self).__init__(**kwargs)
+
+    __tablename__ = 'photos'
+    id = Column(Integer, primary_key=True)
+    img_src = Column(String, nullable=False)
+    sol = Column(Integer, nullable=False)
+    earth_date = Column(String, nullable=False)
+    rover_name = Column(String, ForeignKey('rovers.name'))
+    camera_name = Column(String, ForeignKey('cameras.name'))
+    rover = relationship('Rover', back_populates='photos')
+    camera = relationship('Camera', back_populates='photos')
+
+
 class Rover(Base):
 
     def __init__(self, cameras=None, **kwargs):
@@ -35,7 +57,7 @@ class Rover(Base):
 
     __tablename__ = 'rovers'
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
     landing_date = Column(String, nullable=False)
     max_date = Column(String, nullable=False)
     max_sol = Column(String, nullable=False)
@@ -44,30 +66,18 @@ class Rover(Base):
     cameras = relationship('Camera', back_populates='rover')
 
 
-class Photo(Base):
-    def __init__(self, camera=None, rover=None, **kwargs):
-        if camera:
-            kwargs['camera_id'] = camera['id']
-        if rover:
-            kwargs['rover_id'] = rover['id']
-        super(Photo, self).__init__(**kwargs)
-
-    __tablename__ = 'photos'
-    id = Column(Integer, primary_key=True)
-    img_src = Column(String, nullable=False)
-    sol = Column(Integer, nullable=False)
-    earth_date = Column(String, nullable=False)
-    rover_id = Column(Integer, ForeignKey('rovers.id'))
-    camera_id = Column(Integer, ForeignKey('cameras.id'))
-    rover = relationship('Rover', back_populates='photos')
-    camera = relationship('Camera', back_populates='photos')
-
-
 class Camera(Base):
+
+    def __init__(self, name=None, **kwargs):
+        if not kwargs.get('rover_name') or not name:
+            raise KeyError('Camera must initialize with name and rover_name.')
+        kwargs['name'] = '_'.join((kwargs['rover_name'], name))
+        super(Camera, self).__init__(**kwargs)
+
     __tablename__ = 'cameras'
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    rover_id = Column(Integer, ForeignKey('rovers.id'))
+    name = Column(String, nullable=False, unique=True)
+    rover_name = Column(String, ForeignKey('rovers.name'))
     full_name = Column(String, nullable=False)
     photos = relationship('Photo', back_populates='camera')
     rover = relationship('Rover', back_populates='cameras')
