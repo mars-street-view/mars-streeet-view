@@ -18,47 +18,41 @@ def test_db_add(dbtransaction, model_test_params):
     assert DBSession.query(model).count() == 1
 
 
-def test_photo_rover_relationship(dbtransaction,
-                                  test_rover_params,
-                                  test_photo_params):
-    rover = Rover(**test_rover_params)
+def test_photo_rover_relationship(dbtransaction, rover_params, photo_params):
+    rover = Rover(**rover_params)
     rover_id = rover.id
-    test_photo_params['rover_id'] = rover_id
-    photo = Photo(**test_photo_params)
+    photo_params['rover_id'] = rover_id
+    photo = Photo(**photo_params)
     DBSession.add_all([photo, rover])
     DBSession.flush()
     assert photo.rover_id == rover_id == rover.id
 
 
-def test_photo_rover_details(dbtransaction,
-                             test_rover_params,
-                             test_photo_params):
-    rover = Rover(**test_rover_params)
+def test_photo_rover_details(dbtransaction, rover_params, photo_params):
+    rover = Rover(**rover_params)
     rover_id = rover.id
     rover_landing_date = rover.landing_date
-    test_photo_params['rover_id'] = rover_id
-    photo = Photo(**test_photo_params)
+    photo_params['rover_id'] = rover_id
+    photo = Photo(**photo_params)
     DBSession.add_all([photo, rover])
     DBSession.flush()
     assert photo.rover.landing_date == rover_landing_date
 
 
-def test_photo_camera_relationship(dbtransaction,
-                                   test_camera_params,
-                                   test_photo_params):
-    camera = Camera(**test_camera_params)
+def test_photo_camera_relationship(dbtransaction, camera_params, photo_params):
+    camera = Camera(**camera_params)
     camera_id = camera.id
-    test_photo_params['camera_id'] = camera.id
-    photo = Photo(**test_photo_params)
+    photo_params['camera_id'] = camera.id
+    photo = Photo(**photo_params)
     DBSession.add_all([photo, camera])
     DBSession.flush()
     assert photo.camera_id == camera_id == camera.id
 
 
-def test_full_params(dbtransaction,
-                     full_photo_params):
+def test_full_params(dbtransaction, full_photo_params):
     rover_id = full_photo_params['rover']['id']
+    camera_id = full_photo_params['camera']['id']
     photo = Photo(**full_photo_params)
     DBSession.add(photo)
     DBSession.flush()
-    assert photo.rover_id == rover_id
+    assert photo.rover_id == rover_id and photo.camera_id == camera_id

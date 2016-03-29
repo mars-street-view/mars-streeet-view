@@ -75,7 +75,7 @@ ROVER_PARAMS = {
     'max_sol': 1,
     'max_date': "2016-03-28",
     'total_photos': 9,
-    }
+}
 PHOTO_PARAMS = {
     'id': 99,
     'sol': 1,
@@ -100,8 +100,23 @@ def model_test_params(request):
     return request.param
 
 
+@pytest.fixture(scope='session')
+def rover_params():
+    return ROVER_PARAMS
+
+
+@pytest.fixture(scope='session')
+def photo_params():
+    return PHOTO_PARAMS
+
+
+@pytest.fixture(scope='session')
+def camera_params():
+    return CAMERA_PARAMS
+
+
 @pytest.fixture()
-def full_photo_params():
+def full_photo_params(photo_params, rover_params, camera_params):
     full_params = {
         'id': 549762,
         'sol': 1294,
