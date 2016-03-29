@@ -23,7 +23,7 @@ NASA_API_KEY = os.environ.get('NASA_API_KEY')
 
 def fetch_photo_data(url, rover, sol):
     """Make API call to NASA."""
-    page = 0
+    page = 1
     lst = []
     found_ids = set()
     while True:
@@ -48,13 +48,15 @@ def fetch_photo_data(url, rover, sol):
     return lst
 
 
-def fetch_data_sample():
+def fetch_and_save_data_sample():
     """Download and save json data sample of the first day of each mission."""
     photo_list = []
-    for rover in ('Spirit', 'Curiosity', 'Opportunity'):
+    for rover in ROVERS:
         photo_list.extend(get_one_sol(rover, 1, True))
     data = {'photos': photo_list}
     write_to_json_file(data, SAMPLE_DATA_PATH)
+    print('Successfully saved {} photo objects to {}.'
+          ''.format(len(photo_list), SAMPLE_DATA_PATH))
 
 
 def load_photo_data(rover, sol):
@@ -96,4 +98,4 @@ def get_one_sol(rover, sol, fetch=False):
 
 
 if __name__ == '__main__':
-    fetch_data_sample()
+    fetch_and_save_data_sample()

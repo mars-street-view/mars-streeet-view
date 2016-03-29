@@ -67,5 +67,7 @@ setup(name='mars-street-view',
       main = mars_street_view:main
       [console_scripts]
       initialize_db = mars_street_view.scripts.initializedb:main
+      sample = mars_street_view.api_call:fetch_and_save_data_sample
+      populate_sample = mars_street_view.populate_database:populate_sample_data
       """,
       )
