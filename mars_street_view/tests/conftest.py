@@ -64,6 +64,24 @@ def dbtransaction(request, sqlengine):
     return connection
 
 
+@pytest.fixture()
+def pre_pop_transaction(request, sqlengine):
+    """Create database transaction connection."""
+    from mars_street_view.populate_database import populate_sample_data
+    connection = sqlengine.connect()
+    transaction = connection.begin()
+    DBSession.configure(bind=connection, expire_on_commit=False)
+    populate_sample_data()
+
+    def teardown():
+        transaction.rollback()
+        connection.close()
+        DBSession.remove()
+
+    request.addfinalizer(teardown)
+    return connection
+
+
 @pytest.fixture(params=['Spirit', 'Curiosity', 'Opportunity'])
 def rover_name(request):
     """Establish all rover names to iterate over in tests."""
