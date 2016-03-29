@@ -4,10 +4,14 @@ from mars_street_view.api_call import get_one_sol
 from mars_street_view.models import DBSession, Photo
 
 
-def main(config_uri, rover, sol):
+def main(config_uri, rover, sol, fetch=False):
     """Initialize database, query API and write models to database."""
     initializedb.main(['initializedb', config_uri])
-    results = get_one_sol(rover, sol)
+    results = get_one_sol(rover, sol, fetch)
     new_photos = [Photo(**result) for result in results]
     DBSession.add_all(new_photos)
     DBSession.flush()
+
+
+def populate_rovers_cameras():
+    pass
