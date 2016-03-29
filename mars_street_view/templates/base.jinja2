@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../static/normalize.css">
     <link rel="stylesheet" type="text/css" href="../static/skeleton.css">
     <link rel="stylesheet" type="text/css" href="../static/base.css">
+    <link rel="stylesheet" type="text/css" href="../static/map.css">
   </head>
 
   <!-- BODY -->
@@ -35,29 +36,19 @@
           </ul>
         </nav>
         <div class="space"></div>
-        
+
       </section>
 
       <article class="container">
-        
-        <!-- BLOCK TO HOME JINJA -->
-        {% block home %}
-        {% endblock %}
-
-        <!-- BLOCK TO ROVER JINJA -->
-        {% block content %}
-        {% endblock %}
-
-        <!-- BLOCK TO HISTORY JINJA -->
-        {% block history %}
-        {% endblock %}
-        
+          <div class="main_photo">
+          </div>
       </article>
-
-
       <footer class="footer">
-        &copy; 2016 | Mars Street View 
+        &copy; 2016 | Mars Street View
       </footer>
     </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type='text/javascript' src='static/scripts/rover.js'></script>
+    <script src="/static/mainView.js"></script>
   </body>
 </html>
