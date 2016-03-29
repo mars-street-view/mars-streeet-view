@@ -48,7 +48,7 @@ def fetch_photo_data(url, rover, sol):
     return lst
 
 
-def download_data_sample():
+def fetch_data_sample():
     """Download and save json data sample of the first day of each mission."""
     photo_list = []
     for rover in ('Spirit', 'Curiosity', 'Opportunity'):
@@ -62,6 +62,12 @@ def load_photo_data(rover, sol):
     data = read_json_from_file(SAMPLE_DATA_PATH)
     return [photo for photo in data['photos']
             if photo['rover']['name'] == rover and photo['sol'] == sol]
+
+
+def load_full_sample_data():
+    """Load list of related photos from sample json file instead."""
+    data = read_json_from_file(SAMPLE_DATA_PATH)
+    return data['photos']
 
 
 def write_to_json_file(data, file_name, encoding='utf-8'):
@@ -90,4 +96,4 @@ def get_one_sol(rover, sol, fetch=False):
 
 
 if __name__ == '__main__':
-    download_data_sample()
+    fetch_data_sample()
