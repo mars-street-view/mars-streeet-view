@@ -57,47 +57,47 @@ def dbtransaction(request, sqlengine):
     return connection
 
 
-ROVER_NAMES = ['Spirit', 'Curiosity', 'Opportunity']
-
-
-@pytest.fixture(params=ROVER_NAMES)
+@pytest.fixture(params=['Spirit', 'Curiosity', 'Opportunity'])
 def rover_name(request):
+    """Establish all rover names to iterate over in tests."""
     return request.param
 
 
-@pytest.fixture()
-def test_rover_params():
-    test_rover = {
-        'id': 99,
-        'name': "Optimism",
-        'landing_date': "2016-03-28",
-        'max_sol': 1,
-        'max_date': "2016-03-28",
-        'total_photos': 9,
+@pytest.fixture(params=['Photo', 'Rover', 'Camera'])
+def model_name(request):
+    """Establish all model names to iterate over in tests."""
+    return request.param
+
+ROVER_PARAMS = {
+    'id': 99,
+    'name': "Optimism",
+    'landing_date': "2016-03-28",
+    'max_sol': 1,
+    'max_date': "2016-03-28",
+    'total_photos': 9,
     }
-    return test_rover
+PHOTO_PARAMS = {
+    'id': 99,
+    'sol': 1,
+    'img_src': "image_source",
+    'earth_date': "2016-03-28",
+}
+CAMERA_PARAMS = {
+    'id': 29,
+    'name': "NAVCAM",
+    'rover_id': 7,
+    'full_name': "Navigation Camera"
+}
+TEST_PARAMS = [
+    ('Photo', PHOTO_PARAMS),
+    ('Rover', ROVER_PARAMS),
+    ('Camera', CAMERA_PARAMS),
+]
 
 
-@pytest.fixture()
-def test_camera_params():
-    test_camera = {
-        'id': 29,
-        'name': "NAVCAM",
-        'rover_id': 7,
-        'full_name': "Navigation Camera"
-    }
-    return test_camera
-
-
-@pytest.fixture()
-def test_photo_params():
-    test_photo = {
-        'id': 99,
-        'sol': 1,
-        'img_src': "image_source",
-        'earth_date': "2016-03-28",
-    }
-    return test_photo
+@pytest.fixture(params=TEST_PARAMS)
+def model_test_params(request):
+    return request.param
 
 
 @pytest.fixture()
