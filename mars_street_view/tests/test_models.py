@@ -56,3 +56,8 @@ def test_full_params(dbtransaction, full_photo_params):
     DBSession.add(photo)
     DBSession.flush()
     assert photo.rover_id == rover_id and photo.camera_id == camera_id
+
+
+def test_prepopulated(pre_pop_transaction):
+    assert all([True
+        ])
