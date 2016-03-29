@@ -39,7 +39,7 @@ def test_populated_rel_photo_rover(dbtransaction, config_uri):
         assert photo.rover_id is not None
     for rover in DBSession.query(Rover).all():
         # import pdb; pdb.set_trace()
-        assert rover.photos.count() > 1
+        assert len(rover.photos) > 1
 
 
 def test_populated_rel_photo_camera(dbtransaction, config_uri):
@@ -48,14 +48,14 @@ def test_populated_rel_photo_camera(dbtransaction, config_uri):
     for photo in DBSession.query(Photo).all():
         assert photo.rover_id is not None
     for camera in DBSession.query(Camera).all():
-        assert camera.photos.count() > 1
+        assert len(camera.photos) > 1
 
 
-# def test_populate_photos_from_fetch(dbtransaction):
-#     """Test that photos from each rover populate."""
-#     from mars_street_view.api_call import get_one_sol
-#     test_list = get_one_sol('Opportunity', 1, fetch=True)
-#     new_photos = [Photo(**obj) for obj in test_list]
-#     DBSession.add_all(new_photos)
-#     DBSession.flush()
-#     assert DBSession.query(Photo).count() == len(test_list)
+def test_populate_photos_from_fetch(dbtransaction):
+    """Test that photos from each rover populate."""
+    from mars_street_view.api_call import get_one_sol
+    test_list = get_one_sol('Opportunity', 1, fetch=True)
+    new_photos = [Photo(**obj) for obj in test_list]
+    DBSession.add_all(new_photos)
+    DBSession.flush()
+    assert DBSession.query(Photo).count() == len(test_list)
