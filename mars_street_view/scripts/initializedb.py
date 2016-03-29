@@ -48,7 +48,6 @@ def main(argv=sys.argv):
         except KeyError:
             print('Required NASA_API_KEY not set in global os environment.')
             sys.exit()
-    # import pdb; pdb.set_trace()
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
@@ -71,7 +70,8 @@ CAMERAS = {
 ROVERS = [
     {'name': 'Curiosity',
      'landing_date': "2012-08-06",
-     'cameras': ['FHAZ', "NAVCAM", "MAST", "CHEMCAM", "MAHLI", "MARDI", "RHAZ"],
+     'cameras': ['FHAZ', "NAVCAM", "MAST", "CHEMCAM", "MAHLI", "MARDI",
+                 "RHAZ"],
      'max_date': "2016-03-28",
      'max_sol': 1295,
      'total_photos': 246346,
@@ -94,6 +94,7 @@ ROVERS = [
 
 
 def init_rovers_and_cameras():
+    """Create all Rovers and Cameras and save in database."""
     camera_list = []
     rover_list = []
     for rover_dict in ROVERS:
@@ -112,4 +113,3 @@ def init_rovers_and_cameras():
     DBSession.add_all(camera_list)
     DBSession.flush()
     transaction.commit()
-    # import pdb; pdb.set_trace()
