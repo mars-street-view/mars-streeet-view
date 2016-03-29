@@ -13,15 +13,10 @@ def main(rover, sol, fetch, config_uri=None):
         args = []
     initializedb.main(args)
     results = get_one_sol(rover, sol, fetch)
-    new_photos = [models.Photo(**result) for result in results]
-    models.DBSession.add_all(new_photos)
-    models.DBSession.flush()
+    populate_from_data(results)
 
 
-def populate_sample_data(args=sys.argv):
-    """Put all photos from sample json data into database."""
-    initializedb.main(args)
-    results = load_full_sample_data()
+def populate_from_data(results):
     obj_list = []
     for obj_name in ('rover', 'camera'):
         found_ids = set()
@@ -37,3 +32,10 @@ def populate_sample_data(args=sys.argv):
 
     models.DBSession.add_all(obj_list)
     models.DBSession.flush()
+
+
+def populate_sample_data(args=sys.argv):
+    """Put all photos from sample json data into database."""
+    initializedb.main(args)
+    results = load_full_sample_data()
+    populate_from_data(results)
