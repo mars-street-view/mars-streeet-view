@@ -102,9 +102,8 @@ def init_rovers_and_cameras():
         rover_name = rover_dict['name']
         cam_list = rover_dict['cameras']
         for short_name in cam_list:
-            cam_name = '_'.join((rover_name, short_name))
             cam_dict = {
-                'name': cam_name,
+                'name': short_name,
                 'rover_name': rover_name,
                 'full_name': CAMERAS[short_name]
             }
