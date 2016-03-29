@@ -8,6 +8,11 @@ import requests
 import json
 # from sys import argv
 
+
+PARENT_DIR = os.path.dirname(__file__)
+SAMPLE_DATA_PATH = os.path.join(PARENT_DIR, 'tests', 'sample_data.json')
+
+
 ROVERS = {
     'Curiosity': 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos',
     'Opportunity': 'https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos',
@@ -16,48 +21,22 @@ ROVERS = {
 NASA_API_KEY = os.environ.get('NASA_API_KEY')
 
 
-def get_inspection_page(rover, sol, page):
+def fetch_photo_data(url, rover, sol):
     """Make API call to NASA."""
-    try:
-        url = ROVERS[rover]
-    except KeyError:
-        raise ValueError('Incorrect rover name provided.')
-
-    params = {
-        'sol': sol,
-        'page': page,
-        'api_key': NASA_API_KEY,
-    }
-    resp = requests.get(url, params=params)
-    resp.raise_for_status()  # <- This is a no-op if there is no HTTP error
-    return resp.content, resp.encoding
-
-
-def write_to_file(resp, file_name):
-    """Save JSON to a file."""
-    content, encoding = resp
-    file = io.open(file_name, encoding='utf-8', mode='w')
-    file.write(content.decode(encoding))
-    file.close()
-
-
-def read_json(file):
-    """Parse JSON."""
-    text = io.open(file, encoding='utf-8', mode='r')
-    unparsed = text.read()
-    parsed = json.loads(unparsed)
-    return parsed['photos']
-
-
-def get_one_sol(rover, sol):
-    """Return all photos for one sol, given rover and sol."""
-    page = 0
+    page = 1
     lst = []
     found_ids = set()
     while True:
-        new_content, encoding = get_inspection_page(rover, sol, page)
-        new_content = new_content.decode(encoding)
-        photos = json.loads(new_content)['photos']
+        params = {
+            'sol': sol,
+            'page': page,
+            'api_key': NASA_API_KEY,
+        }
+        resp = requests.get(url, params=params)
+        resp.raise_for_status()  # <- This is a no-op if there is no HTTP error
+        content, encoding = resp.content, resp.encoding
+        photo_data = json.loads(content.decode(encoding))
+        photos = photo_data['photos']
         if not photos:
             break
         for photo in photos:
@@ -66,13 +45,57 @@ def get_one_sol(rover, sol):
                 found_ids.add(photo['id'])
         page += 1
 
-    # print(lst[-1])
-    # print('length of list:')
-    # print(len(lst))
     return lst
 
 
+def fetch_and_save_data_sample():
+    """Download and save json data sample of the first day of each mission."""
+    photo_list = []
+    for rover in ROVERS:
+        photo_list.extend(get_one_sol(rover, 1, True))
+    data = {'photos': photo_list}
+    write_to_json_file(data, SAMPLE_DATA_PATH)
+    print('Successfully saved {} photo objects to {}.'
+          ''.format(len(photo_list), SAMPLE_DATA_PATH))
+
+
+def load_photo_data(rover, sol):
+    """Load list of related photos from sample json file instead."""
+    data = read_json_from_file(SAMPLE_DATA_PATH)
+    return [photo for photo in data['photos']
+            if photo['rover']['name'] == rover and photo['sol'] == sol]
+
+
+def load_full_sample_data():
+    """Load list of related photos from sample json file instead."""
+    data = read_json_from_file(SAMPLE_DATA_PATH)
+    return data['photos']
+
+
+def write_to_json_file(data, file_name, encoding='utf-8'):
+    """Save JSON to a file."""
+    with io.open(file_name, encoding=encoding, mode='w') as file:
+        json.dump(data, file)
+
+
+def read_json_from_file(file_name, encoding='utf-8'):
+    """Parse JSON."""
+    with io.open(file_name, encoding=encoding, mode='r') as file:
+        return json.load(file)
+
+
+def get_one_sol(rover, sol, fetch=False):
+    """Return all photos for one sol, given rover and sol."""
+    try:
+        url = ROVERS[rover]
+    except KeyError:
+        raise ValueError('Incorrect rover name provided.')
+    if fetch:
+        photo_list = fetch_photo_data(url, rover, sol)
+    else:
+        photo_list = load_photo_data(rover, sol)
+    return photo_list
+
+
 if __name__ == '__main__':
-    # write_to_file(get_inspection_page('curiostiy', 1000, 1), 'sample_data.json')
-    # read_json('sample_data.json')
-    get_one_sol('curiosity', 780)
+    fetch_and_save_data_sample()
