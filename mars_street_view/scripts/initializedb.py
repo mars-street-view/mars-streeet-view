@@ -36,6 +36,7 @@ def main(argv=sys.argv):
     options = parse_vars(argv[2:])
     setup_logging(config_uri)
     settings = get_appsettings(config_uri, options=options)
+    # import pdb; pdb.set_trace()
     if not settings.get('sqlalchemy.url'):
         try:
             settings['sqlalchemy.url'] = os.environ['MARS_DATABASE_URL']
@@ -108,7 +109,7 @@ def init_rovers_and_cameras():
                 'full_name': CAMERAS[short_name]
             }
             camera_list.append(Camera(**cam_dict))
-    DBSession.add_all(rover_list)
-    DBSession.add_all(camera_list)
-    DBSession.flush()
-    transaction.commit()
+    with transaction.manager:
+        DBSession.add_all(rover_list)
+        DBSession.add_all(camera_list)
+        DBSession.flush()
