@@ -30,13 +30,12 @@ def usage(argv):
 
 def main(argv=sys.argv):
     """Initialize database, optionally with settings from config uri."""
-    if len(argv) > 1:
-        config_uri = argv[1]
-        options = parse_vars(argv[2:])
-        setup_logging(config_uri)
-        settings = get_appsettings(config_uri, options=options)
-    else:
-        settings = {}
+    if len(argv) < 2:
+        usage(argv)
+    config_uri = argv[1]
+    options = parse_vars(argv[2:])
+    setup_logging(config_uri)
+    settings = get_appsettings(config_uri, options=options)
     if not settings.get('sqlalchemy.url'):
         try:
             settings['sqlalchemy.url'] = os.environ['MARS_DATABASE_URL']
@@ -64,6 +63,7 @@ CAMERAS = {
     "RHAZ": "Rear Hazard Avoidance Camera",
     "PANCAM": "Panoramic Camera",
     "MINITES": "Miniature Thermal Emission Spectrometer (Mini-TES)",
+    "ENTRY": "Entry, Descent, and Landing Camera"
 }
 
 
@@ -78,7 +78,7 @@ ROVERS = [
      },
     {'name': 'Spirit',
      'landing_date': "2004-01-04",
-     'cameras': ['FHAZ', "NAVCAM", "RHAZ", "PANCAM", "MINITES"],
+     'cameras': ['FHAZ', "NAVCAM", "RHAZ", "PANCAM", "MINITES", "ENTRY"],
      'max_date': "2010-03-21",
      'max_sol': 2208,
      'total_photos': 124550,
@@ -86,7 +86,7 @@ ROVERS = [
     {'name': 'Opportunity',
      'landing_date': "2004-01-25",
      'max_date': "2016-03-28",
-     'cameras': ['FHAZ', "NAVCAM", "RHAZ", "PANCAM", "MINITES"],
+     'cameras': ['FHAZ', "NAVCAM", "RHAZ", "PANCAM", "MINITES", "ENTRY"],
      'max_sol': 4328,
      'total_photos': 178933,
      }
