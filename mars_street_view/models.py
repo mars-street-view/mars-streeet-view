@@ -29,6 +29,10 @@ class MyModel(Base):
 
 
 class Rover(Base):
+
+    def __init__(self, cameras=None, **kwargs):
+        super(Rover, self).__init__(**kwargs)
+
     __tablename__ = 'rovers'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
