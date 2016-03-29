@@ -81,3 +81,7 @@ def test_photo_camera_relationship(dbtransaction,
 
 def test_api_photo_populates(dbtransaction):
     test_list = get_one_sol('curiosity', 1)
+    new_photos = [Photo(**obj) for obj in test_list]
+    DBSession.add_all(new_photos)
+    DBSession.flush()
+    assert DBSession.query(Photo).count() == len(test_list)

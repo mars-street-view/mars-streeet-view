@@ -22,11 +22,8 @@ def test_read_json():
     assert isinstance(data, list)
     assert data[0]['id'] == 103389
 
-# def test_scrub_data():
-#     """Test that our function will return """
 
-
-def test_api_photo_result(dbtransaction):
+def test_api_photo_not_dupe(dbtransaction):
     test_list = get_one_sol('curiosity', 1)
     photo_ids = [item['id'] for item in test_list]
     print(photo_ids)

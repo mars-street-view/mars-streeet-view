@@ -75,7 +75,6 @@ def get_one_sol(rover, sol):
     return lst
 
 
-
 if __name__ == '__main__':
     # write_to_file(get_inspection_page('curiostiy', 1000, 1), 'sample_data.json')
     # read_json('sample_data.json')
