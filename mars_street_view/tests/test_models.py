@@ -1,4 +1,5 @@
 from mars_street_view.models import DBSession, Rover, Photo, Camera
+from mars_street_view.api_call import get_one_sol
 
 
 def test_rover_db_is_empty(dbtransaction):
