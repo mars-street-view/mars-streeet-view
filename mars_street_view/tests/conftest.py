@@ -24,7 +24,7 @@ def config_uri():
     parent_dir = os.path.dirname(__file__)
     gparent_dir = os.path.dirname(parent_dir)
     ggparent_dir = os.path.dirname(gparent_dir)
-    return os.path.join(ggparent_dir, 'development.ini')
+    return os.path.join(ggparent_dir, 'testing.ini')
 
 
 @pytest.fixture()
@@ -55,6 +55,14 @@ def dbtransaction(request, sqlengine):
 
     request.addfinalizer(teardown)
     return connection
+
+
+ROVER_NAMES = ['Spirit', 'Curiosity', 'Opportunity']
+
+
+@pytest.fixture(params=ROVER_NAMES)
+def rover_name(request):
+    return request.param
 
 
 @pytest.fixture()

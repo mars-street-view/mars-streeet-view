@@ -1,4 +1,5 @@
 # _*_ Coding: utf-8 _*_
+"""Call the NASA Mars Rover Photo API and return image data."""
 from __future__ import unicode_literals
 
 import os
@@ -7,37 +8,28 @@ import requests
 import json
 # from sys import argv
 
-CURIOSITY = 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos'
-OPPORTUNITY = 'https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos'
-SPIRIT = 'https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos'
-NASA_API = os.environ.get('NASA_API_KEY')
-
-INSPECTION_PARAMS = {
-    'sol': "",
-    'api_key': NASA_API,
-    'page': "",
+ROVERS = {
+    'Curiosity': 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos',
+    'Opportunity': 'https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos',
+    'Spirit': 'https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos',
 }
+NASA_API_KEY = os.environ.get('NASA_API_KEY')
 
 
 def get_inspection_page(rover, sol, page):
     """Make API call to NASA."""
-    url = ""
-    if rover == 'spirit':
-        url = SPIRIT
-    elif rover == 'opportunity':
-        url = OPPORTUNITY
-    else:
-        url = CURIOSITY
+    try:
+        url = ROVERS[rover]
+    except KeyError:
+        raise ValueError('Incorrect rover name provided.')
 
-    params = INSPECTION_PARAMS.copy()
-    # for key, val in kwargs.items():
-    #     if key in INSPECTION_PARAMS:
-    #         params[key] = val
-    params['sol'] = sol
-    params['page'] = page
+    params = {
+        'sol': sol,
+        'page': page,
+        'api_key': NASA_API_KEY,
+    }
     resp = requests.get(url, params=params)
     resp.raise_for_status()  # <- This is a no-op if there is no HTTP error
-    # remember, in requests `content` is bytes and `text` is unicode
     return resp.content, resp.encoding
 
 
@@ -59,21 +51,25 @@ def read_json(file):
 
 def get_one_sol(rover, sol):
     """Return all photos for one sol, given rover and sol."""
-    page = 1
+    page = 0
     lst = []
+    found_ids = set()
     while True:
         new_content, encoding = get_inspection_page(rover, sol, page)
-        new_content = new_content.decode('utf-8')
-        pcontent = json.loads(new_content)
-        lst.extend(pcontent['photos'])
-        page += 1
-        if not pcontent['photos']:
+        new_content = new_content.decode(encoding)
+        photos = json.loads(new_content)['photos']
+        if not photos:
             break
-    print(lst[-1])
-    print('length of list:')
-    print(len(lst))
-    return lst
+        for photo in photos:
+            if photo['id'] not in found_ids:
+                lst.append(photo)
+                found_ids.add(photo['id'])
+        page += 1
 
+    # print(lst[-1])
+    # print('length of list:')
+    # print(len(lst))
+    return lst
 
 
 if __name__ == '__main__':
