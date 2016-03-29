@@ -27,8 +27,13 @@ def rover_view(request):
         sol = request.matchdict['sol']
         nav = rover.cameras.filter(name='NAVCAM')
         nav_today = nav.photos.filter(sol=sol)
+        nav_photo_list = []
+        for photo in nav_today:
+            nav_photo_list.append(photo)
     except:
         pass
+    return {'pictures': nav_photo_list}
+
         
 
 conn_err_msg = """\
