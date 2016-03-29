@@ -27,10 +27,10 @@ def home_view(request):
 def rover_view(request):
     """Return appropriate pictures for a rover request."""
     import pdb; pdb.set_trace()
-    rover = DBSession.query(Rover).filter_by(name=request.matchdict['rover_name']).one()
+    rover = DBSession.query(Rover).filter_by(name=request.matchdict['rover_name'].capitalize())
     camera = rover.cameras.filter(name='NAVCAM').one()
     photo = DBSession.query(Photo).filter_by(camera_id=camera.id)
-    sol = request.matchdict['sol']
+    sol = int(request.matchdict['sol'])
     # nav = rover.cameras.filter(name='NAVCAM')
     nav_today = nav.photos.filter(sol=sol)
     nav_photo_list = []
