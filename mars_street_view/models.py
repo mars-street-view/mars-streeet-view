@@ -5,7 +5,7 @@ from sqlalchemy import (
     Text,
     String,
     ForeignKey,
-    )
+)
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -13,7 +13,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
-    )
+)
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -30,11 +30,13 @@ class MyModel(Base):
 
 class Photo(Base):
     def __init__(self, id=None, camera=None, rover=None, **kwargs):
-        rover_name = rover['name']
+        if rover:
+            rover_name = rover['name']
+            kwargs['rover_name'] = rover_name
         if camera:
             kwargs['camera_name'] = '_'.join((rover_name, camera['name']))
-        if rover:
-            kwargs['rover_name'] = rover_name
+        else:
+            raise KeyError('Photo must be initialized with a rover obj.')
         super(Photo, self).__init__(**kwargs)
 
     __tablename__ = 'photos'
@@ -65,6 +67,13 @@ class Rover(Base):
 
 
 class Camera(Base):
+
+    def __init__(self, name=None, **kwargs):
+        if not kwargs.get('rover_name') or not name:
+            raise KeyError('Camera must initialize with name and rover_name.')
+        kwargs['name'] = '_'.join((kwargs['rover_name'], name))
+        super(Camera, self).__init__(**kwargs)
+
     __tablename__ = 'cameras'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)

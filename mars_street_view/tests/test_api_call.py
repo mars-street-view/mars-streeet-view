@@ -25,7 +25,7 @@ def test_load_full_sample_data():
                 len(data) > 20])
 
 
-def test_api_photo_not_dupe(dbtransaction, rover_name):
+def test_api_photo_not_dupe(rover_name):
     """Confirm that get_one_sol() is not returning duplicate photo ids."""
     from mars_street_view.api_call import get_one_sol
     photos_list = get_one_sol(rover_name, 1)
