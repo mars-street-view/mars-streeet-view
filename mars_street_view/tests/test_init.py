@@ -1,6 +1,5 @@
 """Test SQLAlchemy database and Pyramid app initialization."""
 import os
-import pytest
 from mars_street_view.scripts.initializedb import main
 from mars_street_view.models import DBSession, MyModel
 
@@ -26,9 +25,3 @@ def test_main(config_uri, global_environ, dbtransaction):
     """Test that main runs."""
     main(['initialize_db',
           config_uri])
-
-
-def test_main_error(config_uri, global_environ, dbtransaction):
-    """Test that main does not run without an .ini file."""
-    with pytest.raises(SystemExit):
-        main(['initialize_db'])
