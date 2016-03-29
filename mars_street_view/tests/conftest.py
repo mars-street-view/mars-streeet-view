@@ -27,6 +27,13 @@ def config_uri():
     return os.path.join(ggparent_dir, 'testing.ini')
 
 
+@pytest.fixture(scope='session')
+def sample_data_uri():
+    """Establish configuration uri for initialization."""
+    parent_dir = os.path.dirname(__file__)
+    return os.path.join(parent_dir, 'sample_data.json')
+
+
 @pytest.fixture()
 def sqlengine(request):
     """Return sql engine."""
