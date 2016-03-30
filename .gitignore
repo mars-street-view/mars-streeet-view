@@ -62,3 +62,4 @@ target/
 .ipynb_checkpoints
 
 .globals
+mars_street_view/tests/sample_data.json

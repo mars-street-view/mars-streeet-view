@@ -62,8 +62,8 @@ class Rover(Base):
     max_date = Column(String, nullable=False)
     max_sol = Column(String, nullable=False)
     total_photos = Column(Integer, nullable=False)
-    photos = relationship('Photo', back_populates='rover')
-    cameras = relationship('Camera', back_populates='rover')
+    photos = relationship('Photo', back_populates='rover', lazy='dynamic')
+    cameras = relationship('Camera', back_populates='rover', lazy='dynamic')
 
 
 class Camera(Base):
