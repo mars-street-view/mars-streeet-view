@@ -7,10 +7,13 @@ from sqlalchemy.exc import DBAPIError
 from .models import (
     DBSession,
     MyModel,
+    Rover,
+    Camera,
+    Photo
 )
 
 
-@view_config(route_name='home', renderer='templates/home.jinja2')
+@view_config(route_name='home', renderer='templates/index.jinja2')
 def home_view(request):
     """Home page view."""
     try:
@@ -18,6 +21,23 @@ def home_view(request):
     except DBAPIError:
         return Response(conn_err_msg, content_type='text/plain', status_int=500)
     return {'one': one, 'project': 'mars-street-view'}
+
+
+@view_config(route_name='rover', renderer='json')
+def rover_view(request):
+    """Return appropriate pictures for a rover request."""
+    import pdb; pdb.set_trace()
+    rover = DBSession.query(Rover).filter_by(name=request.matchdict['rover_name']).one()
+    camera = rover.cameras.filter(name='NAVCAM').one()
+    photo = DBSession.query(Photo).filter_by(camera_id=camera.id)
+    sol = request.matchdict['sol']
+    # nav = rover.cameras.filter(name='NAVCAM')
+    nav_today = nav.photos.filter(sol=sol)
+    nav_photo_list = []
+    for photo in nav_today:
+        nav_photo_list.append(photo)
+    return nav_photo_list
+
 
 
 conn_err_msg = """\

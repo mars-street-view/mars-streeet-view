@@ -1,39 +1,30 @@
 """Make a live API call and populate the database from the results."""
-import sys
-from mars_street_view.scripts import initializedb
+import os
+from sqlalchemy import create_engine
 from mars_street_view.api_call import get_one_sol, load_full_sample_data
-from mars_street_view.models import DBSession, Photo, Rover, Camera
+from mars_street_view.models import DBSession, Base, Photo
+import transaction
 
 
-def main(config_uri, rover, sol, fetch):
+def populate_one_sol(rover, sol, fetch):
     """Initialize database, query API and write models to database."""
-    initializedb.main(['initializedb', config_uri])
     results = get_one_sol(rover, sol, fetch)
-    new_photos = [Photo(**result) for result in results]
-    DBSession.add_all(new_photos)
-    DBSession.flush()
+    populate_from_data(results)
 
 
-def populate_sample_data(argv=sys.argv):
+def populate_sample_data():
     """Put all photos from sample json data into database."""
-    if len(argv) < 2:
-        print('Specify a config .ini file.')
-        sys.exit()
-    config_uri = argv[1]
-    initializedb.main(['initializedb', config_uri])
     results = load_full_sample_data()
-    obj_list = []
-    for obj_name in ('rover', 'camera'):
-        found_ids = set()
-        for result in results:
-            obj = result[obj_name]
-            obj_id = obj['id']
-            if obj_id not in found_ids:
-                found_ids.add(obj_id)
-                model = globals()[obj_name.capitalize()]
-                obj_list.append(model(**obj))
+    populate_from_data(results)
 
-    obj_list.extend([Photo(**result) for result in results])
 
-    DBSession.add_all(obj_list)
-    DBSession.flush()
+def populate_from_data(results):
+    """Push the given list of photo dictionaries into the database."""
+    photo_list = [Photo(**result) for result in results]
+    database_url = os.environ.get("MARS_DATABASE_URL", None)
+    engine = create_engine(database_url)
+    DBSession.configure(bind=engine)
+    Base.metadata.create_all(engine)
+    with transaction.manager:
+        DBSession.add_all(photo_list)
+        DBSession.flush()
