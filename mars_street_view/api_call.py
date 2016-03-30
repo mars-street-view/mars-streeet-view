@@ -7,7 +7,7 @@ import io
 import requests
 import json
 import webbrowser
-
+import time
 
 PARENT_DIR = os.path.dirname(__file__)
 SAMPLE_DATA_PATH = os.path.join(PARENT_DIR, 'tests', 'sample_data.json')
@@ -39,6 +39,7 @@ def fetch_photo_data(rover, sol, camera=None):
         if camera:
             params['camera'] = camera
         resp = requests.get(url, params=params)
+        # import pdb; pdb.set_trace()
         if resp.status_code == 400:
             print('400 response for {0} {camera} sol {sol} page={page}'
                   ''.format(rover, **params))
@@ -105,11 +106,13 @@ def get_one_sol(rover, sol, fetch=False, camera=None):
 def webbrowse_photos(rover_name, sol_range, camera):
     for n in sol_range:
         results = fetch_photo_data(rover_name, n, camera)
-        id_url_list = [(result['id'], result['img_src']) for result in results]
+        id_url_list = [(result['img_src'], result['id']) for result in results]
         id_url_list.sort()
-        for photo_id, url in id_url_list:
-            print('opening url for id {}'.format(photo_id))
+        for url, photo_id in id_url_list:
+            print('opening url {} for id {}'.format(url, photo_id))
             webbrowser.open_new_tab(url)
+        time.sleep(10)
+
 
 if __name__ == '__main__':
     import sys
