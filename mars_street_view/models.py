@@ -84,14 +84,13 @@ class Photo(Base):
         return_dict['sol'] = sol
         return_dict['photos_by_cam'] = {}
 
-        all_photos = DBSession.query(Photo).\
-            filter(Photo.rover_name == rover.name, sol == sol).\
-            order_by(Photo.id)
+        # all_photos = DBSession.query(Photo).\
+        #     filter(Photo.rover_name == rover.name, sol == sol).\
+        #     order_by(Photo.id)
 
         for cam in rover.cameras:
-            photos_this_cam = all_photos.filter(Photo.camera_name == cam.name).all()
+            photos_this_cam = cam.photos.filter(Photo.sol == sol).all()
             return_dict['photos_by_cam'][cam.name] = photos_this_cam
-
 
         return return_dict
 
@@ -125,7 +124,7 @@ class Camera(Base):
     name = Column(String, nullable=False, unique=True)
     rover_name = Column(String, ForeignKey('rovers.name'))
     full_name = Column(String, nullable=False)
-    photos = relationship('Photo', back_populates='camera')
+    photos = relationship('Photo', back_populates='camera', lazy='dynamic')
     rover = relationship('Rover', back_populates='cameras')
 
 # Index('my_index', MyModel.name, unique=True, mysql_length=255)
