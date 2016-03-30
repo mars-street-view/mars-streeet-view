@@ -1,7 +1,6 @@
 """Defines models for the whole project: Photo, Rover and Camera."""
 from sqlalchemy import (
     Column,
-    Index,
     Integer,
     String,
     ForeignKey,
@@ -29,6 +28,7 @@ Base = declarative_base()
 
 class MyModel(Base):
     """Test model."""
+
     __tablename__ = 'models'
     id = Column(Integer, primary_key=True)
     name = Column(Text)
@@ -38,20 +38,26 @@ class MyModel(Base):
 class Photo(Base):
     """Each individual photo object from a NASA API query."""
 
-    def __init__(self, id=None, camera=None, rover=None, **kwargs):
+    def __init__(self, camera=None, rover=None, **kwargs):
         """Initialize the Photo object, renaming some parameters."""
-        if rover:
+        try:
             rover_name = rover['name']
             kwargs['rover_name'] = rover_name
-        if camera:
-            kwargs['camera_name'] = '_'.join((rover_name, camera['name']))
-        else:
+        except AttributeError:
             raise KeyError('Photo must be initialized with a rover obj.')
+        except KeyError:
+            raise KeyError('Given rover object does not have a name.')
+        try:
+            kwargs['camera_name'] = '_'.join((rover_name, camera['name']))
+        except AttributeError:
+            raise KeyError('Photo must be initialized with a camera obj.')
+        except KeyError:
+            raise KeyError('Given camera object does not have a name.')
         super(Photo, self).__init__(**kwargs)
 
     __tablename__ = 'photos'
     id = Column(Integer, primary_key=True)
-    img_src = Column(String, nullable=False)
+    img_src = Column(String, nullable=False, unique=True, index=True)
     sol = Column(Integer, nullable=False)
     earth_date = Column(String, nullable=False)
     rover_name = Column(String, ForeignKey('rovers.name'))
@@ -65,6 +71,10 @@ class Photo(Base):
             full_name = self.camera.full_name
         except AttributeError:
             full_name = ''
+        try:
+            short_name = self.camera.short_name
+        except AttributeError:
+            short_name = ''
         return {
             'id': self.id,
             'img_src': self.img_src,
@@ -72,6 +82,7 @@ class Photo(Base):
             'earth_date': self.earth_date,
             'rover_name': self.rover_name,
             'camera_name': self.camera_name,
+            'camera_short_name': short_name,
             'camera_full_name': full_name
         }
 
@@ -101,6 +112,7 @@ class Photo(Base):
 
 def order_photo_query(photo_query):
     """Return custom sorted the given photo query."""
+    # TODO: order by url instead
     return photo_query.order_by(Photo.id).all()
 
 
@@ -113,7 +125,7 @@ class Rover(Base):
 
     __tablename__ = 'rovers'
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
+    name = Column(String, nullable=False, unique=True, index=True)
     landing_date = Column(String, nullable=False)
     max_date = Column(String, nullable=False)
     max_sol = Column(String, nullable=False)
@@ -130,15 +142,14 @@ class Camera(Base):
         if not kwargs.get('rover_name') or not name:
             raise KeyError('Camera must initialize with name and rover_name.')
         kwargs['name'] = '_'.join((kwargs['rover_name'], name))
+        kwargs['short_name'] = name
         super(Camera, self).__init__(**kwargs)
 
     __tablename__ = 'cameras'
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
-    rover_name = Column(String, ForeignKey('rovers.name'))
+    name = Column(String, nullable=False, unique=True, index=True)
+    short_name = Column(String, nullable=False)
     full_name = Column(String, nullable=False)
+    rover_name = Column(String, ForeignKey('rovers.name'))
     photos = relationship('Photo', back_populates='camera', lazy='dynamic')
     rover = relationship('Rover', back_populates='cameras')
-
-# Index('my_index', MyModel.name, unique=True, mysql_length=255)
-# TODO: write indexes for forthcoming tables.
