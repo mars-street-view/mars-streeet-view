@@ -1,10 +1,11 @@
+"""Defines models for the whole project: Photo, Rover and Camera."""
 from sqlalchemy import (
     Column,
     Index,
     Integer,
-    Text,
     String,
     ForeignKey,
+    Text
 )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -27,6 +28,7 @@ Base = declarative_base()
 
 
 class MyModel(Base):
+    """Test model."""
     __tablename__ = 'models'
     id = Column(Integer, primary_key=True)
     name = Column(Text)
@@ -34,7 +36,10 @@ class MyModel(Base):
 
 
 class Photo(Base):
+    """Each individual photo object from a NASA API query."""
+
     def __init__(self, id=None, camera=None, rover=None, **kwargs):
+        """Initialize the Photo object, renaming some parameters."""
         if rover:
             rover_name = rover['name']
             kwargs['rover_name'] = rover_name
@@ -55,22 +60,24 @@ class Photo(Base):
     camera = relationship('Camera', back_populates='photos')
 
     def __json__(self, request):
+        """Return dict of attributes which will be made into a JSON object."""
         try:
             full_name = self.camera.full_name
         except AttributeError:
-            full_name = ""          
+            full_name = ''
         return {
-        'id': self.id,
-        'img_src': self.img_src,
-        'sol': self.sol,
-        'earth_date': self.earth_date,
-        'rover_name': self.rover_name,
-        'camera_name': self.camera_name,
-        'camera_full_name': full_name
-    }
+            'id': self.id,
+            'img_src': self.img_src,
+            'sol': self.sol,
+            'earth_date': self.earth_date,
+            'rover_name': self.rover_name,
+            'camera_name': self.camera_name,
+            'camera_full_name': full_name
+        }
 
     @classmethod
     def get_rov_sol(cls, rover, sol):
+        """Return photo data for a given Rover and mission sol."""
         return_dict = {}
         try:
             rover = DBSession.query(Rover).filter_by(name=rover).one()
@@ -84,20 +91,24 @@ class Photo(Base):
         return_dict['sol'] = sol
         return_dict['photos_by_cam'] = {}
 
-        # all_photos = DBSession.query(Photo).\
-        #     filter(Photo.rover_name == rover.name, sol == sol).\
-        #     order_by(Photo.id)
-
         for cam in rover.cameras:
-            photos_this_cam = cam.photos.filter(Photo.sol == sol).all()
-            return_dict['photos_by_cam'][cam.name] = photos_this_cam
+            photos_this_cam = cam.photos.filter(Photo.sol == sol)
+            ordered_photos = order_photo_query(photos_this_cam)
+            return_dict['photos_by_cam'][cam.name] = ordered_photos
 
         return return_dict
 
 
+def order_photo_query(photo_query):
+    """Return custom sorted the given photo query."""
+    return photo_query.order_by(Photo.id).all()
+
+
 class Rover(Base):
+    """Class for the three Mars rovers."""
 
     def __init__(self, cameras=None, **kwargs):
+        """Initialize rover from NASA API JSON data, stripping out cameras."""
         super(Rover, self).__init__(**kwargs)
 
     __tablename__ = 'rovers'
@@ -112,8 +123,10 @@ class Rover(Base):
 
 
 class Camera(Base):
+    """Table of each camera on each Rover."""
 
     def __init__(self, name=None, **kwargs):
+        """Construct camera object, resetting name to be Rovername_CAMNAME."""
         if not kwargs.get('rover_name') or not name:
             raise KeyError('Camera must initialize with name and rover_name.')
         kwargs['name'] = '_'.join((kwargs['rover_name'], name))
