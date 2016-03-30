@@ -95,3 +95,16 @@ def test_rov_sol_lots(dbtransaction, global_environ, rover_params):
     rover = DBSession.query(Rover).filter(Rover.name == 'Curiosity').one()
     cam_name_list = [camera.name for camera in rover.cameras]
     assert sorted(cam_name_list) == sorted(list(result['photos_by_cam'].keys()))
+
+def test_rov_sol_returns_photos(dbtransaction, global_environ):
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
+    from mars_street_view.populate_database import populate_sample_data
+    init_rovers_and_cameras()
+    populate_sample_data()
+    sol = 1
+    result = Photo.get_rov_sol('Curiosity', sol)
+    rover = DBSession.query(Rover).filter(Rover.name == 'Curiosity').one()
+    cam_name_list = [camera.name for camera in rover.cameras]
+    photo_list = [photo for photos in result['photos_by_cam'].values() 
+                  for photo in photos]
+    assert len(photo_list) > 0
