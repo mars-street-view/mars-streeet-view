@@ -15,16 +15,24 @@ def test_test_app(app):
     assert isinstance(app, TestApp)
 
 
-def test_db_empty(app, dbtransaction, global_environ):
+def test_db_empty(dbtransaction, global_environ):
     """Check that test database initializes empty each time."""
     assert all([DBSession.query(Rover).count() == 0,
                 DBSession.query(Camera).count() == 0,
                 DBSession.query(Photo).count() == 0])
 
 
-def test_initialize_db(config_uri, global_environ, dbtransaction):
+def test_initialize_db(dbtransaction, config_uri, global_environ):
     """Test that initialize_db runs and populates Rovers and cameras."""
     from mars_street_view.scripts.initializedb import main
     main(['initialize_db', config_uri])
+    assert DBSession.query(Rover).count() == 3
+    assert DBSession.query(Camera).count() == 19
+
+
+def test_init_rov_cam(dbtransaction, global_environ):
+    """Test that initialize_db runs and populates Rovers and cameras."""
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
+    init_rovers_and_cameras()
     assert DBSession.query(Rover).count() == 3
     assert DBSession.query(Camera).count() == 19

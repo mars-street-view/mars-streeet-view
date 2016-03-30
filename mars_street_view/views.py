@@ -13,7 +13,7 @@ from .models import (
 )
 
 
-@view_config(route_name='home', renderer='templates/home.jinja2')
+@view_config(route_name='home', renderer='templates/index.jinja2')
 def home_view(request):
     """Home page view."""
     try:
@@ -38,7 +38,7 @@ def rover_view(request):
         nav_photo_list.append(photo)
     return nav_photo_list
 
-        
+
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem

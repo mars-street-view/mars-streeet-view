@@ -18,30 +18,39 @@ def test_populate_sample_data_photos(dbtransaction, global_environ):
     assert DBSession.query(Photo).count() == len(sample_data)
 
 
-# def test_populated_rel_photo_rover(dbtransaction, global_environ):
-#     from mars_street_view.populate_database import populate_sample_data
-#     populate_sample_data()
-#     for photo in DBSession.query(Photo).all():
-#         assert photo.rover_id is not None
-#     for rover in DBSession.query(Rover).all():
-#         # import pdb; pdb.set_trace()
-#         assert len(rover.photos) > 1
+def test_populated_rel_photo_rover(dbtransaction, global_environ):
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
+    from mars_street_view.populate_database import populate_sample_data
+    init_rovers_and_cameras()
+    populate_sample_data()
+    for photo in DBSession.query(Photo).all():
+        assert photo.rover_name is not None
+    for rover in DBSession.query(Rover).all():
+        assert len(rover.photos) > 1
 
 
-# def test_populated_rel_photo_camera(dbtransaction, config_uri):
-#     from mars_street_view.populate_database import populate_sample_data
-#     populate_sample_data(['', config_uri])
-#     for photo in DBSession.query(Photo).all():
-#         assert photo.rover_id is not None
-#     for camera in DBSession.query(Camera).all():
-#         assert len(camera.photos) > 1
+def test_populated_rel_photo_camera(dbtransaction, global_environ):
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
+    from mars_street_view.populate_database import populate_sample_data
+    init_rovers_and_cameras()
+    populate_sample_data()
+    for photo in DBSession.query(Photo).all():
+        assert photo.camera_name is not None
 
 
-# def test_populate_photos_from_fetch(dbtransaction):
-#     """Test that photos from each rover populate."""
-#     from mars_street_view.api_call import get_one_sol
-#     test_list = get_one_sol('Opportunity', 1, fetch=True)
-#     new_photos = [Photo(**obj) for obj in test_list]
-#     DBSession.add_all(new_photos)
-#     DBSession.flush()
-#     assert DBSession.query(Photo).count() == len(test_list)
+def test_populated_rel_rover_camera(dbtransaction, global_environ):
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
+    from mars_street_view.populate_database import populate_sample_data
+    init_rovers_and_cameras()
+    populate_sample_data()
+    for camera in DBSession.query(Camera).all():
+        assert camera.rover_name is not None
+    for rover in DBSession.query(Rover).all():
+        assert len(rover.cameras) > 1
+
+
+def test_populate_photos_from_fetch(dbtransaction, global_environ):
+    """Test that photos from each rover populate."""
+    from mars_street_view.populate_database import populate_one_sol
+    populate_one_sol('Opportunity', 1, fetch=True)
+    assert DBSession.query(Photo).count() > 10
