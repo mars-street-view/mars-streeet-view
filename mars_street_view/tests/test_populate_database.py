@@ -26,7 +26,7 @@ def test_populated_rel_photo_rover(dbtransaction, global_environ):
     for photo in DBSession.query(Photo).all():
         assert photo.rover_name is not None
     for rover in DBSession.query(Rover).all():
-        assert len(rover.photos) > 1
+        assert rover.photos.count() > 1
 
 
 def test_populated_rel_photo_camera(dbtransaction, global_environ):
@@ -46,7 +46,7 @@ def test_populated_rel_rover_camera(dbtransaction, global_environ):
     for camera in DBSession.query(Camera).all():
         assert camera.rover_name is not None
     for rover in DBSession.query(Rover).all():
-        assert len(rover.cameras) > 1
+        assert rover.cameras.count() > 1
 
 
 def test_populate_photos_from_fetch(dbtransaction, global_environ):
