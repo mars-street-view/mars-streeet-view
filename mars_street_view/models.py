@@ -49,6 +49,12 @@ class Photo(Base):
     rover = relationship('Rover', back_populates='photos')
     camera = relationship('Camera', back_populates='photos')
 
+    @classmethod
+    def get_rov_sol(cls, rover, sol):
+        return_dict = {}
+
+        return return_dict
+
 
 class Rover(Base):
 
