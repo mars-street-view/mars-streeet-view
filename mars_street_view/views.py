@@ -6,7 +6,6 @@ from sqlalchemy.exc import DBAPIError
 
 from .models import (
     DBSession,
-    MyModel,
     Rover,
     Camera,
     Photo
@@ -34,6 +33,9 @@ class DummyPhoto(object):
 def rover_view(request):
     """Return appropriate pictures for a rover request."""
     # import pdb; pdb.set_trace()
+
+    # NOTE: The next chunk of code is old, and will presumably get cut.  Soon.
+
     # rover = DBSession.query(Rover).filter_by(name=request.matchdict['rover_name'].capitalize())
     # camera = rover.cameras.filter(name='NAVCAM').one()
     # photo = DBSession.query(Photo).filter_by(camera_id=camera.id)
@@ -43,8 +45,21 @@ def rover_view(request):
     # nav_photo_list = []
     # for photo in nav_today:
     #     nav_photo_list.append(photo)
-    nav_photo_list = [DummyPhoto() for i in range(10)]
-    return nav_photo_list
+
+
+    # NOTE: use the 2 lines below to serve identical dummy data to front end
+
+    # nav_photo_list = [DummyPhoto() for i in range(10)]
+    # return nav_photo_list
+
+
+    # NOTE: The following is a simple response based upon a model method we have yet to write.
+    
+    rover = request.matchdict['rover_name']
+    sol = request.matchdict['sol']
+    # Photo.get_rov_sol returns a dictionary with keys 'rov', 'sol', and photos_by_cam
+    data = Photo.get_rov_sol(rover, sol)
+    return data
 
 
 
