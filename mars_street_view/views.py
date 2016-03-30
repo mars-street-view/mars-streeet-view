@@ -5,7 +5,7 @@ from pyramid.view import view_config
 from sqlalchemy.exc import DBAPIError
 
 from .models import (
-    MyModel,
+    MyModel,  # Put this back in so tets pass.
     DBSession,
     Rover,
     Camera,
