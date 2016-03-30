@@ -1,4 +1,4 @@
-"use strict";
+// "use strict";
 
 // RHAZ = Rear Hazard Avoidance Camera  
 // FHAZ = Front Hazard Avoidance Camera
@@ -14,60 +14,63 @@
 var fhaz, rhaz, mast, chemCam, mahli, mardi, navcam, pancam, minites;
 
 // Declaring vars in the ajax function for global use
-var camList;
+var camList, cameras;
 var rover;
 var sol = 1;
+var count = 0;
 
 
-// HAS NOT BEEN CREATED
-$yesterday = $('#yesterday');
-$tomorrow = $('#tomorrow');
+// // HAS NOT BEEN CREATED
+// $yesterday = $('#yesterday');
+// $tomorrow = $('#tomorrow');
 
 
-// Constructor for multiple cameras
-function Camera(details) {
-    Object.keys(details).forEach(function(e, index, keys) {
-        this[e] = details[e];
-    }, this);
-}
+// // Constructor for multiple cameras
+// function Camera(details) {
+//     Object.keys(details).forEach(function(e, index, keys) {
+//         this[e] = details[e];
+//     }, this);
+// }
 
 
-// Compile the template
-Camera.prototype.compileTemplate = function(){
-    var source = $('#cam-template').html();
-    var template = Handlebars.compile(source)
-    return template(this)
-}
+// // Compile the template
+// Camera.prototype.compileTemplate = function(){
+//     var source = $('#cam-template').html();
+//     var template = Handlebars.compile(source)
+//     return template(this)
+// }
 
-// Fill list with objects
-Camera.all = []
+// // Fill list with objects
+// Camera.all = []
 
-// Create the objects from the ajax call
-Camera.loadall = function(camList) {
-    camList.photos_by_cam.forEach(function(ele){
-        Camera.all.push(new Camera(ele))
-        // ele[0].url
-        // ele[0].camera_full_name
-    }
-});
+// // Create the objects from the ajax call
+// Camera.loadall = function(camList) {
+//     camList.photos_by_cam.forEach(function(ele){
+//         Camera.all.push(new Camera(ele))
+//         // ele[0].url
+//         // ele[0].camera_full_name
+//     })
+// };
 
-// Append the template to the buttons
-function buildButtons(){
-    Camera.all.forEach(function(a){
-        $('#cam-buttons').append(a.compileTemplate());
-    });
-}
+// // Append the template to the buttons
+// function buildButtons(){
+//     Camera.all.forEach(function(a){
+//         $('#cam-buttons').append(a.compileTemplate());
+//     });
+// }
 
 
-
+var cap_rover;
 // Event Listener to run the ajax call
 $('.map-loc').on('click', function(e){
     e.preventDefault();
     rover = e.target.id;
+    cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1)
+    console.log(cap_rover);
     // Hide from the home page 
     $('#menu-home').hide();
     // Fetch the list of images with ajax call
-    fetchPhotos(rover, sol);
+    fetchPhotos(cap_rover, sol);
     // Show the first navcam image (for now)
     $('#rover-view').show();
 });
@@ -83,47 +86,56 @@ function fetchPhotos(rover, sol) {
         dataType: 'json',
         success: function(response){            
             camList = response;
+            console.log(response)
             // function to make the list of cameras
+            console.log(rover);
             fullCameraList(rover, camList);
             //
-            Camera.loadall(camList)
+            // Camera.loadall(camList)
             // take the first image and change the 'src' attribute of the main photo (NAVCAM)
-            $('#main-photo').attr('src', navcam[0].url);
+            $('#main-photo').attr('src', navcam[0].img_src);
         }
     });
 };
 
 
 function fullCameraList(rover, camList) {
-    // Return the lists of the photos for each camera
-    if rover = 'Curiosity'{
-        navcam = camList.photos_by_cam.rover + '_NAVCAM';
-        fhaz = camList.photos_by_cam.rover + '_FHAZ';
-        rhaz = camList.photos_by_cam.rover + '_RHAZ';
-        mast = camList.photos_by_cam.rover + '_MAST';
-        chemCam = camList.photos_by_cam.rover + '_CHEMCAM';
-        mahli = camList.photos_by_cam.rover + '_MAHLI';
-        mardi = camList.photos_by_cam.rover + '_MARDI';
+    if (rover = 'Curiosity') {
+        navcam = camList.photos_by_cam[rover + '_NAVCAM'];
+        fhaz = camList.photos_by_cam[rover + '_FHAZ'];
+        rhaz = camList.photos_by_cam[rover + '_RHAZ'];
+        mast = camList.photos_by_cam[rover + '_MAST'];
+        chemCam = camList.photos_by_cam[rover + '_CHEMCAM'];
+        mahli = camList.photos_by_cam[rover + '_MAHLI'];
+        mardi = camList.photos_by_cam[rover + '_MARDI'];
     } else {
-        navcam = camList.photos_by_cam.rover + '_NAVCAM';
-        fhaz = camList.photos_by_cam.rover + '_FHAZ';
-        rhaz = camList.photos_by_cam.rover + '_RHAZ';
-        pancam = camList.photos_by_cam.rover + '_PANCAM';
-        minites = camList.photos_by_cam.rover + '_MINITES';
-    }
-    console.log("LIST OF NAVCAM PHOTOS: " + navcam);
-    console.log("FIRST IMAGE IN NAVCAM: " + navcam[0].url);
+        navcam = camList.photos_by_cam[rover + '_NAVCAM'];
+        fhaz = camList.photos_by_cam[rover + '_FHAZ'];
+        rhaz = camList.photos_by_cam[rover + '_RHAZ'];
+        pancam = camList.photos_by_cam[rover + '_PANCAM'];
+        minites = camList.photos_by_cam[rover + '_MINITES'];
+        entry = camList.photos_by_cam[rover + '_ENTRY'];
+    };
+    console.log(navcam)
+    return navcam;
 };
+
 
 
 // Event listener for the next image to populate main image space
 $("#next-photo").on('click', function(e){
+    console.log("NAVCAM IN NEXT: ")
+    console.log(navcam)
     var url = document.getElementById("main-photo").src;
-    var idx = navcam.indexOf(url);
-    if (idx < navcam.length){
-        newUrl = navcam[idx + 1].url;
+    console.log(url)
+    // var idx = navcam.indexOf();
+    // console.log(idx)
+    if (count < navcam.length){
+        count += 1;
+        newUrl = navcam[count].img_src;
         $('#main-photo').attr('src', newUrl);
     } else {
+        count = 0;
         sol += 1;
         fetchPhotos(rover, sol);
     }
@@ -135,7 +147,7 @@ $("#prev-photo").on('click', function(e){
     var url = document.getElementById("main-photo").src;
     var idx = navcam.indexOf(url);
     if (idx < navcam.length){
-        newUrl = navcam[idx - 1].url;
+        newUrl = navcam[idx - 1].img_src;
         $('#main-photo').attr('src', newUrl);
     } else {
         sol -= 1;
