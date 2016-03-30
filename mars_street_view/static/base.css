@@ -1,0 +1,110 @@
+
+.top_header {
+    position: relative;
+    color: white;
+    background-color: black;
+    right: 0;
+    top: 0;
+    left: 0;
+    text-align: right;
+    padding: 0px 20px 0px 0px;
+}
+
+.logo {
+	display: flex;
+	flex-direction: row;
+}
+
+#logo {
+	padding: 30px, 0px, 0px, 30px;
+	max-height: 100px;
+	max-width: 100px;
+}
+
+#title_header {
+	display: flex;
+	text-align: center;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+}
+
+.space {
+    width: 100px;
+    height: 4px;
+    background-color: red;
+    margin: 0 auto;
+    margin-top: 5px;
+    margin-bottom: 25px;
+}
+
+/*******************************************/
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+
+.container {
+	display: flex;
+	max-width: 95%;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0px 0px -10px;
+}
+
+.nav ul {
+	display: flex;
+	background-color: white;
+	padding: 0px 10px 0px 10px;
+}
+
+.nav_item {
+	display: flex;
+	font-size: 22px;
+	justify-content: space-around;
+	list-style: none;
+	margin: 0px 0px 0px 0px;
+  	padding: 0px 10px 0px 10px;
+}
+
+ul li {
+	/*display: inline-flex;*/
+	/*text-decoration: none; */
+}
+
+a {
+	text-decoration: none;
+	color: black;
+}
+
+a:hover {
+	color: red;
+}
+
+
+/* FOOTER */
+/*footer {
+	position: relative;
+    color: white;
+    background-color: #444;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+}*/
+.footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
