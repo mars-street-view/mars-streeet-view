@@ -26,17 +26,22 @@ def home_view(request):
 @view_config(route_name='rover', renderer='json')
 def rover_view(request):
     """Return appropriate pictures for a rover request."""
-    import pdb; pdb.set_trace()
-    rover = DBSession.query(Rover).filter_by(name=request.matchdict['rover_name']).one()
-    camera = rover.cameras.filter(name='NAVCAM').one()
-    photo = DBSession.query(Photo).filter_by(camera_id=camera.id)
+    # import pdb; pdb.set_trace()
+    # rover = DBSession.query(Rover).filter_by(name=request.matchdict['rover_name']).one()
+    # camera = rover.cameras.filter(name='NAVCAM').one()
+    # photo = DBSession.query(Photo).filter_by(camera_id=camera.id)
+    # sol = request.matchdict['sol']
+    # # nav = rover.cameras.filter(name='NAVCAM')
+    # nav_today = nav.photos.filter(sol=sol)
+    # nav_photo_list = []
+    # for photo in nav_today:
+    #     nav_photo_list.append(photo)
+    # return nav_photo_list
+    rover = request.matchdict['rover_name']
     sol = request.matchdict['sol']
-    # nav = rover.cameras.filter(name='NAVCAM')
-    nav_today = nav.photos.filter(sol=sol)
-    nav_photo_list = []
-    for photo in nav_today:
-        nav_photo_list.append(photo)
-    return nav_photo_list
+    # Photo.get_rov_sol returns a dictionary with keys 'rov', 'sol', and photos_by_cam
+    data = Photo.get_rov_sol(rover, sol)
+    return data
 
 
 
