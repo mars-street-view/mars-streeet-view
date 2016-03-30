@@ -24,7 +24,7 @@ def home_view(request):
 
 
 class DummyPhoto(object):
-    url = "http://funnypics.com/my/cat"
+    url = 'http://i.telegraph.co.uk/multimedia/archive/02445/mars_2445397b.jpg'
     id = 7
 
     def __json__(self, request):
