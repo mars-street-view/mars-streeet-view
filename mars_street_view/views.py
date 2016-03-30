@@ -6,7 +6,6 @@ from sqlalchemy.exc import DBAPIError
 
 from .models import (
     DBSession,
-    MyModel,
     Rover,
     Camera,
     Photo
