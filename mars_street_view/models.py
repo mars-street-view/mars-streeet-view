@@ -15,6 +15,11 @@ from sqlalchemy.orm import (
     sessionmaker,
 )
 
+from sqlalchemy.orm.exc import (
+    MultipleResultsFound,
+    NoResultFound,
+)
+
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
@@ -52,6 +57,25 @@ class Photo(Base):
     @classmethod
     def get_rov_sol(cls, rover, sol):
         return_dict = {}
+        try:
+            rover = DBSession.query(Rover).filter_by(name=rover).one()
+        except NoResultFound:
+            raise NoResultFound("Invalid rover name")
+
+        except MultipleResultsFound:
+            raise MultipleResultsFound("How did you even do that?")
+
+        return_dict['rover'] = rover.name
+        return_dict['sol'] = sol
+        return_dict['photos_by_cam'] = {}
+
+        all_photos = DBSession.query(Photo).\
+            filter(rover_name == rover.name, sol == sol).\
+            order_by(Photo.id)
+
+        for cam in rover.cameras:
+            photos_this_cam = all_photos.filter(camera_name == cam.name).all()
+            return_dict['photos_by_cam'][cam.name] = photos_this_cam
 
         return return_dict
 
