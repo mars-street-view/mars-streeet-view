@@ -15,6 +15,11 @@ from sqlalchemy.orm import (
     sessionmaker,
 )
 
+from sqlalchemy.orm.exc import (
+    MultipleResultsFound,
+    NoResultFound,
+)
+
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
@@ -49,9 +54,43 @@ class Photo(Base):
     rover = relationship('Rover', back_populates='photos')
     camera = relationship('Camera', back_populates='photos')
 
+    def __json__(self, request):
+        try:
+            full_name = self.camera.full_name
+        except AttributeError:
+            full_name = ""          
+        return {
+        'id': self.id,
+        'img_src': self.img_src,
+        'sol': self.sol,
+        'earth_date': self.earth_date,
+        'rover_name': self.rover_name,
+        'camera_name': self.camera_name,
+        'camera_full_name': full_name
+    }
+
     @classmethod
     def get_rov_sol(cls, rover, sol):
         return_dict = {}
+        try:
+            rover = DBSession.query(Rover).filter_by(name=rover).one()
+        except NoResultFound:
+            raise NoResultFound("Invalid rover name")
+
+        except MultipleResultsFound:
+            raise MultipleResultsFound("How did you even do that?")
+
+        return_dict['rover'] = rover.name
+        return_dict['sol'] = sol
+        return_dict['photos_by_cam'] = {}
+
+        # all_photos = DBSession.query(Photo).\
+        #     filter(Photo.rover_name == rover.name, sol == sol).\
+        #     order_by(Photo.id)
+
+        for cam in rover.cameras:
+            photos_this_cam = cam.photos.filter(Photo.sol == sol).all()
+            return_dict['photos_by_cam'][cam.name] = photos_this_cam
 
         return return_dict
 
@@ -85,7 +124,7 @@ class Camera(Base):
     name = Column(String, nullable=False, unique=True)
     rover_name = Column(String, ForeignKey('rovers.name'))
     full_name = Column(String, nullable=False)
-    photos = relationship('Photo', back_populates='camera')
+    photos = relationship('Photo', back_populates='camera', lazy='dynamic')
     rover = relationship('Rover', back_populates='cameras')
 
 # Index('my_index', MyModel.name, unique=True, mysql_length=255)
