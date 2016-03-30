@@ -70,12 +70,13 @@ class Photo(Base):
         return_dict['photos_by_cam'] = {}
 
         all_photos = DBSession.query(Photo).\
-            filter(rover_name == rover.name, sol == sol).\
+            filter(Photo.rover_name == rover.name, sol == sol).\
             order_by(Photo.id)
 
         for cam in rover.cameras:
-            photos_this_cam = all_photos.filter(camera_name == cam.name).all()
+            photos_this_cam = all_photos.filter(Photo.camera_name == cam.name).all()
             return_dict['photos_by_cam'][cam.name] = photos_this_cam
+            
 
         return return_dict
 
