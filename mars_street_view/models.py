@@ -54,6 +54,21 @@ class Photo(Base):
     rover = relationship('Rover', back_populates='photos')
     camera = relationship('Camera', back_populates='photos')
 
+    def __json__(self, request):
+        try:
+            full_name = self.camera.full_name
+        except AttributeError:
+            full_name = ""          
+        return {
+        'id': self.id,
+        'img_src': self.img_src,
+        'sol': self.sol,
+        'earth_date': self.earth_date,
+        'rover_name': self.rover_name,
+        'camera_name': self.camera_name,
+        'camera_full_name': full_name
+    }
+
     @classmethod
     def get_rov_sol(cls, rover, sol):
         return_dict = {}
@@ -76,7 +91,7 @@ class Photo(Base):
         for cam in rover.cameras:
             photos_this_cam = all_photos.filter(Photo.camera_name == cam.name).all()
             return_dict['photos_by_cam'][cam.name] = photos_this_cam
-            
+
 
         return return_dict
 
