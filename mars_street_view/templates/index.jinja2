@@ -10,68 +10,93 @@
     <link rel="stylesheet" type="text/css" href="../static/skeleton.css">
     <link rel="stylesheet" type="text/css" href="../static/base.css">
     <link rel="stylesheet" type="text/css" href="../static/map.css">
-  </head>
-  <body>
-    <section>
-      <header class="top_header">
-        <div>MARS STREET VIEW</div>
-      </header>
-      <section class="header container">
-        <div class="logo">
-          <img id="logo" src="../static/logo.png">
-          <h1 id="title_header">MARS STREET VIEW</h1>
-        </div>
-        <nav class="nav twelve columns">
-          <ul>
-            <li class="nav_item"><a href="">HOME</a></li>
-            <li class="nav_item"><a href="">ROVER</a></li>
-            <li class="nav_item"><a href="">HISTORY</a></li>
-          </ul>
-        </nav>
-        <div class="space"></div>
-      </section>
-      <article class="container">
-        <section class="main-menu row" id="menu-home">
-            <section class="planet-menu one-half column row">
-                <figure class="mars">
-                    <span class="caps"></span>
-                    <span id="opportunity" class="map-loc"></span>
-                    <span id="curiosity" class="map-loc"></span>
-                    <span id="spirit" class="map-loc"></span>
-                </figure>
-            </section>
-            <section class="info one-half column row">
-                <article class="rover-info hidden" rover="opportunity">
-                    <h1>Opportunity</h1>
-                    <p>
-                        After a 563,000,000 km journey, Opportunity touched down on the Martian surface on August 6, 2012. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
-                </article>
-                <article class="rover-info hidden" rover="curiosity">
-                    <h1>Curiosity</h1>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
-                </article>
-                <article class="rover-info hidden" rover="spirit">
-                    <h1>Spirit</h1>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
-                </article>
-            </section>
-        </section>
-        <section id="rover-view">
-            <img src="" id='main-photo'/>
+    <script id="cam-template" type="text/x-handlebars-template">
+      <img src="{{ url }}">
+      <h5>{{ camera_full_name }}<h5>
+    </script>
 
-        </section>
-	</article>
-	<footer class="footer">
-	  &copy; 2016 | Mars Street View
-	</footer>
-	</section>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-	<script src="/static/mainView.js"></script>
+  </head>
+  <!-- BODY -->
+  <body>
+
+    <!-- HEADER / NAV -->
+    <header class="top_header">
+      <div>MARS STREET VIEW</div>
+    </header>
+    <section class='header'>
+      <div class="logo">
+        <img id="logo" src="../static/logo.png">
+        <h1 id="title_header">MARS STREET VIEW</h1>
+      </div>
+      <nav class="nav">
+        <ul>
+          <li class="nav_item"><a href="">HOME</a></li>
+          <li class="nav_item"><a href="">ROVER</a></li>
+          <li class="nav_item"><a href="">HISTORY</a></li>
+        </ul>
+      </nav>
+      <div class="space"></div>
+    </section>
+
+    <!-- HOME CONTAINER -->
+    <article class="container">
+      <section class="main-menu row" id="menu-home">
+
+        <!-- MAR GLOBE -->
+  			<section class="planet-menu six columns">
+  				<figure class="mars">
+  					<span class="caps"></span>
+  					<span id="opportunity" class="map-loc"></span>
+  					<span id="curiosity" class="map-loc"></span>
+  					<span id="spirit" class="map-loc"></span>
+  				</figure>
+  			</section>
+
+        <!-- ALL ROVER INFO -->
+  			<section class="info six columns">
+  				<article class="rover-info hidden" rover="Opportunity">
+  					<h1>Opportunity</h1>
+  					<p>
+  						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  					</p>
+  				</article>
+  				<article class="rover-info hidden" rover="Curiosity">
+  					<h1>Curiosity</h1>
+  					<p>
+  						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  					</p>
+  				</article>
+  				<article class="rover-info hidden" rover="Spirit">
+  					<h1>Spirit</h1>
+  					<p>
+  						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  					</p>
+  				</article>
+  			</section>
+  		</section>
+
+      <!-- ROVER PAGE -->
+      <section id="rover-view">
+      <article></article>
+        <form>
+          <img src="../static/arrow-up.png" id="next-photo">
+          <img src="" id='main-photo'/>
+          <img src="../static/arrow-down.png" id="prev-photo">
+          <section id="cam-buttons"></section>
+        </form>
+      </section>
+    </article>
+
+    <!-- FOOTER -->
+  	<footer class="footer">
+      &copy; 2016 | Mars Street View
+  	</footer>
+
+    <!-- SCRIPT TAGS -->
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  	<script src="static/scripts/mainView.js"></script>
     <script type='text/javascript' src='static/scripts/rover.js'></script>
+    <!-- HANDLEBARS SCRIPT -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
   </body>
 </html>
