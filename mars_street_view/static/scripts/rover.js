@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // "use strict";
 
 // RHAZ = Rear Hazard Avoidance Camera
@@ -84,11 +85,23 @@ $('.map-loc').on('click', function(e){
 // of the photos-per-cam for a given sol and rover
 // EXAMPLE: rover='Curiosity', sol=1
 function fetchPhotos(rover, sol) {
+=======
+
+yesterday = $('#yesterday');
+tomorrow = $('#tomorrow');
+next = $('#next');
+prev = $('#prev');
+
+yeserday.addEventListener();
+
+function getMorePictures(rover, sol){
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
     $.ajax({
         url: '/' + rover + '/' + sol,
         type: 'GET',
         dataType: 'json',
         success: function(response){
+<<<<<<< HEAD
 
             camList = response;
             console.log(response)
@@ -208,3 +221,12 @@ $("#prev-sol").on('click', function(e){
         fetchPhotos(cap_rover, sol);
     }
 })
+=======
+            return json.parse(response);
+        }
+    });
+}
+
+
+
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff

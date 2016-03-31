@@ -56,6 +56,7 @@ def test_full_params(dbtransaction, full_photo_params):
     assert photo.rover_name == rover_name and photo.camera_name == camera_name
 
 
+<<<<<<< HEAD
 def test_rov_sol_empty(dbtransaction, global_environ, rover_params):
     rover = rover_params['name']
     sol = 1
@@ -150,3 +151,8 @@ def test_api_photo_result(dbtransaction):
     assert isinstance(json_string, str)
     assert isinstance(json.loads(json_string), dict)
 >>>>>>> development
+=======
+# def test_prepopulated(pre_pop_transaction):
+#     assert all([True
+#         ])
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff

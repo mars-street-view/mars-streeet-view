@@ -22,12 +22,17 @@ def test_db_empty(dbtransaction, global_environ):
                 DBSession.query(Photo).count() == 0])
 
 
+<<<<<<< HEAD
 def test_initialize_db(dbtransaction, config_uri, global_environ):
+=======
+def test_initialize_db(config_uri, global_environ, dbtransaction):
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
     """Test that initialize_db runs and populates Rovers and cameras."""
     from mars_street_view.scripts.initializedb import main
     main(['initialize_db', config_uri])
     assert DBSession.query(Rover).count() == 3
     assert DBSession.query(Camera).count() == 19
+<<<<<<< HEAD
 
 
 def test_init_rov_cam(dbtransaction, global_environ):
@@ -36,3 +41,5 @@ def test_init_rov_cam(dbtransaction, global_environ):
     init_rovers_and_cameras()
     assert DBSession.query(Rover).count() == 3
     assert DBSession.query(Camera).count() == 19
+=======
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff

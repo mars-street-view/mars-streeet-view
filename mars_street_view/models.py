@@ -4,7 +4,10 @@ from sqlalchemy import (
     Integer,
     String,
     ForeignKey,
+<<<<<<< HEAD
     Text
+=======
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
 )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -12,12 +15,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
+<<<<<<< HEAD
     relationship
 )
 
 from sqlalchemy.orm.exc import (
     MultipleResultsFound,
     NoResultFound,
+=======
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
 )
 
 from zope.sqlalchemy import ZopeTransactionExtension
@@ -39,6 +45,7 @@ class MyModel(Base):
 
 
 class Photo(Base):
+<<<<<<< HEAD
     """Each individual photo object from a NASA API query."""
 
     def __init__(self, id=None, camera=None, rover=None, **kwargs):
@@ -57,12 +64,26 @@ class Photo(Base):
             raise KeyError('Photo must be initialized with a camera obj.')
         except KeyError:
             raise KeyError('Given camera object does not have a name.')
+=======
+    def __init__(self, id=None, camera=None, rover=None, **kwargs):
+        if rover:
+            rover_name = rover['name']
+            kwargs['rover_name'] = rover_name
+        if camera:
+            kwargs['camera_name'] = '_'.join((rover_name, camera['name']))
+        else:
+            raise KeyError('Photo must be initialized with a rover obj.')
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
         super(Photo, self).__init__(**kwargs)
 
     __tablename__ = 'photos'
     id = Column(Integer, primary_key=True)
+<<<<<<< HEAD
     nasa_id = Column(Integer, nullable=False)
     img_src = Column(String, nullable=False, unique=True, index=True)
+=======
+    img_src = Column(String, nullable=False)
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
     sol = Column(Integer, nullable=False)
     earth_date = Column(String, nullable=False)
     rover_name = Column(String, ForeignKey('rovers.name'))
@@ -70,6 +91,7 @@ class Photo(Base):
     rover = relationship('Rover', back_populates='photos')
     camera = relationship('Camera', back_populates='photos')
 
+<<<<<<< HEAD
     def __json__(self, request):
         """Return dict of attributes which will be made into a JSON object."""
         try:
@@ -128,6 +150,8 @@ def order_photo_query(photo_query):
     # TODO: order by url instead
     return photo_query.order_by(Photo.id)
 
+=======
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
 
 class Rover(Base):
     """Class for the three Mars rovers."""
@@ -138,7 +162,11 @@ class Rover(Base):
 
     __tablename__ = 'rovers'
     id = Column(Integer, primary_key=True)
+<<<<<<< HEAD
     name = Column(String, nullable=False, unique=True, index=True)
+=======
+    name = Column(String, nullable=False, unique=True)
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
     landing_date = Column(String, nullable=False)
     max_date = Column(String, nullable=False)
     max_sol = Column(String, nullable=False)
@@ -146,6 +174,7 @@ class Rover(Base):
     photos = relationship('Photo', back_populates='rover', lazy='dynamic')
     cameras = relationship('Camera', back_populates='rover', lazy='dynamic')
 
+<<<<<<< HEAD
 
 class Camera(Base):
     """Table of each camera on each Rover."""
@@ -156,12 +185,25 @@ class Camera(Base):
             raise KeyError('Camera must initialize with name and rover_name.')
         kwargs['name'] = '_'.join((kwargs['rover_name'], name))
         kwargs['short_name'] = name
+=======
+class Camera(Base):
+
+    def __init__(self, name=None, **kwargs):
+        if not kwargs.get('rover_name') or not name:
+            raise KeyError('Camera must initialize with name and rover_name.')
+        kwargs['name'] = '_'.join((kwargs['rover_name'], name))
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
         super(Camera, self).__init__(**kwargs)
 
     __tablename__ = 'cameras'
     id = Column(Integer, primary_key=True)
+<<<<<<< HEAD
     name = Column(String, nullable=False, unique=True, index=True)
     short_name = Column(String, nullable=False)
+=======
+    name = Column(String, nullable=False, unique=True)
+    rover_name = Column(String, ForeignKey('rovers.name'))
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
     full_name = Column(String, nullable=False)
     rover_name = Column(String, ForeignKey('rovers.name'))
     photos = relationship('Photo', back_populates='camera', lazy='dynamic')

@@ -109,7 +109,14 @@ def init_rovers_and_cameras():
                 'full_name': CAMERAS[short_name]
             }
             camera_list.append(Camera(**cam_dict))
+<<<<<<< HEAD
     with transaction.manager:
         DBSession.add_all(rover_list)
         DBSession.add_all(camera_list)
         DBSession.flush()
+=======
+    DBSession.add_all(rover_list)
+    DBSession.add_all(camera_list)
+    DBSession.flush()
+    transaction.commit()
+>>>>>>> 06182f80812ccd62ef57a49f4482d7a426d6b8ff
