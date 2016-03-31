@@ -38,8 +38,9 @@ class MyModel(Base):
 class Photo(Base):
     """Each individual photo object from a NASA API query."""
 
-    def __init__(self, camera=None, rover=None, **kwargs):
+    def __init__(self, id=None, camera=None, rover=None, **kwargs):
         """Initialize the Photo object, renaming some parameters."""
+        kwargs['nasa_id'] = id
         try:
             rover_name = rover['name']
             kwargs['rover_name'] = rover_name
@@ -57,6 +58,7 @@ class Photo(Base):
 
     __tablename__ = 'photos'
     id = Column(Integer, primary_key=True)
+    nasa_id = Column(Integer, nullable=False)
     img_src = Column(String, nullable=False, unique=True, index=True)
     sol = Column(Integer, nullable=False)
     earth_date = Column(String, nullable=False)
