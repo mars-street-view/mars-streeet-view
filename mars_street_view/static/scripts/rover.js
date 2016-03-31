@@ -38,7 +38,6 @@ var current_camera;
 
 // Constructor for multiple cameras
 function Camera(details) {
-    console.log(details);
     if (details.length > 0){
         this.name = details[0].camera_full_name
         this.short_name = details[0].camera_short_name.toLowerCase()
@@ -72,9 +71,12 @@ Camera.all = []
 
 // Create the objects from the ajax call
 Camera.loadall = function(response) {
+    Camera.all = [];
     photo_list = response.photos_by_cam;
     for (var property in photo_list) {
-        Camera.all.push(new Camera(photo_list[property]))
+        if (photo_list[property].length > 0){
+            Camera.all.push(new Camera(photo_list[property]))
+        }
     }
 };
 
@@ -105,7 +107,6 @@ function fetchPhotos(rover, sol) {
         success: function(response){
 
             camList = response;
-            console.log(response)
             // fullCameraList(rover, response);
 
 
@@ -161,30 +162,9 @@ function switchMain(camera, count){
 }
 
 
-// Returns a list of all the objects of a rover depending on the camera
-// function fullCameraList(rover, camList) {
-//     if (rover === 'Curiosity') {
-//         navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-//         fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-//         rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-//         mast = camList.photos_by_cam[rover + '_MAST'];
-//         chemCam = camList.photos_by_cam[rover + '_CHEMCAM'];
-//         mahli = camList.photos_by_cam[rover + '_MAHLI'];
-//         mardi = camList.photos_by_cam[rover + '_MARDI'];
-//     } else {
-//         navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-//         fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-//         rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-//         pancam = camList.photos_by_cam[rover + '_PANCAM'];
-//         minites = camList.photos_by_cam[rover + '_MINITES'];
-//         entry = camList.photos_by_cam[rover + '_ENTRY'];
-//     };
-//     // console.log(navcam)
-// };
-
-
 // Event listener for the next image to populate main image space
 $("#next-photo").on('click', function(e){
+    e.preventDefault()
     var url = document.getElementById("main-photo").src;
     if (count < current_camera.length - 1){
         newUrl = current_camera[count].img_src;
@@ -194,7 +174,7 @@ $("#next-photo").on('click', function(e){
     } else {
         count = 0;
         sol += 1;
-        console.log(rover)
+        console.log(sol)
         cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
         // if sol < max_sol
         fetchPhotos(cap_rover, sol);
@@ -204,6 +184,7 @@ $("#next-photo").on('click', function(e){
 
 // Event listener for the previous image to populate main image space
 $("#prev-photo").on('click', function(e){
+    e.preventDefault()
     var url = document.getElementById("main-photo").src;
     if (count > 0){
         newUrl = current_camera[count].img_src;
@@ -222,6 +203,7 @@ $("#prev-photo").on('click', function(e){
 
 // NEXT SOL
 $("#next-sol").on('click', function(e){
+    e.preventDefault()
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
     sol += 1;
     // if sol < max_sol
@@ -231,6 +213,7 @@ $("#next-sol").on('click', function(e){
 
 // PREV SOL
 $("#prev-sol").on('click', function(e){
+    e.preventDefault()
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
     sol -= 1;
     if (sol > 0){
