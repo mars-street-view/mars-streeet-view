@@ -1,3 +1,4 @@
+
 $('article.rover-info').hide();
 $('.rover-info').removeClass('hidden')
 
