@@ -73,10 +73,12 @@ def dbtransaction(request, sqlengine):
 @pytest.fixture()
 def pre_pop_transaction(request, sqlengine):
     """Create database transaction connection."""
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
     from mars_street_view.populate_database import populate_sample_data
     connection = sqlengine.connect()
     transaction = connection.begin()
     DBSession.configure(bind=connection, expire_on_commit=False)
+    init_rovers_and_cameras()
     populate_sample_data()
 
     def teardown():

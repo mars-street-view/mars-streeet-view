@@ -2,6 +2,13 @@
 from mars_street_view.models import DBSession, Photo, Rover, Camera
 
 
+def test_pre_populate_sample_data_photos(pre_pop_transaction, global_environ):
+    """Test that sample data can be loaded into DB."""
+    from mars_street_view.api_call import load_full_sample_data
+    sample_data = load_full_sample_data()
+    assert DBSession.query(Photo).count() == len(sample_data)
+
+
 def test_populate_one_sol(dbtransaction, rover_name, global_environ):
     """Test that main function populates database."""
     from mars_street_view.populate_database import populate_one_sol
