@@ -52,6 +52,7 @@ def test_photo_camera_relationship(dbtransaction, camera_params, photo_params):
 
 
 def test_full_params(dbtransaction, full_photo_params):
+    """Test that a full set of params from NASA API will construct models."""
     rover_name = full_photo_params['rover']['name']
     cam_short_name = full_photo_params['camera']['name']
     camera_name = '_'.join((rover_name, cam_short_name))
@@ -62,15 +63,18 @@ def test_full_params(dbtransaction, full_photo_params):
 
 
 def test_rov_sol_empty(dbtransaction, global_environ, rover_params):
+    """Test get_rov_sol return value for Rover with no cameras or photos."""
     rover = rover_params['name']
     sol = 1
     DBSession.add(Rover(**rover_params))
     DBSession.flush()
     expected = {'rover': rover, 'sol': sol, 'photos_by_cam': {}}
-    assert Photo.get_rov_sol(rover, sol)  == expected
+    assert Photo.get_rov_sol(rover, sol) == expected
 
 
-def test_rov_sol_one_camera(dbtransaction, global_environ, rover_params, camera_params):
+def test_rov_sol_one_camera(dbtransaction, global_environ, rover_params,
+                            camera_params):
+    """Test get_rov_sol return value for a Rover with one Camera."""
     rover = rover_params['name']
     camera = '_'.join((rover, camera_params['name']))
     sol = 1
@@ -81,7 +85,9 @@ def test_rov_sol_one_camera(dbtransaction, global_environ, rover_params, camera_
     assert Photo.get_rov_sol(rover, sol) == expected
 
 
-def test_rov_sol_one_photo(dbtransaction, global_environ, rover_params, camera_params, photo_params):
+def test_rov_sol_one_photo(dbtransaction, global_environ, rover_params,
+                           camera_params, photo_params):
+    """Test return value for get_rov_sol with one Photo."""
     rover = rover_params['name']
     camera = '_'.join((rover, camera_params['name']))
     photo = Photo(**photo_params)
@@ -90,21 +96,24 @@ def test_rov_sol_one_photo(dbtransaction, global_environ, rover_params, camera_p
     DBSession.add(Camera(**camera_params))
     DBSession.add(photo)
     DBSession.flush()
-    assert Photo.get_rov_sol(rover, sol) == {'rover': rover, 'sol': sol, 'photos_by_cam': {camera : [photo]}}
+    expected = {'rover': rover, 'sol': sol, 'photos_by_cam': {camera: [photo]}}
+    assert Photo.get_rov_sol(rover, sol) == expected
 
 
-def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_params):
+def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_name):
+    """Test get_rov_sol returns correct camera names on pre-populated DB."""
     sol = 1
-    result = Photo.get_rov_sol('Curiosity', sol)
-    rover = DBSession.query(Rover).filter(Rover.name == 'Curiosity').one()
+    result = Photo.get_rov_sol(rover_name, sol)
+    rover = DBSession.query(Rover).filter(Rover.name == rover_name).one()
     cam_name_list = [camera.name for camera in rover.cameras]
-    assert sorted(cam_name_list) == sorted(list(result['photos_by_cam'].keys()))
+    assert sorted(cam_name_list) == sorted(list(
+        result['photos_by_cam'].keys()))
 
 
-def test_rov_sol_returns_photos(pre_pop_transaction, global_environ):
+def test_rov_sol_gets_photos(pre_pop_transaction, global_environ, rover_name):
+    """Check that all contents of data are Photo objects."""
     sol = 1
     result = Photo.get_rov_sol('Curiosity', sol)
-    rover = DBSession.query(Rover).filter(Rover.name == 'Curiosity').one()
     photo_list = [photo for photos in result['photos_by_cam'].values()
                   for photo in photos]
     assert len(photo_list) > 0 and all([isinstance(photo, Photo)
@@ -112,6 +121,7 @@ def test_rov_sol_returns_photos(pre_pop_transaction, global_environ):
 
 
 def test_rov_sol_returns_spirit_filter(pre_pop_transaction, global_environ):
+    """Check that get_sol_rov returns no photos from right lens."""
     sol = 1
     result = Photo.get_rov_sol('Spirit', sol)
     photo_list = [photo for photos in result['photos_by_cam'].values()
@@ -123,7 +133,9 @@ def test_rov_sol_returns_spirit_filter(pre_pop_transaction, global_environ):
     assert True
 
 
-def test_photo_model_json(dbtransaction, photo_params, dummy_request):
+def test_photo_model_json(dbtransaction, global_environ, photo_params,
+                          dummy_request):
+    """Assert Photo __json__ value can be converted to and from json."""
     import json
     photo = Photo(**photo_params)
     DBSession.add(photo)
