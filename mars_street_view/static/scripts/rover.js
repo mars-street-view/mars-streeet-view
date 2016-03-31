@@ -1,6 +1,6 @@
 // "use strict";
 
-// RHAZ = Rear Hazard Avoidance Camera  
+// RHAZ = Rear Hazard Avoidance Camera
 // FHAZ = Front Hazard Avoidance Camera
 // MAST = Mast Camera
 // CHEMCAM = Chemistry and Camera Complex
@@ -22,45 +22,47 @@ var sol = 1;
 var count = 0;
 
 
-// // Constructor for multiple cameras
-// function Camera(details) {
-//     Object.keys(details).forEach(function(e, index, keys) {
-//         this[e] = details[e];
-//     }, this);
-// }
+// Constructor for multiple cameras
+function Camera(details) {
+    console.log(details);
+    if (details.length > 0){
+        this.name = details[0].camera_full_name
+        Object.keys(details).forEach(function(e, index, keys) {
+            this[e] = details[e].img_src;
+        }, this);
+    }
+}
 
-// var template;
-// // Compile the template
-// Camera.prototype.compileTemplate = function(){
-//     var source = $('#cam-template').html();
-//     template = Handlebars.compile(source)
-//     return template(this)
-// }
+var template;
+// Compile the template
+Camera.prototype.compileTemplate = function(){
+    var source = $('#cam-template').html();
+    template = Handlebars.compile(source)
+    return template(this)
+}
 
-// // var a;
-// // Append the template to the buttons
-// function buildButtons(){
-//     Camera.all.forEach(function(a){
-//         if (Object.keys(a).length > 0) {
-//             console.log(a)
-//             // $('.cam-buttons').append(a[0].compileTemplate());
-//         }
-//     });
-// }
-
-
-// // Fill list with objects
-// Camera.all = []
+// var a;
+// Append the template to the buttons
+function buildButtons(){
+    Camera.all.forEach(function(a){
+        if (Object.keys(a).length > 0) {
+            $('.cam-buttons').append(a.compileTemplate());
+        }
+    });
+}
 
 
-// // Create the objects from the ajax call
-// Camera.loadall = function(camList) {
-//     new_list = camList.photos_by_cam
-//     for (var property in new_list) {
-//         console.log(property)
-//         Camera.all.push(new Camera(new_list[property]))
-//     }
-// };
+// Fill list with objects
+Camera.all = []
+
+
+// Create the objects from the ajax call
+Camera.loadall = function(response) {
+    photo_list = response.photos_by_cam;
+    for (var property in photo_list) {
+        Camera.all.push(new Camera(photo_list[property]))
+    }
+};
 
 
 // Event Listener to run the ajax call
@@ -69,7 +71,7 @@ $('.map-loc').on('click', function(e){
     rover = e.target.id;
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1)
     // console.log(cap_rover);
-    // Hide from the home page 
+    // Hide from the home page
     $('#menu-home').hide();
     // Fetch the list of images with ajax call
     fetchPhotos(cap_rover, sol);
@@ -86,12 +88,12 @@ function fetchPhotos(rover, sol) {
         url: '/' + rover + '/' + sol,
         type: 'GET',
         dataType: 'json',
-        success: function(response){  
+        success: function(response){
 
             camList = response;
             console.log(response)
             // fullCameraList(rover, response);
-            
+
 
 
             if (rover === 'Curiosity') {
@@ -114,20 +116,20 @@ function fetchPhotos(rover, sol) {
             // handlebar_return = []
 
             // or
-            
+
             // for i in camList.photos_by_cam {
             //     handlebar_return.push(x[i].url)
             // }
 
-            // Camera.loadall(camList)
+            Camera.loadall(camList)
             // console.log(camList)
-            // buildButtons()
+            buildButtons()
             // take the first image and change the 'src' attribute of the main photo (NAVCAM)
             // console.log(navcam)
             $('#main-photo').attr('src', navcam[count].img_src);
             // fetchPhotos(rover, sol);
         }
-    })   
+    })
 };
 
 
@@ -181,7 +183,7 @@ $("#prev-photo").on('click', function(e){
     } else {
         count = 0;
         sol -= 1;
-        if (sol > 0){ 
+        if (sol > 0){
             cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
             fetchPhotos(cap_rover, sol);
         }
@@ -202,9 +204,7 @@ $("#next-sol").on('click', function(e){
 $("#prev-sol").on('click', function(e){
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
     sol -= 1;
-    if (sol > 0){ 
+    if (sol > 0){
         fetchPhotos(cap_rover, sol);
     }
 })
-
-
