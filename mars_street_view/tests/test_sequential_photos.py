@@ -33,9 +33,9 @@ def test_photos_sorted(pre_pop_transaction, global_environ):
     assert urls_from_method == urls_from_query
 
 
-ROVER = 'Curiosity'
-SOL = 330
-CAMERA = 'NAVCAM'
+ROVER = 'Spirit'
+SOL = 336
+CAMERA = 'FHAZ'
 
 
 def test_in_browser(dbtransaction, global_environ):
