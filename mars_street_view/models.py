@@ -82,6 +82,7 @@ class Photo(Base):
             short_name = ''
         return {
             'id': self.id,
+            'nasa_id': self.nasa_id,
             'img_src': self.img_src,
             'sol': self.sol,
             'earth_date': self.earth_date,

@@ -104,24 +104,3 @@ def get_one_sol(rover, sol, fetch=False, camera=None):
     else:
         photo_list = load_photo_data(rover, sol)
     return photo_list
-
-
-def webbrowse_photos(rover_name, sol_range, camera):
-    for n in sol_range:
-        results = fetch_photo_data(rover_name, n, camera)
-        id_url_list = [(result['img_src'], result['id']) for result in results]
-        id_url_list.sort()
-        for url, photo_id in id_url_list:
-            print('opening url {} for id {}'.format(url, photo_id))
-            webbrowser.open_new_tab(url)
-        time.sleep(10)
-
-
-if __name__ == '__main__':
-    import sys
-    if len(sys.argv) != 5:
-        print('Wrong num of args.')
-        sys.exit()
-    rover_name, start_sol, sol_range, camera = sys.argv[1:]
-    sol_range = range(int(start_sol), int(start_sol) + int(sol_range))
-    webbrowse_photos(rover_name, sol_range, camera)
