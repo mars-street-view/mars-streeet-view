@@ -2,14 +2,14 @@
 from mars_street_view.models import DBSession, Rover, Photo, Camera
 
 
-def test_db_is_empty(dbtransaction, model_name):
+def test_db_is_empty(dbtransaction, global_environ, model_name):
     """Test that the database is empty of each model at test session start."""
     model = globals()[model_name]
     query = DBSession.query(model)
     assert query.count() == 0
 
 
-def test_db_add(dbtransaction, model_test_params):
+def test_db_add(dbtransaction, global_environ, model_test_params):
     """Test that one of each type of model can be added to the DB."""
     model_name, params = model_test_params
     model = globals()[model_name]
