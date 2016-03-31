@@ -119,14 +119,13 @@ class Photo(Base):
 def filter_only_left(photo_query, rover_name):
     """Return a query filtered to only contain LEFT photos of a 2-lens pair."""
     if rover_name == 'Opportunity' or rover_name == 'Spirit':
-        return photo_query.filter(Photo.img_src.like(LEFT_LENS_URL))
+        return photo_query.filter(Photo.img_src.notlike(RIGHT_LENS_URL))
     return photo_query
 
 
 def order_photo_query(photo_query):
     """Return custom sorted the given photo query."""
-    # TODO: order by url instead
-    return photo_query.order_by(Photo.id)
+    return photo_query.order_by(Photo.img_src)
 
 
 class Rover(Base):

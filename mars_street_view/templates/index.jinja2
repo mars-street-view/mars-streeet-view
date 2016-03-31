@@ -10,9 +10,15 @@
     <link rel="stylesheet" type="text/css" href="../static/skeleton.css">
     <link rel="stylesheet" type="text/css" href="../static/base.css">
     <link rel="stylesheet" type="text/css" href="../static/map.css">
+
+
     <script id="cam-template" type="text/x-handlebars-template">
-      <img src="{{ url }}">
-      <h5>{{ camera_full_name }}<h5>
+      {% raw %}
+        {{#Camera}}
+          <img src="{{img_src}}">
+          <h5>{{camera_short_name}}<h5>
+        {{/Camera}}
+      {% endraw %}
     </script>
 
   </head>
@@ -77,12 +83,21 @@
 
       <!-- ROVER PAGE -->
       <section id="rover-view">
-      <article></article>
-        <form>
-          <img src="../static/arrow-up.png" id="next-photo">
+        <form class="rover-form">
+
+          <article class="next">
+            <img src="../static/arrow-up.png" id="next-photo">
+            <img src="../static/arrow-up.png" id="next-sol">
+          </article>
+          
           <img src="" id='main-photo'/>
-          <img src="../static/arrow-down.png" id="prev-photo">
-          <section id="cam-buttons"></section>
+
+          <article class=prev>
+            <img src="../static/arrow-down.png" id="prev-photo">
+            <img src="../static/arrow-up.png" id="prev-sol">
+          </article>
+
+          <section class="cam-buttons"></section>
         </form>
       </section>
     </article>
@@ -93,10 +108,19 @@
   	</footer>
 
     <!-- SCRIPT TAGS -->
+
+    <!-- JQUERY CDN SCRIPT -->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  	<script src="static/scripts/mainView.js"></script>
-    <script type='text/javascript' src='static/scripts/rover.js'></script>
-    <!-- HANDLEBARS SCRIPT -->
+    <!-- HANDLEBARS CDN SCRIPT -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+
+    <!-- HOME PAGE SCRIPT -->
+    <script type='text/javascript' src="static/scripts/mainView.js"></script>
+    
+    <!-- ROVER HOME PAGE -->
+    <script type='text/javascript' src='static/scripts/rover.js'></script>
+
+    <!-- HANDLEBARS IN JS -->
+    <script type='text/javascript' src="static/scripts/rover_handlebars.js"></script>
   </body>
 </html>
