@@ -14,8 +14,9 @@
 
     {% raw %}
     <script id="cam-template" type="text/x-handlebars-template">
-          <img src="{{0}}">
+          <img src="{{0}}" id="{{short_name}}">
           <h5>{{name}}<h5>
+
     </script>
     {% endraw %}
 
@@ -80,7 +81,7 @@
   		</section>
 
       <!-- ROVER PAGE -->
-      <section id="rover-view">
+      <section id="rover-view" class="hidden">
         <form class="rover-form">
 
           <article class="next">
@@ -117,8 +118,5 @@
 
     <!-- ROVER HOME PAGE -->
     <script type='text/javascript' src='static/scripts/rover.js'></script>
-
-    <!-- HANDLEBARS IN JS -->
-    <script type='text/javascript' src="static/scripts/rover_handlebars.js"></script>
   </body>
 </html>
