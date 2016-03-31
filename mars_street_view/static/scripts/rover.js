@@ -73,7 +73,6 @@ Camera.all = []
 // Create the objects from the ajax call
 Camera.loadall = function(response) {
     photo_list = response.photos_by_cam;
-    Camera.all = [];
     for (var property in photo_list) {
         Camera.all.push(new Camera(photo_list[property]))
     }
