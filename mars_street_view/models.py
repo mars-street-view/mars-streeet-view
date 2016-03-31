@@ -22,6 +22,8 @@ from sqlalchemy.orm.exc import (
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
+from sqlalchemy import func
+
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
@@ -94,15 +96,6 @@ class Photo(Base):
     @classmethod
     def get_rov_sol(cls, roverparam, sol):
         """Return photo data for a given Rover and mission sol."""
-        return_dict = {}
-        maxsol_tuple = DBsession.query(func.max(Photo.sol))).filter(Photo.rover_name == roverparam).one()
-        maxsol = maxsol_tuple[0]
-        day_has_photos = None
-
-        while day_has_photos is None and sol < maxsol:
-            day_has_photos = DBsession.query(Photo).filter(Photo.rover_name == roverparam).filter(Photo.sol == sol).first()
-            sol += 1
-
         try:
             rover = DBSession.query(Rover).filter_by(name=roverparam).one()
         except NoResultFound:
@@ -111,10 +104,26 @@ class Photo(Base):
         except MultipleResultsFound:
             raise MultipleResultsFound("How did you even do that?")
 
+        return_dict = {}
+        maxsol_tuple = DBSession.query(func.max(Photo.sol)).filter(Photo.rover_name == roverparam).one()
+        maxsol = maxsol_tuple[0]
+        day_has_photos = None
+        if not maxsol:
+            raise ValueError("No photos for your rover in database")
+
+        if sol > maxsol:
+            sol = maxsol
+
+        while day_has_photos is None and sol < maxsol:
+            day_has_photos = rover.photos.filter(Photo.sol == sol).first()
+            sol += 1
+
+
         return_dict['rover'] = rover.name
         return_dict['sol'] = sol
         return_dict['photos_by_cam'] = {}
-        return_dict['last_day'] = True if sol == maxsol else False
+        return_dict['last_day'] = True if sol >= maxsol else False
+        return_dict['first_day'] = True if sol <= 1 else False
 
         for cam in rover.cameras:
             photos_query = cam.photos.filter(Photo.sol == sol)
@@ -124,7 +133,6 @@ class Photo(Base):
 
         return return_dict
 
-def _check_for_pic
 
 def filter_only_left(photo_query, rover_name):
     """Return a query filtered to only contain LEFT photos of a 2-lens pair."""
