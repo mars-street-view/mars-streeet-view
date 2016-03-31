@@ -109,7 +109,7 @@ class Photo(Base):
             photos_query = cam.photos.filter(Photo.sol == sol)
             photos_query = filter_only_left(photos_query, roverparam)
             photos_query = order_photo_query(photos_query)
-            return_dict['photos_by_cam'][cam.short_name] = photos_query.all()
+            return_dict['photos_by_cam'][cam.name] = photos_query.all()
 
         return return_dict
 
