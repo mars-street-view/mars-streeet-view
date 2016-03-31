@@ -110,6 +110,7 @@ def test_rov_sol_returns_photos(dbtransaction, global_environ):
                   for photo in photos]
     assert len(photo_list) > 0
 
+
 def test_rov_sol_returns_spirit_filter(dbtransaction, global_environ):
     from mars_street_view.scripts.initializedb import init_rovers_and_cameras
     from mars_street_view.populate_database import populate_sample_data
@@ -117,15 +118,14 @@ def test_rov_sol_returns_spirit_filter(dbtransaction, global_environ):
     populate_sample_data()
     sol = 1
     result = Photo.get_rov_sol('Spirit', sol)
-    rover = DBSession.query(Rover).filter(Rover.name == 'Spirit').one()
-    cam_name_list = [camera.name for camera in rover.cameras]
     photo_list = [photo for photos in result['photos_by_cam'].values() 
                   for photo in photos]
     assert len(photo_list) > 0
     for photo in photo_list:
-        if photo.img_src[-11] != 'R':
-            photo_list.remove(photo)
-    assert len(photo_list) == 0
+        if photo.img_src[-11] == 'R':
+            assert False
+    assert True
+
 
 
 def test_photo_model_json(dbtransaction, photo_params, dummy_request):
@@ -136,6 +136,3 @@ def test_photo_model_json(dbtransaction, photo_params, dummy_request):
     json_string = json.dumps(photo.__json__(dummy_request))
     assert isinstance(json_string, str)
     assert isinstance(json.loads(json_string), dict)
-
-
-

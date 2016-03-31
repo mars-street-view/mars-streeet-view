@@ -8,23 +8,25 @@ from sqlalchemy import (
 )
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
+    relationship
 )
 
 from sqlalchemy.orm.exc import (
     MultipleResultsFound,
     NoResultFound,
 )
-import re
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
+
+LEFT_LENS_URL = '%L___-BR.JPG'
+RIGHT_LENS_URL = '%R___-BR.JPG'
 
 
 class MyModel(Base):
@@ -102,23 +104,27 @@ class Photo(Base):
         return_dict['rover'] = rover.name
         return_dict['sol'] = sol
         return_dict['photos_by_cam'] = {}
-        exp = re.compile('[R]....BR.JPG')
 
         for cam in rover.cameras:
-            photos_this_cam = cam.photos.filter(Photo.sol == sol)
-            if roverparam == 'Opportunity' or roverparam == 'Spirit':
-                import pdb; pdb.set_trace()
-                photos_this_cam == photos_this_cam.filter(exp.match(Photo.img_src))
-            ordered_photos = order_photo_query(photos_this_cam)
-            return_dict['photos_by_cam'][cam.name] = ordered_photos
+            photos_query = cam.photos.filter(Photo.sol == sol)
+            photos_query = filter_only_left(photos_query, roverparam)
+            photos_query = order_photo_query(photos_query)
+            return_dict['photos_by_cam'][cam.name] = photos_query.all()
 
         return return_dict
+
+
+def filter_only_left(photo_query, rover_name):
+    """Return a query filtered to only contain LEFT photos of a 2-lens pair."""
+    if rover_name == 'Opportunity' or rover_name == 'Spirit':
+        return photo_query.filter(Photo.img_src.like(LEFT_LENS_URL))
+    return photo_query
 
 
 def order_photo_query(photo_query):
     """Return custom sorted the given photo query."""
     # TODO: order by url instead
-    return photo_query.order_by(Photo.id).all()
+    return photo_query.order_by(Photo.id)
 
 
 class Rover(Base):
