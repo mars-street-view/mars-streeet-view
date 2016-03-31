@@ -55,6 +55,70 @@ def test_full_params(dbtransaction, full_photo_params):
     assert photo.rover_name == rover_name and photo.camera_name == camera_name
 
 
-# def test_prepopulated(pre_pop_transaction):
-#     assert all([True
-#         ])
+def test_rov_sol_empty(dbtransaction, global_environ, rover_params):
+    rover = rover_params['name']
+    sol = 1
+    DBSession.add(Rover(**rover_params))
+    DBSession.flush()
+    assert Photo.get_rov_sol(rover, sol)  == {'rover': rover, 'sol': sol, 'photos_by_cam': {}}
+
+
+def test_rov_sol_one_camera(dbtransaction, global_environ, rover_params, camera_params):
+    rover = rover_params['name']
+    camera = '_'.join((rover, camera_params['name']))
+    sol = 1
+    DBSession.add(Rover(**rover_params))
+    DBSession.add(Camera(**camera_params))
+    DBSession.flush()
+    assert Photo.get_rov_sol(rover, sol) == {'rover': rover, 'sol': sol, 'photos_by_cam': {camera : []}}
+
+
+def test_rov_sol_one_photo(dbtransaction, global_environ, rover_params, camera_params, photo_params):
+    rover = rover_params['name']
+    camera = '_'.join((rover, camera_params['name']))
+    photo = Photo(**photo_params)
+    sol = 1
+    DBSession.add(Rover(**rover_params))
+    DBSession.add(Camera(**camera_params))
+    DBSession.add(photo)
+    DBSession.flush()
+    assert Photo.get_rov_sol(rover, sol) == {'rover': rover, 'sol': sol, 'photos_by_cam': {camera : [photo]}}
+
+
+def test_rov_sol_lots(dbtransaction, global_environ, rover_params):
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
+    from mars_street_view.populate_database import populate_sample_data
+    init_rovers_and_cameras()
+    populate_sample_data()
+    sol = 1
+    result = Photo.get_rov_sol('Curiosity', sol)
+    rover = DBSession.query(Rover).filter(Rover.name == 'Curiosity').one()
+    cam_name_list = [camera.name for camera in rover.cameras]
+    assert sorted(cam_name_list) == sorted(list(result['photos_by_cam'].keys()))
+
+
+def test_rov_sol_returns_photos(dbtransaction, global_environ):
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
+    from mars_street_view.populate_database import populate_sample_data
+    init_rovers_and_cameras()
+    populate_sample_data()
+    sol = 1
+    result = Photo.get_rov_sol('Curiosity', sol)
+    rover = DBSession.query(Rover).filter(Rover.name == 'Curiosity').one()
+    cam_name_list = [camera.name for camera in rover.cameras]
+    photo_list = [photo for photos in result['photos_by_cam'].values() 
+                  for photo in photos]
+    assert len(photo_list) > 0
+
+
+def test_photo_model_json(dbtransaction, photo_params, dummy_request):
+    import json
+    photo = Photo(**photo_params)
+    DBSession.add(photo)
+    DBSession.flush()
+    json_string = json.dumps(photo.__json__(dummy_request))
+    assert isinstance(json_string, str)
+    assert isinstance(json.loads(json_string), dict)
+
+
+

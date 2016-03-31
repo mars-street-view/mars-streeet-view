@@ -5,8 +5,8 @@
 def test_fetch_photo_data():
     """Test that the url returns content for one rover."""
     rover_name = 'Curiosity'
-    from mars_street_view.api_call import fetch_photo_data, ROVERS
-    data = fetch_photo_data(ROVERS[rover_name], rover_name, 522)
+    from mars_street_view.api_call import fetch_photo_data
+    data = fetch_photo_data(rover_name, 522)
     assert isinstance(data, list)
 
 

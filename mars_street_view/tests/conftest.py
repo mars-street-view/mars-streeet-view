@@ -207,7 +207,7 @@ def dummy_request():
 def dummy_get_request(dummy_request):
     """Make a dummy GET request to test views."""
     dummy_request.method = 'GET'
-    dummy_request.matchdict = {'rover_name': 'curiosity', 'sol': 1}
+    dummy_request.matchdict = {'rover_name': 'Curiosity', 'sol': 1}
     # dummy_request.POST = multidict.NoVars()
     return dummy_request
 
