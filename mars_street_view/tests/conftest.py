@@ -73,10 +73,12 @@ def dbtransaction(request, sqlengine):
 @pytest.fixture()
 def pre_pop_transaction(request, sqlengine):
     """Create database transaction connection."""
+    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
     from mars_street_view.populate_database import populate_sample_data
     connection = sqlengine.connect()
     transaction = connection.begin()
     DBSession.configure(bind=connection, expire_on_commit=False)
+    init_rovers_and_cameras()
     populate_sample_data()
 
     def teardown():
@@ -86,6 +88,11 @@ def pre_pop_transaction(request, sqlengine):
 
     request.addfinalizer(teardown)
     return connection
+
+
+@pytest.fixture(params=range(1, 4))
+def sol(request):
+    return request.param
 
 
 @pytest.fixture(params=['Spirit', 'Curiosity', 'Opportunity'])
@@ -115,7 +122,7 @@ CAMERA_PARAMS = {
 }
 PHOTO_PARAMS = {
     'id': 99,
-    'sol': 1,
+    'sol': 300,
     'img_src': "image_source",
     'earth_date': "2016-03-28",
     'rover': ROVER_PARAMS,
@@ -205,7 +212,7 @@ def dummy_request():
 def dummy_get_request(dummy_request):
     """Make a dummy GET request to test views."""
     dummy_request.method = 'GET'
-    dummy_request.matchdict = {'rover_name': 'curiosity', 'sol': 1}
+    dummy_request.matchdict = {'rover_name': 'Curiosity', 'sol': 1}
     # dummy_request.POST = multidict.NoVars()
     return dummy_request
 
