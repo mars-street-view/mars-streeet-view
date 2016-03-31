@@ -12,7 +12,20 @@
 
 
 // Declaring the list of camera to global scope
-var fhaz, rhaz, mast, chemCam, mahli, mardi, navcam, pancam, minites;
+// var fhaz, rhaz, mast, chemCam, mahli, mardi, navcam, pancam, minites;
+
+var RoverCams = {
+    fhaz: [],
+    rhaz: [],
+    mast: [],
+    chemcam: [],
+    mahli: [],
+    mardi: [],
+    navcam: [],
+    pancam: [],
+    minites: [],
+    entry: []
+}
 
 
 // Declaring vars in the ajax function for global use
@@ -20,6 +33,7 @@ var camList, cameras, cap_rover;
 var rover;
 var sol = 1;
 var count = 0;
+var current_camera;
 
 
 // Constructor for multiple cameras
@@ -27,6 +41,7 @@ function Camera(details) {
     console.log(details);
     if (details.length > 0){
         this.name = details[0].camera_full_name
+        this.short_name = details[0].camera_short_name.toLowerCase()
         Object.keys(details).forEach(function(e, index, keys) {
             this[e] = details[e].img_src;
         }, this);
@@ -44,9 +59,9 @@ Camera.prototype.compileTemplate = function(){
 // var a;
 // Append the template to the buttons
 function buildButtons(){
+    $('.cam-buttons').empty()
     Camera.all.forEach(function(a){
         $('.cam-buttons').append(a.compileTemplate());
-
     });
 }
 
@@ -58,6 +73,7 @@ Camera.all = []
 // Create the objects from the ajax call
 Camera.loadall = function(response) {
     photo_list = response.photos_by_cam;
+    Camera.all = []
     for (var property in photo_list) {
         Camera.all.push(new Camera(photo_list[property]))
     }
@@ -94,24 +110,29 @@ function fetchPhotos(rover, sol) {
             // fullCameraList(rover, response);
 
 
-
             if (rover === 'Curiosity') {
-                navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-                fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-                rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-                mast = camList.photos_by_cam[rover + '_MAST'];
-                chemCam = camList.photos_by_cam[rover + '_CHEMCAM'];
-                mahli = camList.photos_by_cam[rover + '_MAHLI'];
-                mardi = camList.photos_by_cam[rover + '_MARDI'];
+                RoverCams.navcam = camList.photos_by_cam[rover + '_NAVCAM'];
+                RoverCams.fhaz = camList.photos_by_cam[rover + '_FHAZ'];
+                RoverCams.rhaz = camList.photos_by_cam[rover + '_RHAZ'];
+                RoverCams.mast = camList.photos_by_cam[rover + '_MAST'];
+                RoverCams.chemcam = camList.photos_by_cam[rover + '_CHEMCAM'];
+                RoverCams.mahli = camList.photos_by_cam[rover + '_MAHLI'];
+                RoverCams.mardi = camList.photos_by_cam[rover + '_MARDI'];
+                RoverCams.entry = [];
+                RoverCams.pancam = [];
+                RoverCams.minites = [];
             } else {
-                navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-                fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-                rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-                pancam = camList.photos_by_cam[rover + '_PANCAM'];
-                minites = camList.photos_by_cam[rover + '_MINITES'];
-                entry = camList.photos_by_cam[rover + '_ENTRY'];
+                RoverCams.navcam = camList.photos_by_cam[rover + '_NAVCAM'];
+                RoverCams.fhaz = camList.photos_by_cam[rover + '_FHAZ'];
+                RoverCams.rhaz = camList.photos_by_cam[rover + '_RHAZ'];
+                RoverCams.pancam = camList.photos_by_cam[rover + '_PANCAM'];
+                RoverCams.minites = camList.photos_by_cam[rover + '_MINITES'];
+                RoverCams.entry = camList.photos_by_cam[rover + '_ENTRY'];
+                RoverCams.mast = [];
+                RoverCams.chemcam = [];
+                RoverCams.mahli = [];
+                RoverCams.mardi = [];
             };
-
             // handlebar_return = []
 
             // or
@@ -125,11 +146,20 @@ function fetchPhotos(rover, sol) {
             buildButtons()
             // take the first image and change the 'src' attribute of the main photo (NAVCAM)
             // console.log(navcam)
-            $('#main-photo').attr('src', navcam[count].img_src);
+            // $('#main-photo').attr('src', navcam[count].img_src);
+            current_camera = RoverCams.navcam;
+            switchMain(current_camera, count)
             // fetchPhotos(rover, sol);
         }
     })
 };
+
+function switchMain(camera, count){
+    console.log('camera, count');
+    console.log(camera);
+    console.log(count);
+    $('#main-photo').attr('src', camera[count].img_src);
+}
 
 
 // Returns a list of all the objects of a rover depending on the camera
@@ -157,9 +187,10 @@ function fetchPhotos(rover, sol) {
 // Event listener for the next image to populate main image space
 $("#next-photo").on('click', function(e){
     var url = document.getElementById("main-photo").src;
-    if (count < navcam.length - 1){
-        newUrl = navcam[count].img_src;
-        $('#main-photo').attr('src', newUrl);
+    if (count < current_camera.length - 1){
+        newUrl = current_camera[count].img_src;
+        switchMain(current_camera, count)
+        // $('#main-photo').attr('src', newUrl);
         count += 1;
     } else {
         count = 0;
@@ -176,7 +207,7 @@ $("#next-photo").on('click', function(e){
 $("#prev-photo").on('click', function(e){
     var url = document.getElementById("main-photo").src;
     if (count > 0){
-        newUrl = navcam[count].img_src;
+        newUrl = current_camera[count].img_src;
         $('#main-photo').attr('src', newUrl);
         count -= 1;
     } else {
@@ -206,4 +237,10 @@ $("#prev-sol").on('click', function(e){
     if (sol > 0){
         fetchPhotos(cap_rover, sol);
     }
+})
+
+$(".cam-buttons").on('click', function(e){
+    camera = e.target.id
+    current_camera = RoverCams[camera]
+    switchMain(current_camera, 0)
 })
