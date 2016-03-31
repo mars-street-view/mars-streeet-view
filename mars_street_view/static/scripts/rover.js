@@ -10,10 +10,6 @@
 // PANCAM = Panoramic Camera
 // MINITES = Miniature Thermal Emission Spectrometer (Mini-TES)
 
-
-// Declaring the list of camera to global scope
-// var fhaz, rhaz, mast, chemCam, mahli, mardi, navcam, pancam, minites;
-
 var RoverCams = {
     fhaz: [],
     rhaz: [],
@@ -107,7 +103,9 @@ function fetchPhotos(rover, sol) {
         success: function(response){
 
             camList = response;
-            // fullCameraList(rover, response);
+            sol = camList.sol
+            console.log('sol');
+            console.log(sol);
 
 
             if (rover === 'Curiosity') {
@@ -167,20 +165,33 @@ $("#next-photo").on('click', function(e){
     e.preventDefault()
     var url = document.getElementById("main-photo").src;
     if (count < current_camera.length - 1){
+        count += 1;
         newUrl = current_camera[count].img_src;
         switchMain(current_camera, count)
-        // $('#main-photo').attr('src', newUrl);
-        count += 1;
     } else {
         count = 0;
         sol += 1;
-        console.log(sol)
         cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
-        // if sol < max_sol
         fetchPhotos(cap_rover, sol);
     }
 })
 
+
+$("#next-ten").on('click', function(e){
+    e.preventDefault()
+    count = 0;
+    sol += 10;
+    cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
+    fetchPhotos(cap_rover, sol);
+});
+
+$("#next-hundred").on('click', function(e){
+    e.preventDefault()
+    count = 0;
+    sol += 100;
+    cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
+    fetchPhotos(cap_rover, sol);
+});
 
 // Event listener for the previous image to populate main image space
 $("#prev-photo").on('click', function(e){
