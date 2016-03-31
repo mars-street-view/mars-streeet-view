@@ -41,6 +41,7 @@ def fetch_photo_data(rover, sol, camera=None):
         resp = requests.get(url, params=params)
         # import pdb; pdb.set_trace()
         if resp.status_code == 400:
+            params['camera'] = camera or ''
             print('400 response for {0} {camera} sol {sol} page={page}'
                   ''.format(rover, **params))
             break
@@ -62,7 +63,9 @@ def fetch_and_save_data_sample():
     """Download and save json data sample of the first day of each mission."""
     photo_list = []
     for rover in ROVERS:
-        photo_list.extend(get_one_sol(rover, 1, True))
+        for sol in range(0, 5):
+            photo_list.extend(get_one_sol(rover, sol, True))
+            time.sleep(1)
     data = {'photos': photo_list}
     write_to_json_file(data, SAMPLE_DATA_PATH)
     print('Successfully saved {} photo objects to {}.'
