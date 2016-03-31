@@ -52,5 +52,13 @@ def test_populated_rel_rover_camera(dbtransaction, global_environ):
 def test_populate_photos_from_fetch(dbtransaction, global_environ):
     """Test that photos from each rover populate."""
     from mars_street_view.populate_database import populate_one_sol
-    populate_one_sol('Opportunity', 1, fetch=True)
-    assert DBSession.query(Photo).count() > 10
+    populate_one_sol('Curiosity', 0, fetch=True)
+    photo_query = DBSession.query(Photo)
+    assert photo_query.count() > 10
+    for photo in photo_query:
+        assert photo.id
+        assert photo.sol
+        assert photo.earth_date
+        assert photo.img_src
+        assert photo.rover_name
+        assert photo.camera_name
