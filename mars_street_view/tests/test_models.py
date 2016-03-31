@@ -62,10 +62,9 @@ def test_full_params(dbtransaction, full_photo_params):
     assert photo.rover_name == rover_name and photo.camera_name == camera_name
 
 
-def test_rov_sol_empty(dbtransaction, global_environ, rover_params):
+def test_rov_sol_empty(dbtransaction, global_environ, rover_params, sol):
     """Test get_rov_sol return value for Rover with no cameras or photos."""
     rover = rover_params['name']
-    sol = 1
     DBSession.add(Rover(**rover_params))
     DBSession.flush()
     expected = {'rover': rover, 'sol': sol, 'photos_by_cam': {}}
@@ -73,11 +72,10 @@ def test_rov_sol_empty(dbtransaction, global_environ, rover_params):
 
 
 def test_rov_sol_one_camera(dbtransaction, global_environ, rover_params,
-                            camera_params):
+                            camera_params, sol):
     """Test get_rov_sol return value for a Rover with one Camera."""
     rover = rover_params['name']
     camera = '_'.join((rover, camera_params['name']))
-    sol = 1
     DBSession.add(Rover(**rover_params))
     DBSession.add(Camera(**camera_params))
     DBSession.flush()
@@ -89,9 +87,9 @@ def test_rov_sol_one_photo(dbtransaction, global_environ, rover_params,
                            camera_params, photo_params):
     """Test return value for get_rov_sol with one Photo."""
     rover = rover_params['name']
+    sol = photo_params['sol']
     camera = '_'.join((rover, camera_params['name']))
     photo = Photo(**photo_params)
-    sol = 1
     DBSession.add(Rover(**rover_params))
     DBSession.add(Camera(**camera_params))
     DBSession.add(photo)
@@ -100,9 +98,8 @@ def test_rov_sol_one_photo(dbtransaction, global_environ, rover_params,
     assert Photo.get_rov_sol(rover, sol) == expected
 
 
-def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_name):
+def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_name, sol):
     """Test get_rov_sol returns correct camera names on pre-populated DB."""
-    sol = 1
     result = Photo.get_rov_sol(rover_name, sol)
     rover = DBSession.query(Rover).filter(Rover.name == rover_name).one()
     cam_name_list = [camera.name for camera in rover.cameras]
@@ -110,27 +107,22 @@ def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_name):
         result['photos_by_cam'].keys()))
 
 
-def test_rov_sol_gets_photos(pre_pop_transaction, global_environ, rover_name):
+def test_rov_sol_photos(pre_pop_transaction, global_environ, rover_name, sol):
     """Check that all contents of data are Photo objects."""
-    sol = 1
-    result = Photo.get_rov_sol('Curiosity', sol)
+    result = Photo.get_rov_sol(rover_name, sol)
     photo_list = [photo for photos in result['photos_by_cam'].values()
                   for photo in photos]
     assert len(photo_list) > 0 and all([isinstance(photo, Photo)
                                         for photo in photo_list])
 
 
-def test_rov_sol_returns_spirit_filter(pre_pop_transaction, global_environ):
+def test_left_lens_only(pre_pop_transaction, global_environ, rover_name, sol):
     """Check that get_sol_rov returns no photos from right lens."""
-    sol = 1
-    result = Photo.get_rov_sol('Spirit', sol)
+    result = Photo.get_rov_sol(rover_name, sol)
     photo_list = [photo for photos in result['photos_by_cam'].values()
                   for photo in photos]
-    assert len(photo_list) > 0
-    for photo in photo_list:
-        if photo.img_src[-11] == 'R':
-            assert False
-    assert True
+    assert photo_list and all([photo.img_src[-11] != 'R'
+                               for photo in photo_list])
 
 
 def test_photo_model_json(dbtransaction, global_environ, photo_params,

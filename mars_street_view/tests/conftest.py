@@ -90,6 +90,11 @@ def pre_pop_transaction(request, sqlengine):
     return connection
 
 
+@pytest.fixture(params=range(1, 4))
+def sol(request):
+    return request.param
+
+
 @pytest.fixture(params=['Spirit', 'Curiosity', 'Opportunity'])
 def rover_name(request):
     """Establish all rover names to iterate over in tests."""
@@ -117,7 +122,7 @@ CAMERA_PARAMS = {
 }
 PHOTO_PARAMS = {
     'id': 99,
-    'sol': 1,
+    'sol': 300,
     'img_src': "image_source",
     'earth_date': "2016-03-28",
     'rover': ROVER_PARAMS,
