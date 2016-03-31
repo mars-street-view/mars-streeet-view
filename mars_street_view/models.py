@@ -30,6 +30,16 @@ Base = declarative_base()
 LEFT_LENS_URL = '%L___-BR.JPG'
 RIGHT_LENS_URL = '%R___-BR.JPG'
 
+LOW_RES_SPI_OPP = '%ESF_____________-BR.JPG'
+BAD_CUR_1 = '%_M_______NCAM_______.JPG'
+#   BAD_CUR_2 = 
+# NRB_427068209EDR_F0070438SAPP07612M_.JPG
+
+#         256 x 256 photos:
+#         NLB_427235001EDR_D0080132TRAV00067M_.JPG
+#         NLB_427235031EDR_D0080132TRAV00067M_.JPG
+#         NLB_427235056EDR_D0080132TRAV00067M_.JPG
+
 
 class MyModel(Base):
     """Test model."""
@@ -84,6 +94,7 @@ class Photo(Base):
             short_name = ''
         return {
             'id': self.id,
+            'nasa_id': self.nasa_id,
             'img_src': self.img_src,
             'sol': self.sol,
             'earth_date': self.earth_date,
@@ -105,19 +116,19 @@ class Photo(Base):
             raise MultipleResultsFound("How did you even do that?")
 
         return_dict = {}
+        # finds absolute last day in which this rover has photos.
         maxsol_tuple = DBSession.query(func.max(Photo.sol)).filter(Photo.rover_name == roverparam).one()
         maxsol = maxsol_tuple[0]
-        day_has_photos = None
         if not maxsol:
             raise ValueError("No photos for your rover in database")
 
         if sol > maxsol:
             sol = maxsol
 
-        while day_has_photos is None and sol < maxsol:
-            day_has_photos = rover.photos.filter(Photo.sol == sol).first()
+        while sol < maxsol:
+            if rover.photos.filter(Photo.sol == sol).first():
+                break
             sol += 1
-
 
         return_dict['rover'] = rover.name
         return_dict['sol'] = sol
@@ -128,15 +139,25 @@ class Photo(Base):
         for cam in rover.cameras:
             photos_query = cam.photos.filter(Photo.sol == sol)
             photos_query = filter_only_left(photos_query, roverparam)
+            photos_query = filter_bad_quality(photos_query, roverparam)
             photos_query = order_photo_query(photos_query)
             return_dict['photos_by_cam'][cam.name] = photos_query.all()
 
         return return_dict
 
 
+def filter_bad_quality(photo_query, rover_name):
+    """Return a query filtered to remove low-quality images."""
+    if rover_name in ('Opportunity', 'Spirit'):
+        return photo_query.filter(Photo.img_src.notlike(LOW_RES_SPI_OPP))
+    elif rover_name == 'Curiosity':
+        photo_query = photo_query.filter(Photo.img_src.notlike(BAD_CUR_1))
+    return photo_query
+
+
 def filter_only_left(photo_query, rover_name):
     """Return a query filtered to only contain LEFT photos of a 2-lens pair."""
-    if rover_name == 'Opportunity' or rover_name == 'Spirit':
+    if rover_name in ('Opportunity', 'Spirit'):
         return photo_query.filter(Photo.img_src.notlike(RIGHT_LENS_URL))
     return photo_query
 
