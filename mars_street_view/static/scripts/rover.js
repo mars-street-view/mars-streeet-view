@@ -86,13 +86,39 @@ function fetchPhotos(rover, sol) {
         url: '/' + rover + '/' + sol,
         type: 'GET',
         dataType: 'json',
-        success: function(response){            
+        success: function(response){  
+
             camList = response;
-            // console.log(response)
-            // function to make the list of cameras
-            // console.log(rover);
-            fullCameraList(rover, response);
+            console.log(response)
+            // fullCameraList(rover, response);
             
+
+
+            if (rover === 'Curiosity') {
+                navcam = camList.photos_by_cam[rover + '_NAVCAM'];
+                fhaz = camList.photos_by_cam[rover + '_FHAZ'];
+                rhaz = camList.photos_by_cam[rover + '_RHAZ'];
+                mast = camList.photos_by_cam[rover + '_MAST'];
+                chemCam = camList.photos_by_cam[rover + '_CHEMCAM'];
+                mahli = camList.photos_by_cam[rover + '_MAHLI'];
+                mardi = camList.photos_by_cam[rover + '_MARDI'];
+            } else {
+                navcam = camList.photos_by_cam[rover + '_NAVCAM'];
+                fhaz = camList.photos_by_cam[rover + '_FHAZ'];
+                rhaz = camList.photos_by_cam[rover + '_RHAZ'];
+                pancam = camList.photos_by_cam[rover + '_PANCAM'];
+                minites = camList.photos_by_cam[rover + '_MINITES'];
+                entry = camList.photos_by_cam[rover + '_ENTRY'];
+            };
+
+            // handlebar_return = []
+
+            // or
+            
+            // for i in camList.photos_by_cam {
+            //     handlebar_return.push(x[i].url)
+            // }
+
             // Camera.loadall(camList)
             // console.log(camList)
             // buildButtons()
@@ -106,25 +132,25 @@ function fetchPhotos(rover, sol) {
 
 
 // Returns a list of all the objects of a rover depending on the camera
-function fullCameraList(rover, camList) {
-    if (rover === 'Curiosity') {
-        navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-        fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-        rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-        mast = camList.photos_by_cam[rover + '_MAST'];
-        chemCam = camList.photos_by_cam[rover + '_CHEMCAM'];
-        mahli = camList.photos_by_cam[rover + '_MAHLI'];
-        mardi = camList.photos_by_cam[rover + '_MARDI'];
-    } else {
-        navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-        fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-        rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-        pancam = camList.photos_by_cam[rover + '_PANCAM'];
-        minites = camList.photos_by_cam[rover + '_MINITES'];
-        entry = camList.photos_by_cam[rover + '_ENTRY'];
-    };
-    // console.log(navcam)
-};
+// function fullCameraList(rover, camList) {
+//     if (rover === 'Curiosity') {
+//         navcam = camList.photos_by_cam[rover + '_NAVCAM'];
+//         fhaz = camList.photos_by_cam[rover + '_FHAZ'];
+//         rhaz = camList.photos_by_cam[rover + '_RHAZ'];
+//         mast = camList.photos_by_cam[rover + '_MAST'];
+//         chemCam = camList.photos_by_cam[rover + '_CHEMCAM'];
+//         mahli = camList.photos_by_cam[rover + '_MAHLI'];
+//         mardi = camList.photos_by_cam[rover + '_MARDI'];
+//     } else {
+//         navcam = camList.photos_by_cam[rover + '_NAVCAM'];
+//         fhaz = camList.photos_by_cam[rover + '_FHAZ'];
+//         rhaz = camList.photos_by_cam[rover + '_RHAZ'];
+//         pancam = camList.photos_by_cam[rover + '_PANCAM'];
+//         minites = camList.photos_by_cam[rover + '_MINITES'];
+//         entry = camList.photos_by_cam[rover + '_ENTRY'];
+//     };
+//     // console.log(navcam)
+// };
 
 
 // Event listener for the next image to populate main image space
