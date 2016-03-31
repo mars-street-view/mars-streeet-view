@@ -30,5 +30,4 @@ def test_api_photo_not_dupe(rover_name):
     from mars_street_view.api_call import get_one_sol
     photos_list = get_one_sol(rover_name, 1)
     photo_ids = [item['id'] for item in photos_list]
-    for photo_id in photo_ids:
-        assert photo_ids.count(photo_id) == 1
+    assert len(photo_ids) == len(set(photo_ids))
