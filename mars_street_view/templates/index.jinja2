@@ -12,14 +12,12 @@
     <link rel="stylesheet" type="text/css" href="../static/map.css">
 
 
+    {% raw %}
     <script id="cam-template" type="text/x-handlebars-template">
-      {% raw %}
-        {{#Camera}}
-          <img src="{{img_src}}">
-          <h5>{{camera_short_name}}<h5>
-        {{/Camera}}
-      {% endraw %}
+          <img src="{{0}}">
+          <h5>{{name}}<h5>
     </script>
+    {% endraw %}
 
   </head>
   <!-- BODY -->
@@ -89,7 +87,7 @@
             <img src="../static/arrow-up.png" id="next-photo">
             <img src="../static/arrow-up.png" id="next-sol">
           </article>
-          
+
           <img src="" id='main-photo'/>
 
           <article class=prev>
@@ -116,7 +114,7 @@
 
     <!-- HOME PAGE SCRIPT -->
     <script type='text/javascript' src="static/scripts/mainView.js"></script>
-    
+
     <!-- ROVER HOME PAGE -->
     <script type='text/javascript' src='static/scripts/rover.js'></script>
 
