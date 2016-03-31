@@ -10,11 +10,13 @@
 // PANCAM = Panoramic Camera
 // MINITES = Miniature Thermal Emission Spectrometer (Mini-TES)
 
+
 // Declaring the list of camera to global scope
 var fhaz, rhaz, mast, chemCam, mahli, mardi, navcam, pancam, minites;
 
+
 // Declaring vars in the ajax function for global use
-var camList, cameras;
+var camList, cameras, cap_rover;
 var rover;
 var sol = 1;
 var count = 0;
@@ -25,48 +27,53 @@ var count = 0;
 // $tomorrow = $('#tomorrow');
 
 
-// // Constructor for multiple cameras
-// function Camera(details) {
-//     Object.keys(details).forEach(function(e, index, keys) {
-//         this[e] = details[e];
-//     }, this);
-// }
+// Constructor for multiple cameras
+function Camera(details) {
+    Object.keys(details).forEach(function(e, index, keys) {
+        this[e] = details[e];
+    }, this);
+}
+
+var template;
+// Compile the template
+Camera.prototype.compileTemplate = function(){
+    var source = $('#cam-template').html();
+    template = Handlebars.compile(source)
+    return template(this)
+}
+
+// var a;
+// Append the template to the buttons
+function buildButtons(){
+    Camera.all.forEach(function(a){
+        if (Object.keys(a).length > 0) {
+            console.log(a)
+            $('.cam-buttons').append(a[0].compileTemplate());
+        }
+    });
+}
 
 
-// // Compile the template
-// Camera.prototype.compileTemplate = function(){
-//     var source = $('#cam-template').html();
-//     var template = Handlebars.compile(source)
-//     return template(this)
-// }
-
-// // Fill list with objects
-// Camera.all = []
-
-// // Create the objects from the ajax call
-// Camera.loadall = function(camList) {
-//     camList.photos_by_cam.forEach(function(ele){
-//         Camera.all.push(new Camera(ele))
-//         // ele[0].url
-//         // ele[0].camera_full_name
-//     })
-// };
-
-// // Append the template to the buttons
-// function buildButtons(){
-//     Camera.all.forEach(function(a){
-//         $('#cam-buttons').append(a.compileTemplate());
-//     });
-// }
+// Fill list with objects
+Camera.all = []
 
 
-var cap_rover;
+// Create the objects from the ajax call
+Camera.loadall = function(camList) {
+    new_list = camList.photos_by_cam
+    for (var property in new_list) {
+        console.log(property)
+        Camera.all.push(new Camera(new_list[property]))
+    }
+};
+
+
 // Event Listener to run the ajax call
 $('.map-loc').on('click', function(e){
     e.preventDefault();
     rover = e.target.id;
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1)
-    console.log(cap_rover);
+    // console.log(cap_rover);
     // Hide from the home page 
     $('#menu-home').hide();
     // Fetch the list of images with ajax call
@@ -86,19 +93,22 @@ function fetchPhotos(rover, sol) {
         dataType: 'json',
         success: function(response){            
             camList = response;
-            console.log(response)
+            // console.log(response)
             // function to make the list of cameras
-            console.log(rover);
+            // console.log(rover);
             fullCameraList(rover, camList);
-            //
-            // Camera.loadall(camList)
+            
+            Camera.loadall(camList)
+
+            buildButtons()
             // take the first image and change the 'src' attribute of the main photo (NAVCAM)
-            $('#main-photo').attr('src', navcam[0].img_src);
+            $('#main-photo').attr('src', navcam[count].img_src);
         }
     });
 };
 
 
+// Returns a list of all the objects of a rover depending on the camera
 function fullCameraList(rover, camList) {
     if (rover = 'Curiosity') {
         navcam = camList.photos_by_cam[rover + '_NAVCAM'];
@@ -116,20 +126,12 @@ function fullCameraList(rover, camList) {
         minites = camList.photos_by_cam[rover + '_MINITES'];
         entry = camList.photos_by_cam[rover + '_ENTRY'];
     };
-    console.log(navcam)
-    return navcam;
 };
-
 
 
 // Event listener for the next image to populate main image space
 $("#next-photo").on('click', function(e){
-    console.log("NAVCAM IN NEXT: ")
-    console.log(navcam)
     var url = document.getElementById("main-photo").src;
-    console.log(url)
-    // var idx = navcam.indexOf();
-    // console.log(idx)
     if (count < navcam.length){
         count += 1;
         newUrl = navcam[count].img_src;
@@ -145,11 +147,12 @@ $("#next-photo").on('click', function(e){
 // Event listener for the previous image to populate main image space
 $("#prev-photo").on('click', function(e){
     var url = document.getElementById("main-photo").src;
-    var idx = navcam.indexOf(url);
-    if (idx < navcam.length){
-        newUrl = navcam[idx - 1].img_src;
+    if (count > 0){
+        count -= 1;
+        newUrl = navcam[count].img_src;
         $('#main-photo').attr('src', newUrl);
     } else {
+        count = 0;
         sol -= 1;
         fetchPhotos(rover, sol);
     }
