@@ -19,9 +19,9 @@ def main(global_config, **settings):
             print('Required MARS_DATABASE_URL not set in global os environ.')
             sys.exit()
         try:
-            settings['mars_api_key'] = os.environ['MARS_API_KEY']
+            settings['nasa_api_key'] = os.environ['NASA_API_KEY']
         except KeyError:
-            print('Required MARS_API_KEY not set in global os environment.')
+            print('Required NASA_API_KEY not set in global os environment.')
             sys.exit()
 
     engine = engine_from_config(settings, 'sqlalchemy.')
@@ -31,5 +31,6 @@ def main(global_config, **settings):
     config.include('pyramid_jinja2')
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
+    config.add_route('rover', '/{rover_name}/{sol}')
     config.scan()
     return config.make_wsgi_app()
