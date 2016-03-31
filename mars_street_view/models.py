@@ -19,6 +19,7 @@ from sqlalchemy.orm.exc import (
     MultipleResultsFound,
     NoResultFound,
 )
+import re
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -87,11 +88,11 @@ class Photo(Base):
         }
 
     @classmethod
-    def get_rov_sol(cls, rover, sol):
+    def get_rov_sol(cls, roverparam, sol):
         """Return photo data for a given Rover and mission sol."""
         return_dict = {}
         try:
-            rover = DBSession.query(Rover).filter_by(name=rover).one()
+            rover = DBSession.query(Rover).filter_by(name=roverparam).one()
         except NoResultFound:
             raise NoResultFound("Invalid rover name")
 
@@ -101,9 +102,13 @@ class Photo(Base):
         return_dict['rover'] = rover.name
         return_dict['sol'] = sol
         return_dict['photos_by_cam'] = {}
+        exp = re.compile('[R]....BR.JPG')
 
         for cam in rover.cameras:
             photos_this_cam = cam.photos.filter(Photo.sol == sol)
+            if roverparam == 'Opportunity' or roverparam == 'Spirit':
+                import pdb; pdb.set_trace()
+                photos_this_cam == photos_this_cam.filter(exp.match(Photo.img_src))
             ordered_photos = order_photo_query(photos_this_cam)
             return_dict['photos_by_cam'][cam.name] = ordered_photos
 
