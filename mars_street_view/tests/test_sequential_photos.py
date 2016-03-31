@@ -1,4 +1,5 @@
 """Tests to see if we can order our photos sequentially."""
+import time
 import random
 import webbrowser
 
@@ -12,3 +13,4 @@ def test_in_browser(pre_pop_transaction, global_environ):
     photos = data['photos_by_cam'][cam]
     for photo in photos:
         webbrowser.open_new_tab(photo.img_src)
+        time.sleep(1)

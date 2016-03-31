@@ -111,7 +111,6 @@ class Photo(Base):
             photos_query = cam.photos.filter(Photo.sol == sol)
             photos_query = filter_only_left(photos_query, roverparam)
             photos_query = order_photo_query(photos_query)
-            import pdb; pdb.set_trace()
             return_dict['photos_by_cam'][cam.name] = photos_query.all()
 
         return return_dict
@@ -126,7 +125,6 @@ def filter_only_left(photo_query, rover_name):
 
 def order_photo_query(photo_query):
     """Return custom sorted the given photo query."""
-    # TODO: order by url instead
     return photo_query.order_by(Photo.img_src)
 
 
