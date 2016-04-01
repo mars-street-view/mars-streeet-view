@@ -159,7 +159,7 @@ $('.map-loc').on('click', function(e){
     // Fetch the list of images with ajax call
     fetchPhotos(cap_rover);
     // Show the first navcam image (for now)
-    $('#rover-view').show();
+    $('#rover-view').fadeIn(600);
 });
 
 
