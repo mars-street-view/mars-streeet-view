@@ -6,7 +6,7 @@ import pytest
 from sqlalchemy import create_engine
 from pyramid import testing
 from mars_street_view.models import DBSession, Base
-
+from mars_street_view.scripts.initializedb import CAMERAS
 
 TEST_DATABASE_URL = 'sqlite:////tmp/test_db.sqlite'
 
@@ -97,6 +97,12 @@ def sol(request):
 @pytest.fixture(params=['Spirit', 'Curiosity', 'Opportunity'])
 def rover_name(request):
     """Establish all rover names to iterate over in tests."""
+    return request.param
+
+
+@pytest.fixture(params=CAMERAS.keys())
+def camera(request):
+    """Establish all camera names as fixtures."""
     return request.param
 
 
