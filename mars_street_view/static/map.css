@@ -30,7 +30,8 @@
 	width: 15px;
     height: 15px;
     margin: 30%;
-	background: blue;
+	background: black;
+	background-image: url('/static/rover.png');
 	border-radius: 50%;
 	transform: translateX(-40px) translateY(20px) skewX(0deg) skewY(0deg);
 	position: absolute;
@@ -39,7 +40,7 @@
 	width: 15px;
     height: 15px;
     margin: 30%;
-	background: blue;
+	background: black;
 	border-radius: 50%;
 	transform: translateX(160px) translateY(100px) skewX(0deg) skewY(0deg);
 	position: absolute;
@@ -48,7 +49,7 @@
 	width: 15px;
     height: 15px;
     margin: 30%;
-	background: blue;
+	background: black;
 	border-radius: 50%;
 	transform: translateX(200px) translateY(160px) skewX(0deg) skewY(0deg);
 	position: absolute;

@@ -1,0 +1,14 @@
+.camera-button {
+	display: inline-block;
+	width: 200px;
+    height: 200px;
+}
+
+.camera-button img {
+	width: 100%;
+	height: auto;
+}
+
+.camera-button h5 {
+
+}
