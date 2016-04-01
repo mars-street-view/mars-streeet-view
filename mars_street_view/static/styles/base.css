@@ -38,7 +38,6 @@
 }
 
 /*******************************************/
-/* PATRICKS TRANSITIONS */
 /*
 body {
 	display: flex;
@@ -103,6 +102,8 @@ font-weight: bold;
 
 ul {
   list-style-type: none;
+	/*display: inline-flex;*/
+	/*text-decoration: none; */
 }
 
 a {

@@ -23,3 +23,4 @@ $('.map-loc').hover(function(){
 //     $("#menu-home").fadeIn(1000)
 //     $('#logo').attr('src', "../static/MSV-BLACK.svg")
 // })
+

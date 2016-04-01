@@ -1,0 +1,72 @@
+/* ======== MEDIA QUERIES FOR WEB ========*/
+
+
+@media only screen and (max-width: 650px) {
+/*===========================================*/
+
+	ul {
+		list-style-type: none;
+	}
+
+	/* LOGO CHANGE */
+	/**************************************/
+	div.m-logo{
+		display: flex;
+		justify-content: center;
+	}
+
+	#mobile-logo {
+		display: inline-flex;
+		max-width: 450px;
+		max-height: 160px;
+		/*justify-content: center;*/
+	}
+
+
+	/*HIDE WEB LOGO*/
+	/**************************************/
+	#logo {
+		visibility: hidden;
+	}
+
+
+	/* MAIN ROVER PHOTO */
+	/**************************************/
+	.main-photo {
+	    width: 100%;
+	    height: auto;
+	}
+
+
+	/* HIDE WEB VIEW */
+	/**************************************/
+	.desktop-home {
+		visibility: hidden; 
+	}
+
+
+	/* MOBILE VIEW */
+	/**************************************/
+	.mobile-home {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+	}
+
+	.title-mobile {
+		display: flex;
+		/*flex-direction: column;*/
+		justify-content: center;
+	}
+
+	.rover-title-mobile {
+		justify-content: center;
+	}
+
+	.rover-thumbnail {
+		width: 380px;
+		height: 350px;
+		padding-bottom: 20px;
+	}
+
+}
