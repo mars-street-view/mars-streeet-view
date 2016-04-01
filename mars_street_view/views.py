@@ -1,4 +1,5 @@
 """Establish view functions for Mars Street View web app."""
+from __future__ import unicode_literals, print_function
 from pyramid.response import Response
 from pyramid.view import view_config
 

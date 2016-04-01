@@ -1,4 +1,5 @@
 """Defines models for the whole project: Photo, Rover and Camera."""
+from __future__ import unicode_literals, print_function
 from sqlalchemy import (
     Column,
     Integer,

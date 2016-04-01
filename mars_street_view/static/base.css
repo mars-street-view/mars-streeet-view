@@ -45,23 +45,32 @@
 body {
 	display: flex;
 	flex-direction: column;
+  transition: background-color .5s ease;
+  background-color: white;
 }
 
+.make-black{
+  background-color: black;
 
+}
 .container {
 	display: flex;
 	max-width: 95%;
 }
 
 .nav {
-    display: flex;
-    justify-content: space-around;
-    margin: 10px 0px 0px -10px;
+  display: flex;
+  justify-content: space-around;
+  margin: 10px 0px 0px -10px;
+
+}
+
+.nav-swap {
+  color: white;
 }
 
 .nav ul {
 	display: flex;
-	background-color: white;
 	padding: 0px 10px 0px 10px;
 }
 
@@ -100,7 +109,7 @@ a:hover {
     text-align: center;
 }*/
 .footer {
-  position: absolute;
+  /*position: absolute;*/
   right: 0;
   bottom: 0;
   left: 0;

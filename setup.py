@@ -27,7 +27,7 @@ TEST = [
     'tox',
     'coverage',
     'pytest-cov',
-    'webtest'
+    'webtest',
 ]
 
 DEV = [
