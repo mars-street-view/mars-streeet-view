@@ -11,17 +11,15 @@ $('.map-loc').hover(function(){
 
 $('.map-loc').on('click', function(){
     $('body').addClass('make-black')
-})
-
-$('.map-loc').on('click', function(){
-    $('body').addClass('make-black')
     $('.nav a').addClass('nav-swap')
+    $('#logo').attr('src', "../static/MSV-White-Background.png")
 })
 
-$('nav').on('click', function(e){
+$('nav a').on('click', function(e){
     e.preventDefault()
     $('body').removeClass('make-black')
     $('.nav a').removeClass('nav-swap')
     $("#rover-view").hide()
     $("#menu-home").fadeIn(1000)
+    $('#logo').attr('src', "../static/MarsStreetView-FullLogo.png")
 })
