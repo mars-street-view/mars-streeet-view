@@ -120,17 +120,22 @@ $('.map-loc').on('click', function(e){
 });
 
 
-// DOES THIS WORK??????
-$('.map-loc').on('click', function(e){
+
+$("img").on('click', function(e){
     e.preventDefault();
-    rover = e.target.data[rover];
-    cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1)
+    // $rover = $(this).name;
+    // $rover = $(this).value
+    rover = document.getElementsByName('Spirit');
+    // rover = document.getElementsByAttribute("data-rover", "Spirit")
+    console.log(rover[0].name);
+
+    // cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1)
     // Hide from the home page
-    $('#menu-home').hide();
+    $('#mobile-home').hide();
     // Fetch the list of images with ajax call
-    fetchPhotos(cap_rover);
+    fetchPhotos(rover[0].name);
     // Show the first navcam image (for now)
-    $('#rover-view').fadeIn(600);
+    $('#mobile-rover-view').fadeIn(600);
 });
 
 
