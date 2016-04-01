@@ -6,17 +6,17 @@ import os
 import io
 import requests
 import json
-import webbrowser
 import time
 
 PARENT_DIR = os.path.dirname(__file__)
 SAMPLE_DATA_PATH = os.path.join(PARENT_DIR, 'tests', 'sample_data.json')
 
+BASE_URL = 'https://api.nasa.gov/mars-photos/api/v1/rovers/'
 
 ROVERS = {
-    'Curiosity': 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos',
-    'Opportunity': 'https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos',
-    'Spirit': 'https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos',
+    'Curiosity': ''.join((BASE_URL, 'curiosity/photos')),
+    'Opportunity': ''.join((BASE_URL, 'opportunity/photos')),
+    'Spirit': ''.join((BASE_URL, 'spirit/photos')),
 }
 NASA_API_KEY = os.environ.get('NASA_API_KEY')
 
