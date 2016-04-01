@@ -10,10 +10,6 @@
 // PANCAM = Panoramic Camera
 // MINITES = Miniature Thermal Emission Spectrometer (Mini-TES)
 
-
-// Declaring the list of camera to global scope
-// var fhaz, rhaz, mast, chemCam, mahli, mardi, navcam, pancam, minites;
-
 var RoverCams = {
     fhaz: [],
     rhaz: [],
@@ -38,7 +34,6 @@ var current_camera;
 
 // Constructor for multiple cameras
 function Camera(details) {
-    console.log(details);
     if (details.length > 0){
         this.name = details[0].camera_full_name
         this.short_name = details[0].camera_short_name.toLowerCase()
@@ -48,7 +43,7 @@ function Camera(details) {
     }
 }
 
-var template;
+// var template;
 // Compile the template
 Camera.prototype.compileTemplate = function(){
     var source = $('#cam-template').html();
@@ -65,17 +60,17 @@ function buildButtons(){
     });
 }
 
-
 // Fill list with objects
 Camera.all = []
 
-
 // Create the objects from the ajax call
 Camera.loadall = function(response) {
+    Camera.all = [];
     photo_list = response.photos_by_cam;
-    Camera.all = []
     for (var property in photo_list) {
-        Camera.all.push(new Camera(photo_list[property]))
+        if (photo_list[property].length > 0){
+            Camera.all.push(new Camera(photo_list[property]))
+        }
     }
 };
 
@@ -89,7 +84,7 @@ $('.map-loc').on('click', function(e){
     // Hide from the home page
     $('#menu-home').hide();
     // Fetch the list of images with ajax call
-    fetchPhotos(cap_rover, sol);
+    fetchPhotos(cap_rover);
     // Show the first navcam image (for now)
     $('#rover-view').show();
 });
@@ -98,36 +93,36 @@ $('.map-loc').on('click', function(e){
 // Make an ajax call that will return a list
 // of the photos-per-cam for a given sol and rover
 // EXAMPLE: rover='Curiosity', sol=1
-function fetchPhotos(rover, sol) {
+function fetchPhotos(rover) {
     $.ajax({
         url: '/' + rover + '/' + sol,
         type: 'GET',
         dataType: 'json',
         success: function(response){
-
             camList = response;
-            console.log(response)
-            // fullCameraList(rover, response);
+            sol = response.sol
 
-
+            // console.log('res' + response.sol);
+            // console.log('sol' + sol);
+            console.log(response);
             if (rover === 'Curiosity') {
-                RoverCams.navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-                RoverCams.fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-                RoverCams.rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-                RoverCams.mast = camList.photos_by_cam[rover + '_MAST'];
-                RoverCams.chemcam = camList.photos_by_cam[rover + '_CHEMCAM'];
-                RoverCams.mahli = camList.photos_by_cam[rover + '_MAHLI'];
-                RoverCams.mardi = camList.photos_by_cam[rover + '_MARDI'];
+                RoverCams.navcam = response.photos_by_cam[rover + '_NAVCAM'];
+                RoverCams.fhaz = response.photos_by_cam[rover + '_FHAZ'];
+                RoverCams.rhaz = response.photos_by_cam[rover + '_RHAZ'];
+                RoverCams.mast = response.photos_by_cam[rover + '_MAST'];
+                RoverCams.chemcam = response.photos_by_cam[rover + '_CHEMCAM'];
+                RoverCams.mahli = response.photos_by_cam[rover + '_MAHLI'];
+                RoverCams.mardi = response.photos_by_cam[rover + '_MARDI'];
                 RoverCams.entry = [];
                 RoverCams.pancam = [];
                 RoverCams.minites = [];
             } else {
-                RoverCams.navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-                RoverCams.fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-                RoverCams.rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-                RoverCams.pancam = camList.photos_by_cam[rover + '_PANCAM'];
-                RoverCams.minites = camList.photos_by_cam[rover + '_MINITES'];
-                RoverCams.entry = camList.photos_by_cam[rover + '_ENTRY'];
+                RoverCams.navcam = response.photos_by_cam[rover + '_NAVCAM'];
+                RoverCams.fhaz = response.photos_by_cam[rover + '_FHAZ'];
+                RoverCams.rhaz = response.photos_by_cam[rover + '_RHAZ'];
+                RoverCams.pancam = response.photos_by_cam[rover + '_PANCAM'];
+                RoverCams.minites = response.photos_by_cam[rover + '_MINITES'];
+                RoverCams.entry = response.photos_by_cam[rover + '_ENTRY'];
                 RoverCams.mast = [];
                 RoverCams.chemcam = [];
                 RoverCams.mahli = [];
@@ -141,7 +136,7 @@ function fetchPhotos(rover, sol) {
             //     handlebar_return.push(x[i].url)
             // }
 
-            Camera.loadall(camList)
+            Camera.loadall(response)
             // console.log(camList)
             buildButtons()
             // take the first image and change the 'src' attribute of the main photo (NAVCAM)
@@ -149,73 +144,78 @@ function fetchPhotos(rover, sol) {
             // $('#main-photo').attr('src', navcam[count].img_src);
             current_camera = RoverCams.navcam;
             switchMain(current_camera, count)
+            buildInfo(response)
+            console.log(response);
             // fetchPhotos(rover, sol);
         }
     })
 };
 
 function switchMain(camera, count){
-    console.log('camera, count');
-    console.log(camera);
-    console.log(count);
     $('#main-photo').attr('src', camera[count].img_src);
 }
 
+function Info(response) {
+    this.label_sol = response.rover,
+    this.rover = response.rover,
+    this.cam_name = current_camera
+}
 
-// Returns a list of all the objects of a rover depending on the camera
-// function fullCameraList(rover, camList) {
-//     if (rover === 'Curiosity') {
-//         navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-//         fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-//         rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-//         mast = camList.photos_by_cam[rover + '_MAST'];
-//         chemCam = camList.photos_by_cam[rover + '_CHEMCAM'];
-//         mahli = camList.photos_by_cam[rover + '_MAHLI'];
-//         mardi = camList.photos_by_cam[rover + '_MARDI'];
-//     } else {
-//         navcam = camList.photos_by_cam[rover + '_NAVCAM'];
-//         fhaz = camList.photos_by_cam[rover + '_FHAZ'];
-//         rhaz = camList.photos_by_cam[rover + '_RHAZ'];
-//         pancam = camList.photos_by_cam[rover + '_PANCAM'];
-//         minites = camList.photos_by_cam[rover + '_MINITES'];
-//         entry = camList.photos_by_cam[rover + '_ENTRY'];
-//     };
-//     // console.log(navcam)
-// };
+function buildInfo(response){
+    var source = $('#cam-details').html();
+    template = Handlebars.compile(source)
+    $('#camera-info').empty();
+    $('#camera-info').append(template(new Info(response)))
+}
 
 
 // Event listener for the next image to populate main image space
 $("#next-photo").on('click', function(e){
+    e.preventDefault()
     var url = document.getElementById("main-photo").src;
     if (count < current_camera.length - 1){
+        count += 1;
         newUrl = current_camera[count].img_src;
         switchMain(current_camera, count)
-        // $('#main-photo').attr('src', newUrl);
-        count += 1;
     } else {
         count = 0;
         sol += 1;
-        console.log(rover)
         cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
-        // if sol < max_sol
-        fetchPhotos(cap_rover, sol);
+        fetchPhotos(cap_rover);
     }
 })
 
 
+// $("#next-ten").on('click', function(e){
+//     e.preventDefault()
+//     count = 0;
+//     sol += 10;
+//     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
+//     fetchPhotos(cap_rover);
+// });
+//
+// $("#next-hundred").on('click', function(e){
+//     e.preventDefault()
+//     count = 0;
+//     sol += 100;
+//     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
+//     fetchPhotos(cap_rover);
+// });
+
 // Event listener for the previous image to populate main image space
 $("#prev-photo").on('click', function(e){
+    e.preventDefault()
     var url = document.getElementById("main-photo").src;
     if (count > 0){
+        count -= 1;
         newUrl = current_camera[count].img_src;
         $('#main-photo').attr('src', newUrl);
-        count -= 1;
     } else {
         count = 0;
         sol -= 1;
         if (sol > 0){
             cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
-            fetchPhotos(cap_rover, sol);
+            fetchPhotos(cap_rover);
         }
     }
 })
@@ -223,19 +223,21 @@ $("#prev-photo").on('click', function(e){
 
 // NEXT SOL
 $("#next-sol").on('click', function(e){
+    e.preventDefault()
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
     sol += 1;
     // if sol < max_sol
-    fetchPhotos(cap_rover, sol);
+    fetchPhotos(cap_rover);
 })
 
 
 // PREV SOL
 $("#prev-sol").on('click', function(e){
+    e.preventDefault()
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
     sol -= 1;
     if (sol > 0){
-        fetchPhotos(cap_rover, sol);
+        fetchPhotos(cap_rover);
     }
 })
 
