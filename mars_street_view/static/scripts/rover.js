@@ -75,37 +75,13 @@ function buildButtons(){
 /////////////////////////////////////////////////
 
 function Info(details) {
-    // if (details.length > 0){
-    console.log(details)
     this.label_sol = details.sol
-    this.rover = details.rover        
-        // Object.keys(details).forEach(function(e, index, keys) {
-        //     this[e] = details[e].img_src;
-        // }, this);
-    // }
-    // console.log(response),
-    // this.label_sol = response.sol,
-    // // console.log(current_camera.camera_full_name),
-    // this.rover = response.rover
-    // // this.cam_name = current_camera.camera_full_name
-
+    this.rover = details.rover
 }
 
 
-// function Camera(details) {
-//     if (details.length > 0){
-//         this.name = details[0].camera_full_name
-//         this.short_name = details[0].camera_short_name.toLowerCase()
-//         Object.keys(details).forEach(function(e, index, keys) {
-//             this[e] = details[e].img_src;
-//         }, this);
-//     }
-// }
-
-
 Info.prototype.compileTemplateInfo = function(){
-    console.log('COMPILE')
-    var source = $('#cam-details').html();    
+    var source = $('#cam-details').html();
     template = Handlebars.compile(source)
     return template(this)
 }
@@ -114,38 +90,20 @@ Info.prototype.compileTemplateInfo = function(){
 Info.all = []
 Info.loadall = function(response) {
     Info.all = [];
-    // photo_list = response.photos_by_cam;
     for (var property in response) {
-        console.log(response[property]);
         if (response[property].length > 0){
             Info.all.push(new Info(response))
         }
     }
-    console.log(Info.all)
 };
 
 
 function buildInfo(){
-    // console.log(response);
     $('.camera-info').empty();
     Info.all.forEach(function(a){
         $('.camera-info').append(a.compileTemplateInfo());
     });
 }
-
-// // Fill list with objects
-// var Camera.all = []
-
-// // Create the objects from the ajax call
-// Camera.loadall = function(response) {
-//     Camera.all = [];
-//     photo_list = response.photos_by_cam;
-//     for (var property in photo_list) {
-//         if (photo_list[property].length > 0){
-//             Camera.all.push(new Camera(photo_list[property]))
-//         }
-//     }
-// };
 
 
 // Event Listener to run the ajax call
@@ -153,14 +111,28 @@ $('.map-loc').on('click', function(e){
     e.preventDefault();
     rover = e.target.id;
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1)
-    // console.log(cap_rover);
     // Hide from the home page
     $('#menu-home').hide();
     // Fetch the list of images with ajax call
     fetchPhotos(cap_rover);
     // Show the first navcam image (for now)
-    $('#rover-view').show();
+    $('#rover-view').fadeIn(600);
 });
+
+
+// DOES THIS WORK??????
+$('.map-loc').on('click', function(e){
+    e.preventDefault();
+    rover = e.target.data[rover];
+    cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1)
+    // Hide from the home page
+    $('#menu-home').hide();
+    // Fetch the list of images with ajax call
+    fetchPhotos(cap_rover);
+    // Show the first navcam image (for now)
+    $('#rover-view').fadeIn(600);
+});
+
 
 
 // Make an ajax call that will return a list
@@ -172,12 +144,8 @@ function fetchPhotos(rover) {
         type: 'GET',
         dataType: 'json',
         success: function(response){
-            camList = response;
             sol = response.sol
 
-            // console.log('res' + response.sol);
-            // console.log('sol' + sol);
-            console.log(response);
             if (rover === 'Curiosity') {
                 RoverCams.navcam = response.photos_by_cam[rover + '_NAVCAM'];
                 RoverCams.fhaz = response.photos_by_cam[rover + '_FHAZ'];
@@ -203,14 +171,17 @@ function fetchPhotos(rover) {
             };
 
             Camera.loadall(response)
-            // console.log(camList)
             buildButtons()
-            // take the first image and change the 'src' attribute of the main photo (NAVCAM)
+
             Info.loadall(response)
             buildInfo()
-            current_camera = RoverCams.navcam;
+            if (RoverCams.navcam){
+                current_camera = RoverCams.navcam;
+            }
+            else {
+                current_camera = RoverCams.mast;
+            }
             switchMain(current_camera, count)
-            // console.log(response);
         }
     })
 };
@@ -218,20 +189,6 @@ function fetchPhotos(rover) {
 function switchMain(camera, count){
     $('#main-photo').attr('src', camera[count].img_src);
 }
-
-// function Info(response) {
-//     this.label_sol = response.sol,
-//     console.log(current_camera.camera_full_name),
-//     this.rover = response.rover,
-//     this.cam_name = current_camera.camera_full_name
-// }
-
-// function buildInfo(response){
-//     var source = $('#cam-details').html();
-//     template = Handlebars.compile(source)
-//     $('#camera-info').empty();
-//     $('#camera-info').append(template(new Info(response)))
-// }
 
 
 // Event listener for the next image to populate main image space
@@ -291,7 +248,6 @@ $("#next-sol").on('click', function(e){
     e.preventDefault()
     cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
     sol += 1;
-    // if sol < max_sol
     fetchPhotos(cap_rover);
 })
 
@@ -311,3 +267,8 @@ $(".cam-buttons").on('click', function(e){
     current_camera = RoverCams[camera]
     switchMain(current_camera, 0)
 })
+
+
+// $(".mobile")
+
+

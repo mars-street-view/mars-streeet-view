@@ -1,4 +1,5 @@
 """Defines models for the whole project: Photo, Rover and Camera."""
+from __future__ import unicode_literals, print_function
 from sqlalchemy import (
     Column,
     Integer,
@@ -29,7 +30,6 @@ Base = declarative_base()
 
 LEFT_LENS_URL = '%L___-BR.JPG'
 RIGHT_LENS_URL = '%R___-BR.JPG'
-
 LOW_RES_SPI_OPP = '%ESF_____________-BR.JPG'
 BAD_CUR_1 = '%_M_______NCAM_______.JPG'
 BAD_CUR_2 = '%SAPP_______.JPG'
