@@ -49,7 +49,7 @@ def fetch_photo_data(rover, sol, camera=None):
             break
         content, encoding = resp.content, resp.encoding or 'utf-8'
         photo_data = json.loads(content.decode(encoding))
-        photos = photo_data['photos']
+        photos = photo_data.get('photos', [])
         if not photos:
             break
         for photo in photos:
