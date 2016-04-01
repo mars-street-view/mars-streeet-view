@@ -36,8 +36,7 @@ def config_uri():
 @pytest.fixture(scope='session')
 def sample_data_uri():
     """Establish configuration uri for initialization."""
-    parent_dir = os.path.dirname(__file__)
-    return os.path.join(parent_dir, 'sample_data.json')
+    return os.environ.get('SAMPLE_DATA_PATH')
 
 
 @pytest.fixture()

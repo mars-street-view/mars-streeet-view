@@ -27,29 +27,32 @@
 	box-shadow: 0px 4px 4px rgba(255,136,31,0.6);
 }
 .mars #opportunity {
-	width: 15px;
-    height: 15px;
+	width: 100px;
+    height: 100px;
     margin: 30%;
-	background: blue;
+    background-image: url('/static/302033-200.png');
+    background-size: 100px;
 	border-radius: 50%;
-	transform: translateX(-40px) translateY(20px) skewX(0deg) skewY(0deg);
+	transform: translateX(-80px) translateY(-20px) skewX(0deg) skewY(0deg);
 	position: absolute;
 }
 .mars #curiosity {
-	width: 15px;
-    height: 15px;
+	width: 100px;
+    height: 100px;
     margin: 30%;
-	background: blue;
+    background-image: url('/static/302033-200.png');
+    background-size: 100px;
 	border-radius: 50%;
-	transform: translateX(160px) translateY(100px) skewX(0deg) skewY(0deg);
+	transform: translateX(80px) translateY(80px) skewX(0deg) skewY(0deg);
 	position: absolute;
 }
 .mars #spirit {
-	width: 15px;
-    height: 15px;
+	width: 100px;
+    height: 100px;
     margin: 30%;
-	background: blue;
+    background-image: url('/static/302033-200.png');
+    background-size: 100px;
 	border-radius: 50%;
-	transform: translateX(200px) translateY(160px) skewX(0deg) skewY(0deg);
+	transform: translateX(140px) translateY(110px) skewX(0deg) skewY(0deg);
 	position: absolute;
 }
