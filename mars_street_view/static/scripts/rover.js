@@ -78,7 +78,7 @@ function Info(details) {
     // if (details.length > 0){
     console.log(details)
     this.label_sol = details.sol
-    this.rover = details.rover        
+    this.rover = details.rover
         // Object.keys(details).forEach(function(e, index, keys) {
         //     this[e] = details[e].img_src;
         // }, this);
@@ -92,20 +92,9 @@ function Info(details) {
 }
 
 
-// function Camera(details) {
-//     if (details.length > 0){
-//         this.name = details[0].camera_full_name
-//         this.short_name = details[0].camera_short_name.toLowerCase()
-//         Object.keys(details).forEach(function(e, index, keys) {
-//             this[e] = details[e].img_src;
-//         }, this);
-//     }
-// }
-
-
 Info.prototype.compileTemplateInfo = function(){
     console.log('COMPILE')
-    var source = $('#cam-details').html();    
+    var source = $('#cam-details').html();
     template = Handlebars.compile(source)
     return template(this)
 }
@@ -133,20 +122,6 @@ function buildInfo(){
     });
 }
 
-// // Fill list with objects
-// var Camera.all = []
-
-// // Create the objects from the ajax call
-// Camera.loadall = function(response) {
-//     Camera.all = [];
-//     photo_list = response.photos_by_cam;
-//     for (var property in photo_list) {
-//         if (photo_list[property].length > 0){
-//             Camera.all.push(new Camera(photo_list[property]))
-//         }
-//     }
-// };
-
 
 // Event Listener to run the ajax call
 $('.map-loc').on('click', function(e){
@@ -172,7 +147,7 @@ function fetchPhotos(rover) {
         type: 'GET',
         dataType: 'json',
         success: function(response){
-            camList = response;
+            // camList = response;
             sol = response.sol
 
             // console.log('res' + response.sol);
@@ -208,7 +183,14 @@ function fetchPhotos(rover) {
             // take the first image and change the 'src' attribute of the main photo (NAVCAM)
             Info.loadall(response)
             buildInfo()
-            current_camera = RoverCams.navcam;
+            if (RoverCams.navcam){
+                console.log('navcam');
+                current_camera = RoverCams.navcam;
+            }
+            else {
+                console.log('fhaz');
+                current_camera = RoverCams.mast;
+            }
             switchMain(current_camera, count)
             // console.log(response);
         }
@@ -218,20 +200,6 @@ function fetchPhotos(rover) {
 function switchMain(camera, count){
     $('#main-photo').attr('src', camera[count].img_src);
 }
-
-// function Info(response) {
-//     this.label_sol = response.sol,
-//     console.log(current_camera.camera_full_name),
-//     this.rover = response.rover,
-//     this.cam_name = current_camera.camera_full_name
-// }
-
-// function buildInfo(response){
-//     var source = $('#cam-details').html();
-//     template = Handlebars.compile(source)
-//     $('#camera-info').empty();
-//     $('#camera-info').append(template(new Info(response)))
-// }
 
 
 // Event listener for the next image to populate main image space
