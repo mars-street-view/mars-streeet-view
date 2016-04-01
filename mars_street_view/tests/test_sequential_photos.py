@@ -1,10 +1,9 @@
 """Tests to see if we can order our photos sequentially."""
-import time
 import random
-import webbrowser
 
 
 def test_photos_seq(pre_pop_transaction, global_environ):
+    """Test that pre-populated photos will be retrieved in url sorted order."""
     from mars_street_view.models import Photo
     rover_name = random.choice(['Curiosity', 'Opportunity', 'Spirit'])
     sol = random.choice(range(1, 5))
@@ -19,6 +18,7 @@ def test_photos_seq(pre_pop_transaction, global_environ):
 
 
 def test_photos_sorted(pre_pop_transaction, global_environ):
+    """Second test that pre-populated photos will come in sorted order."""
     from mars_street_view.models import DBSession, Photo
     rover_name = random.choice(['Curiosity', 'Opportunity', 'Spirit'])
     sol = random.choice(range(1, 5))
@@ -29,28 +29,6 @@ def test_photos_sorted(pre_pop_transaction, global_environ):
     query = DBSession.query(
         Photo, Photo.img_src).filter_by(rover_name=rover_name,
                                         camera_name=cam, sol=sol)
-    urls_from_query = sorted([url for photo, url in query.all() if url[-11] != 'R'])
+    urls_from_query = sorted([url for photo, url in query.all()
+                              if url[-11] != 'R'])
     assert urls_from_method == urls_from_query
-
-
-ROVER = 'Spirit'
-SOL = 336
-CAMERA = 'FHAZ'
-
-
-def test_in_browser(dbtransaction, global_environ):
-    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
-    from mars_street_view.populate_database import populate_one_sol
-    from mars_street_view.models import Photo
-    init_rovers_and_cameras()
-    populate_one_sol(ROVER, SOL, fetch=True)
-    print('Getting data for {} sol {}'.format(ROVER, SOL))
-    data = Photo.get_rov_sol(ROVER, SOL)
-    cam_name = '_'.join((ROVER, CAMERA))
-    photo_list = data['photos_by_cam'].get(cam_name, [])
-    for photo in photo_list:
-        trunc_url = photo.img_src.split('/')[-1]
-        print('{camera_name} url {0}; id {id} nasa_id {nasa_id}'
-              ''.format(trunc_url, **photo.__json__(None)))
-        webbrowser.open_new_tab(photo.img_src)
-        time.sleep(1)

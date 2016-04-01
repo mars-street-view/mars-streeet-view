@@ -8,8 +8,10 @@ import requests
 import json
 import time
 
-PARENT_DIR = os.path.dirname(__file__)
-SAMPLE_DATA_PATH = os.path.join(PARENT_DIR, 'tests', 'sample_data.json')
+# PARENT_DIR = os.path.dirname(__file__)
+# SAMPLE_DATA_PATH = os.path.join(PARENT_DIR, 'tests', 'sample_data.json')
+
+SAMPLE_DATA_PATH = os.environ.get('SAMPLE_DATA_PATH')
 
 BASE_URL = 'https://api.nasa.gov/mars-photos/api/v1/rovers/'
 
@@ -45,7 +47,7 @@ def fetch_photo_data(rover, sol, camera=None):
             print('400 response for {0} {camera} sol {sol} page={page}'
                   ''.format(rover, **params))
             break
-        content, encoding = resp.content, resp.encoding
+        content, encoding = resp.content, resp.encoding or 'utf-8'
         photo_data = json.loads(content.decode(encoding))
         photos = photo_data['photos']
         if not photos:
