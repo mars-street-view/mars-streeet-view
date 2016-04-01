@@ -207,6 +207,20 @@ $("#next-photo").on('click', function(e){
     }
 })
 
+//adding the above listener to the image field.
+$("#main-photo").on('click', function(){
+    var url = document.getElementById("main-photo").src;
+    if (count < current_camera.length - 1){
+        count += 1;
+        newUrl = current_camera[count].img_src;
+        switchMain(current_camera, count)
+    } else {
+        count = 0;
+        sol += 1;
+        cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1);
+        fetchPhotos(cap_rover);
+    }
+})
 
 // $("#next-ten").on('click', function(e){
 //     e.preventDefault()
