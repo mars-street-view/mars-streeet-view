@@ -112,7 +112,8 @@ class Photo(Base):
 
         return_dict = {}
         # finds absolute last day in which this rover has photos.
-        maxsol_tuple = DBSession.query(func.max(Photo.sol)).filter(Photo.rover_name == roverparam).one()
+        maxsol_tuple = DBSession.query(
+            func.max(Photo.sol)).filter(Photo.rover_name == roverparam).one()
         maxsol = maxsol_tuple[0]
         if not maxsol:
             raise ValueError("No photos for your rover in database")
@@ -146,7 +147,10 @@ def filter_bad_quality(photo_query, rover_name):
     if rover_name in ('Opportunity', 'Spirit'):
         return photo_query.filter(Photo.img_src.notlike(LOW_RES_SPI_OPP))
     elif rover_name == 'Curiosity':
-        photo_query = photo_query.filter(Photo.img_src.notlike(BAD_CUR_1))
+        photo_query = photo_query.filter(
+            Photo.img_src.notlike(BAD_CUR_1),
+            Photo.img_src.notlike(BAD_CUR_2),
+            Photo.img_src.notlike(BAD_CUR_3))
     return photo_query
 
 
