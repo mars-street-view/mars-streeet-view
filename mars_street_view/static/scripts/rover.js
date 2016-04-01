@@ -120,6 +120,21 @@ $('.map-loc').on('click', function(e){
 });
 
 
+// DOES THIS WORK??????
+$('.map-loc').on('click', function(e){
+    e.preventDefault();
+    rover = e.target.data[rover];
+    cap_rover = rover.charAt(0).toUpperCase() + rover.slice(1)
+    // Hide from the home page
+    $('#menu-home').hide();
+    // Fetch the list of images with ajax call
+    fetchPhotos(cap_rover);
+    // Show the first navcam image (for now)
+    $('#rover-view').fadeIn(600);
+});
+
+
+
 // Make an ajax call that will return a list
 // of the photos-per-cam for a given sol and rover
 // EXAMPLE: rover='Curiosity', sol=1

@@ -46,6 +46,11 @@
 		visibility: hidden; 
 	}
 
+	#rover-view, button {
+		display: none;
+		visibility: hidden; 
+	}
+
 
 	/* MOBILE HOME VIEW */
 	/**************************************/
