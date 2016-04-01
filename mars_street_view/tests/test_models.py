@@ -78,7 +78,7 @@ def test_rov_sol_one_camera(dbtransaction, global_environ, rover_params,
                             camera_params, sol):
     """Test get_rov_sol return value for a Rover with one Camera."""
     rover = rover_params['name']
-    camera = '_'.join((rover, camera_params['name']))
+    # camera = '_'.join((rover, camera_params['name']))
     DBSession.add(Rover(**rover_params))
     DBSession.add(Camera(**camera_params))
     DBSession.flush()
@@ -99,11 +99,14 @@ def test_rov_sol_one_photo(dbtransaction, global_environ, rover_params,
     DBSession.add(Camera(**camera_params))
     DBSession.add(photo)
     DBSession.flush()
-    expected = {'rover': rover, 'sol': sol, 'photos_by_cam': {camera: [photo]}, 'last_day': True, 'first_day': False}
+    expected = {'rover': rover, 'sol': sol,
+                'photos_by_cam': {camera: [photo]},
+                'last_day': True, 'first_day': False}
     assert Photo.get_rov_sol(rover, sol) == expected
 
 
-def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_name, sol):
+def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_name,
+                      sol):
     """Test get_rov_sol returns correct camera names on pre-populated DB."""
     result = Photo.get_rov_sol(rover_name, sol)
     rover = DBSession.query(Rover).filter(Rover.name == rover_name).one()
@@ -112,7 +115,8 @@ def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_name, sol):
         result['photos_by_cam'].keys()))
 
 
-def test_rov_sol_photos(pre_pop_transaction, global_environ, rover_name, sol):
+def test_rov_sol_photos(pre_pop_transaction, global_environ, rover_name,
+                        sol):
     """Check that all contents of data are Photo objects."""
     result = Photo.get_rov_sol(rover_name, sol)
     photo_list = [photo for photos in result['photos_by_cam'].values()
@@ -121,7 +125,8 @@ def test_rov_sol_photos(pre_pop_transaction, global_environ, rover_name, sol):
                                         for photo in photo_list])
 
 
-def test_left_lens_only(pre_pop_transaction, global_environ, rover_name, sol):
+def test_left_lens_only(pre_pop_transaction, global_environ, rover_name,
+                        sol):
     """Check that get_sol_rov returns no photos from right lens."""
     result = Photo.get_rov_sol(rover_name, sol)
     photo_list = [photo for photos in result['photos_by_cam'].values()
@@ -141,12 +146,12 @@ def test_photo_model_json(dbtransaction, global_environ, photo_params,
     assert isinstance(json_string, str)
     assert isinstance(json.loads(json_string), dict)
 
-def test_get_rov_sol_blank_day(dbtransaction, global_environ, photo_params, 
+
+def test_get_rov_sol_blank_day(dbtransaction, global_environ, photo_params,
                                rover_params, camera_params):
-    """Compare a sol with no photos to the next sol with photos.  Should be equal."""
+    """Compare sol with no photos to next sol with photos.  Should be equal."""
     rover = rover_params['name']
     sol = photo_params['sol']
-    camera = '_'.join((rover, camera_params['name']))
     photo = Photo(**photo_params)
     DBSession.add(Rover(**rover_params))
     DBSession.add(Camera(**camera_params))
@@ -154,12 +159,12 @@ def test_get_rov_sol_blank_day(dbtransaction, global_environ, photo_params,
     DBSession.flush()
     assert Photo.get_rov_sol(rover, sol - 5) == Photo.get_rov_sol(rover, sol)
 
-def test_get_rov_sol_negative_day(dbtransaction, global_environ, photo_params, 
-                               rover_params, camera_params):
-    """Compare a sol with no photos to the next sol with photos.  Should be equal."""
+
+def test_get_rov_sol_negative_day(dbtransaction, global_environ, photo_params,
+                                  rover_params, camera_params):
+    """Compare sol with no photos to next sol with photos.  Should be equal."""
     rover = rover_params['name']
     sol = photo_params['sol']
-    camera = '_'.join((rover, camera_params['name']))
     photo = Photo(**photo_params)
     DBSession.add(Rover(**rover_params))
     DBSession.add(Camera(**camera_params))
@@ -167,26 +172,26 @@ def test_get_rov_sol_negative_day(dbtransaction, global_environ, photo_params,
     DBSession.flush()
     assert Photo.get_rov_sol(rover, sol - 500) == Photo.get_rov_sol(rover, sol)
 
-def test_get_rov_sol_max_day(dbtransaction, global_environ, photo_params, 
-                               rover_params, camera_params):
-    """Compare a sol with no photos to the next sol with photos.  Should be equal."""
+
+def test_get_rov_sol_max_day(dbtransaction, global_environ, photo_params,
+                             rover_params, camera_params):
+    """Compare sol with no photos to next sol with photos. Should be equal."""
     rover = rover_params['name']
     sol = photo_params['sol']
-    camera = '_'.join((rover, camera_params['name']))
     photo = Photo(**photo_params)
     DBSession.add(Rover(**rover_params))
     DBSession.add(Camera(**camera_params))
     DBSession.add(photo)
     DBSession.flush()
     result = Photo.get_rov_sol(rover, sol)
-    assert result['last_day'] == True
+    assert result['last_day']
 
-def test_get_rov_sol_too_big(dbtransaction, global_environ, photo_params, 
-                               rover_params, camera_params):
-    """Compare a sol with no photos to the next sol with photos.  Should be equal."""
+
+def test_get_rov_sol_too_big(dbtransaction, global_environ, photo_params,
+                             rover_params, camera_params):
+    """Compare sol with no photos to next sol with photos. Should be equal."""
     rover = rover_params['name']
     sol = photo_params['sol']
-    camera = '_'.join((rover, camera_params['name']))
     photo = Photo(**photo_params)
     DBSession.add(Rover(**rover_params))
     DBSession.add(Camera(**camera_params))

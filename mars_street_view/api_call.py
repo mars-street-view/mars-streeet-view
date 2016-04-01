@@ -8,8 +8,6 @@ import requests
 import json
 import time
 
-# PARENT_DIR = os.path.dirname(__file__)
-# SAMPLE_DATA_PATH = os.path.join(PARENT_DIR, 'tests', 'sample_data.json')
 
 SAMPLE_DATA_PATH = os.environ.get('SAMPLE_DATA_PATH')
 
@@ -41,7 +39,6 @@ def fetch_photo_data(rover, sol, camera=None):
         if camera:
             params['camera'] = camera
         resp = requests.get(url, params=params)
-        # import pdb; pdb.set_trace()
         if resp.status_code == 400:
             params['camera'] = camera or ''
             print('400 response for {0} {camera} sol {sol} page={page}'
@@ -49,7 +46,7 @@ def fetch_photo_data(rover, sol, camera=None):
             break
         content, encoding = resp.content, resp.encoding or 'utf-8'
         photo_data = json.loads(content.decode(encoding))
-        photos = photo_data['photos']
+        photos = photo_data.get('photos', [])
         if not photos:
             break
         for photo in photos:
