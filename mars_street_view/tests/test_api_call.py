@@ -5,15 +5,15 @@
 def test_fetch_photo_data():
     """Test that the url returns content for one rover."""
     rover_name = 'Curiosity'
-    from mars_street_view.api_call import fetch_photo_data, ROVERS
-    data = fetch_photo_data(ROVERS[rover_name], rover_name, 522)
+    from mars_street_view.api_call import fetch_photo_data
+    data = fetch_photo_data(rover_name, 522)
     assert isinstance(data, list)
 
 
-def test_load_photo_data(sample_data_uri, rover_name):
+def test_load_photo_data(sample_data_uri, rover_name, sol):
     """Test that our 'read_json' function reads file successfully."""
     from mars_street_view.api_call import load_photo_data
-    data = load_photo_data(rover_name, 1)
+    data = load_photo_data(rover_name, sol)
     assert isinstance(data, list)
 
 
@@ -21,14 +21,12 @@ def test_load_full_sample_data():
     """Test that sample data from all rovers can be loaded."""
     from mars_street_view.api_call import load_full_sample_data
     data = load_full_sample_data()
-    assert all([isinstance(data, list),
-                len(data) > 20])
+    assert isinstance(data, list) and len(data) > 20
 
 
-def test_api_photo_not_dupe(rover_name):
+def test_api_photo_not_dupe(rover_name, sol):
     """Confirm that get_one_sol() is not returning duplicate photo ids."""
     from mars_street_view.api_call import get_one_sol
-    photos_list = get_one_sol(rover_name, 1)
+    photos_list = get_one_sol(rover_name, sol)
     photo_ids = [item['id'] for item in photos_list]
-    for photo_id in photo_ids:
-        assert photo_ids.count(photo_id) == 1
+    assert len(photo_ids) == len(set(photo_ids))

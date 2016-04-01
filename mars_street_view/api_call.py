@@ -6,23 +6,29 @@ import os
 import io
 import requests
 import json
-# from sys import argv
+import time
 
+# PARENT_DIR = os.path.dirname(__file__)
+# SAMPLE_DATA_PATH = os.path.join(PARENT_DIR, 'tests', 'sample_data.json')
 
-PARENT_DIR = os.path.dirname(__file__)
-SAMPLE_DATA_PATH = os.path.join(PARENT_DIR, 'tests', 'sample_data.json')
+SAMPLE_DATA_PATH = os.environ.get('SAMPLE_DATA_PATH')
 
+BASE_URL = 'https://api.nasa.gov/mars-photos/api/v1/rovers/'
 
 ROVERS = {
-    'Curiosity': 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos',
-    'Opportunity': 'https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos',
-    'Spirit': 'https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos',
+    'Curiosity': ''.join((BASE_URL, 'curiosity/photos')),
+    'Opportunity': ''.join((BASE_URL, 'opportunity/photos')),
+    'Spirit': ''.join((BASE_URL, 'spirit/photos')),
 }
 NASA_API_KEY = os.environ.get('NASA_API_KEY')
 
 
-def fetch_photo_data(url, rover, sol):
+def fetch_photo_data(rover, sol, camera=None):
     """Make API call to NASA."""
+    try:
+        url = ROVERS[rover]
+    except KeyError:
+        raise ValueError('Incorrect rover name provided.')
     page = 1
     lst = []
     found_ids = set()
@@ -32,9 +38,16 @@ def fetch_photo_data(url, rover, sol):
             'page': page,
             'api_key': NASA_API_KEY,
         }
+        if camera:
+            params['camera'] = camera
         resp = requests.get(url, params=params)
-        resp.raise_for_status()  # <- This is a no-op if there is no HTTP error
-        content, encoding = resp.content, resp.encoding
+        # import pdb; pdb.set_trace()
+        if resp.status_code == 400:
+            params['camera'] = camera or ''
+            print('400 response for {0} {camera} sol {sol} page={page}'
+                  ''.format(rover, **params))
+            break
+        content, encoding = resp.content, resp.encoding or 'utf-8'
         photo_data = json.loads(content.decode(encoding))
         photos = photo_data['photos']
         if not photos:
@@ -52,7 +65,9 @@ def fetch_and_save_data_sample():
     """Download and save json data sample of the first day of each mission."""
     photo_list = []
     for rover in ROVERS:
-        photo_list.extend(get_one_sol(rover, 1, True))
+        for sol in range(0, 5):
+            photo_list.extend(get_one_sol(rover, sol, True))
+            time.sleep(1)
     data = {'photos': photo_list}
     write_to_json_file(data, SAMPLE_DATA_PATH)
     print('Successfully saved {} photo objects to {}.'
@@ -84,18 +99,10 @@ def read_json_from_file(file_name, encoding='utf-8'):
         return json.load(file)
 
 
-def get_one_sol(rover, sol, fetch=False):
+def get_one_sol(rover, sol, fetch=False, camera=None):
     """Return all photos for one sol, given rover and sol."""
-    try:
-        url = ROVERS[rover]
-    except KeyError:
-        raise ValueError('Incorrect rover name provided.')
     if fetch:
-        photo_list = fetch_photo_data(url, rover, sol)
+        photo_list = fetch_photo_data(rover, sol, camera)
     else:
         photo_list = load_photo_data(rover, sol)
     return photo_list
-
-
-if __name__ == '__main__':
-    fetch_and_save_data_sample()

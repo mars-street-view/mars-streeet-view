@@ -1,12 +1,13 @@
 """Establish view functions for Mars Street View web app."""
+from __future__ import unicode_literals, print_function
 from pyramid.response import Response
 from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
 from .models import (
+    MyModel,  # Put this back in so tets pass.
     DBSession,
-    MyModel,
     Photo
 )
 
@@ -37,9 +38,9 @@ class DummyPhoto(object):
 def rover_view(request):
     """Return appropriate pictures for a rover request."""
     rover = request.matchdict['rover_name']
-    sol = request.matchdict['sol']
     # Photo.get_rov_sol returns a dictionary with keys 'rov', 'sol',
     # and photos_by_cam
+    sol = int(request.matchdict['sol'])
     data = Photo.get_rov_sol(rover, sol)
     return data
 
