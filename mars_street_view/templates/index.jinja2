@@ -15,9 +15,17 @@
 
     {% raw %}
     <script id="cam-template" type="text/x-handlebars-template">
-        <div class="camera-button">
+        <div class="camera-button three columns">
           <img src="{{0}}" id="{{short_name}}">
           <h5>{{name}}<h5>
+        </div>
+    </script>
+
+    <script id="cam-details" type="text/x-handlebars-template">
+        <div class="camera-button three columns">
+          <h5>Rover: {{rover}}<h5>
+          <h5>Sol: {{label_sol}}<h5>
+          <!-- <h5>Earth Date: {{earth_date}}<h5> -->
         </div>
     </script>
     {% endraw %}
@@ -89,6 +97,8 @@
           <article class="next">
               <button type="button" name="button" id="next-photo" class="button-primary">Next Photo</button>
               <button type="button" name="button" id="next-sol" class="button-primary">Next Sol</button>
+              <!-- <button type="button" name="button" id="next-ten" class="button-primary">Next Ten</button>
+              <button type="button" name="button" id="next-hundred" class="button-primary">Next Hundred</button> -->
             <!-- <img src="../static/arrow-up.png" id="next-photo">
             <img src="../static/arrow-up.png" id="next-sol"> -->
           </article>
@@ -104,13 +114,15 @@
 
           <section class="cam-buttons u-full-width"></section>
         </form>
+        <section class="camera-info"></section>
       </section>
     </article>
 
+
     <!-- FOOTER -->
-  	<footer class="footer">
+  	<!-- <footer class="footer row">
       &copy; 2016 | Mars Street View
-  	</footer>
+  	</footer> -->
 
     <!-- SCRIPT TAGS -->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>

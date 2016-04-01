@@ -57,7 +57,7 @@ def rover_view(request):
     # NOTE: The following is a simple response based upon a model method we have yet to write.
     
     rover = request.matchdict['rover_name']
-    sol = request.matchdict['sol']
+    sol = int(request.matchdict['sol'])
     # Photo.get_rov_sol returns a dictionary with keys 'rov', 'sol', and photos_by_cam
     data = Photo.get_rov_sol(rover, sol)
     return data
