@@ -10,13 +10,23 @@
     <link rel="stylesheet" type="text/css" href="../static/skeleton.css">
     <link rel="stylesheet" type="text/css" href="../static/base.css">
     <link rel="stylesheet" type="text/css" href="../static/map.css">
+    <link rel="stylesheet" type="text/css" href="../static/cam.css">
 
 
     {% raw %}
     <script id="cam-template" type="text/x-handlebars-template">
+        <div class="camera-button three columns">
           <img src="{{0}}" id="{{short_name}}">
           <h5>{{name}}<h5>
+        </div>
+    </script>
 
+    <script id="cam-details" type="text/x-handlebars-template">
+        <div class="camera-button three columns">
+          <h5>Rover: {{rover}}<h5>
+          <h5>Sol: {{label_sol}}<h5>
+          <!-- <h5>Earth Date: {{earth_date}}<h5> -->
+        </div>
     </script>
     {% endraw %}
 
@@ -59,19 +69,19 @@
 
         <!-- ALL ROVER INFO -->
   			<section class="info six columns">
-  				<article class="rover-info hidden" rover="Opportunity">
+  				<article class="rover-info hidden" rover="Opportunity" rover-lower="opportunity">
   					<h1>Opportunity</h1>
   					<p>
   						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
   					</p>
   				</article>
-  				<article class="rover-info hidden" rover="Curiosity">
+  				<article class="rover-info hidden" rover="Curiosity" rover-lower="curiosity">
   					<h1>Curiosity</h1>
   					<p>
   						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
   					</p>
   				</article>
-  				<article class="rover-info hidden" rover="Spirit">
+  				<article class="rover-info hidden" rover="Spirit" rover-lower="spirit">
   					<h1>Spirit</h1>
   					<p>
   						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -85,38 +95,39 @@
         <form class="rover-form">
 
           <article class="next">
-            <img src="../static/arrow-up.png" id="next-photo">
-            <img src="../static/arrow-up.png" id="next-sol">
+              <button type="button" name="button" id="next-photo" class="button-primary">Next Photo</button>
+              <button type="button" name="button" id="next-sol" class="button-primary">Next Sol</button>
+              <!-- <button type="button" name="button" id="next-ten" class="button-primary">Next Ten</button>
+              <button type="button" name="button" id="next-hundred" class="button-primary">Next Hundred</button> -->
+            <!-- <img src="../static/arrow-up.png" id="next-photo">
+            <img src="../static/arrow-up.png" id="next-sol"> -->
           </article>
 
           <img src="" id='main-photo'/>
 
-          <article class=prev>
-            <img src="../static/arrow-down.png" id="prev-photo">
-            <img src="../static/arrow-up.png" id="prev-sol">
+          <article class="prev">
+              <button type="button" name="button" id="prev-photo" class="button-primary">Previous Photo</button>
+              <button type="button" name="button" id="prev-sol" class="button-primary">Previous Sol</button>
+            <!-- <img src="../static/arrow-down.png" id="prev-photo">
+            <img src="../static/arrow-up.png" id="prev-sol"> -->
           </article>
 
-          <section class="cam-buttons"></section>
+          <section class="cam-buttons u-full-width"></section>
         </form>
+        <section class="camera-info"></section>
       </section>
     </article>
 
+
     <!-- FOOTER -->
-  	<footer class="footer">
+  	<!-- <footer class="footer row">
       &copy; 2016 | Mars Street View
-  	</footer>
+  	</footer> -->
 
     <!-- SCRIPT TAGS -->
-
-    <!-- JQUERY CDN SCRIPT -->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <!-- HANDLEBARS CDN SCRIPT -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
-
-    <!-- HOME PAGE SCRIPT -->
     <script type='text/javascript' src="static/scripts/mainView.js"></script>
-
-    <!-- ROVER HOME PAGE -->
     <script type='text/javascript' src='static/scripts/rover.js'></script>
   </body>
 </html>
