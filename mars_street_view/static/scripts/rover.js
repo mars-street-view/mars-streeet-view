@@ -43,21 +43,11 @@ function Camera(details) {
     }
 }
 
-// var template;
 // Compile the template
 Camera.prototype.compileTemplate = function(){
-    var source = $('#cam-template').html();
-    template = Handlebars.compile(source)
+    var sources = $('#cam-template').html();
+    template = Handlebars.compile(sources)
     return template(this)
-}
-
-// var a;
-// Append the template to the buttons
-function buildButtons(){
-    $('.cam-buttons').empty()
-    Camera.all.forEach(function(a){
-        $('.cam-buttons').append(a.compileTemplate());
-    });
 }
 
 // Fill list with objects
@@ -73,6 +63,89 @@ Camera.loadall = function(response) {
         }
     }
 };
+
+// Append the template to the buttons
+function buildButtons(){
+    $('.cam-buttons').empty()
+    Camera.all.forEach(function(a){
+        $('.cam-buttons').append(a.compileTemplate());
+    });
+}
+
+/////////////////////////////////////////////////
+
+function Info(details) {
+    // if (details.length > 0){
+    console.log(details)
+    this.label_sol = details.sol
+    this.rover = details.rover        
+        // Object.keys(details).forEach(function(e, index, keys) {
+        //     this[e] = details[e].img_src;
+        // }, this);
+    // }
+    // console.log(response),
+    // this.label_sol = response.sol,
+    // // console.log(current_camera.camera_full_name),
+    // this.rover = response.rover
+    // // this.cam_name = current_camera.camera_full_name
+
+}
+
+
+// function Camera(details) {
+//     if (details.length > 0){
+//         this.name = details[0].camera_full_name
+//         this.short_name = details[0].camera_short_name.toLowerCase()
+//         Object.keys(details).forEach(function(e, index, keys) {
+//             this[e] = details[e].img_src;
+//         }, this);
+//     }
+// }
+
+
+Info.prototype.compileTemplateInfo = function(){
+    console.log('COMPILE')
+    var source = $('#cam-details').html();    
+    template = Handlebars.compile(source)
+    return template(this)
+}
+
+
+Info.all = []
+Info.loadall = function(response) {
+    Info.all = [];
+    // photo_list = response.photos_by_cam;
+    for (var property in response) {
+        console.log(response[property]);
+        if (response[property].length > 0){
+            Info.all.push(new Info(response))
+        }
+    }
+    console.log(Info.all)
+};
+
+
+function buildInfo(){
+    // console.log(response);
+    $('.camera-info').empty();
+    Info.all.forEach(function(a){
+        $('.camera-info').append(a.compileTemplateInfo());
+    });
+}
+
+// // Fill list with objects
+// var Camera.all = []
+
+// // Create the objects from the ajax call
+// Camera.loadall = function(response) {
+//     Camera.all = [];
+//     photo_list = response.photos_by_cam;
+//     for (var property in photo_list) {
+//         if (photo_list[property].length > 0){
+//             Camera.all.push(new Camera(photo_list[property]))
+//         }
+//     }
+// };
 
 
 // Event Listener to run the ajax call
@@ -128,25 +201,16 @@ function fetchPhotos(rover) {
                 RoverCams.mahli = [];
                 RoverCams.mardi = [];
             };
-            // handlebar_return = []
-
-            // or
-
-            // for i in camList.photos_by_cam {
-            //     handlebar_return.push(x[i].url)
-            // }
 
             Camera.loadall(response)
             // console.log(camList)
             buildButtons()
             // take the first image and change the 'src' attribute of the main photo (NAVCAM)
-            // console.log(navcam)
-            // $('#main-photo').attr('src', navcam[count].img_src);
+            Info.loadall(response)
+            buildInfo()
             current_camera = RoverCams.navcam;
             switchMain(current_camera, count)
-            buildInfo(response)
-            console.log(response);
-            // fetchPhotos(rover, sol);
+            // console.log(response);
         }
     })
 };
@@ -155,18 +219,19 @@ function switchMain(camera, count){
     $('#main-photo').attr('src', camera[count].img_src);
 }
 
-function Info(response) {
-    this.label_sol = response.rover,
-    this.rover = response.rover,
-    this.cam_name = current_camera
-}
+// function Info(response) {
+//     this.label_sol = response.sol,
+//     console.log(current_camera.camera_full_name),
+//     this.rover = response.rover,
+//     this.cam_name = current_camera.camera_full_name
+// }
 
-function buildInfo(response){
-    var source = $('#cam-details').html();
-    template = Handlebars.compile(source)
-    $('#camera-info').empty();
-    $('#camera-info').append(template(new Info(response)))
-}
+// function buildInfo(response){
+//     var source = $('#cam-details').html();
+//     template = Handlebars.compile(source)
+//     $('#camera-info').empty();
+//     $('#camera-info').append(template(new Info(response)))
+// }
 
 
 // Event listener for the next image to populate main image space

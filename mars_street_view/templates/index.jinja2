@@ -20,11 +20,12 @@
           <h5>{{name}}<h5>
         </div>
     </script>
+
     <script id="cam-details" type="text/x-handlebars-template">
         <div class="camera-button three columns">
-          <h5>Camera: {{long_name}}<h5>
-          <h5>Sol: {{sol}}<h5>
-          <h5>Earth Date: {{earth_date}}<h5>
+          <h5>Rover: {{rover}}<h5>
+          <h5>Sol: {{label_sol}}<h5>
+          <!-- <h5>Earth Date: {{earth_date}}<h5> -->
         </div>
     </script>
     {% endraw %}
@@ -113,10 +114,10 @@
 
           <section class="cam-buttons u-full-width"></section>
         </form>
+        <section class="camera-info"></section>
       </section>
     </article>
 
-    <section id="camera-info"></section>
 
     <!-- FOOTER -->
   	<!-- <footer class="footer row">
