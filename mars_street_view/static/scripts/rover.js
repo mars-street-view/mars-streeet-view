@@ -252,3 +252,8 @@ $(".cam-buttons").on('click', function(e){
     current_camera = RoverCams[camera]
     switchMain(current_camera, 0)
 })
+
+
+// $(".mobile")
+
+

@@ -15,6 +15,7 @@
 		justify-content: center;
 	}
 
+
 	#mobile-logo {
 		display: inline-flex;
 		max-width: 450px;
@@ -41,11 +42,12 @@
 	/* HIDE WEB VIEW */
 	/**************************************/
 	.desktop-home {
+		display: none;
 		visibility: hidden; 
 	}
 
 
-	/* MOBILE VIEW */
+	/* MOBILE HOME VIEW */
 	/**************************************/
 	.mobile-home {
 		display: flex;
@@ -68,5 +70,36 @@
 		height: 350px;
 		padding-bottom: 20px;
 	}
+
+
+
+/*@media only screen and (max-width: 730px) {*/
+/*===========================================*/
+
+
+	/* HIDE ROVER VIEW */
+	/**************************************/
+	/*.home-view {
+		display: none;
+		visibility: hidden; 
+	}
+
+
+	#rover-view {
+
+	}*/
+
+	/* MOBILE ROVER VIEW */
+	/**************************************/
+
+	#mobile-rover-view {
+		display: flex;
+		justify-content: center;
+	}
+
+
+
+
+
 
 }

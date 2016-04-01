@@ -31,7 +31,7 @@
 .space {
     width: 100px;
     height: 4px;
-    background-color: red;
+    background-color: #800000;
     margin: 0 auto;
     margin-top: 5px;
     margin-bottom: 25px;
@@ -112,7 +112,7 @@ a {
 }
 
 a:hover {
-	color: red;
+	color: #800000;
 }
 
 .footer {
@@ -124,3 +124,20 @@ a:hover {
   background-color: #efefef;
   text-align: center;
 }
+
+
+/*  */
+
+
+/*.home_view {
+  
+}
+
+
+.desktop-home {
+      visibility: hidden; 
+
+}
+
+*/
+

@@ -1,3 +1,4 @@
+
 $('article.rover-info').hide();
 $('.rover-info').removeClass('hidden')
 
@@ -8,6 +9,7 @@ $('.map-loc').hover(function(){
 	$('article.rover-info').hide();
 	$('.welcome').fadeIn(200);
 })
+
 
 // $('.map-loc').on('click', function(){
 //     $('body').addClass('make-black')
