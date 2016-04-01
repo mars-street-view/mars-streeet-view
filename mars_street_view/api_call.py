@@ -45,7 +45,7 @@ def fetch_photo_data(rover, sol, camera=None):
             print('400 response for {0} {camera} sol {sol} page={page}'
                   ''.format(rover, **params))
             break
-        content, encoding = resp.content, resp.encoding
+        content, encoding = resp.content, resp.encoding or 'utf-8'
         photo_data = json.loads(content.decode(encoding))
         photos = photo_data['photos']
         if not photos:
