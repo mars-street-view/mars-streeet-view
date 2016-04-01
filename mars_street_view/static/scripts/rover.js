@@ -199,6 +199,8 @@ function fetchPhotos(rover) {
 
 function switchMain(camera, count){
     $('#main-photo').attr('src', camera[count].img_src);
+    console.log('switch'
+    );
 }
 
 
