@@ -1,7 +1,7 @@
 /* ======== MEDIA QUERIES FOR WEB ========*/
 
 
-@media only screen and (max-width: 650px) {
+@media only screen and (max-width: 990px) {
 /*===========================================*/
 
 	ul {
@@ -10,25 +10,14 @@
 
 	/* LOGO CHANGE */
 	/**************************************/
-	div.m-logo{
-		display: flex;
-		justify-content: center;
-	}
 
-
-	#mobile-logo {
-		display: inline-flex;
-		max-width: 450px;
-		max-height: 160px;
-		/*justify-content: center;*/
-	}
 
 
 	/*HIDE WEB LOGO*/
 	/**************************************/
-	#logo {
+	/*#logo {
 		visibility: hidden;
-	}
+	}*/
 
 
 	/* MAIN ROVER PHOTO */
@@ -43,12 +32,12 @@
 	/**************************************/
 	.desktop-home {
 		display: none;
-		visibility: hidden; 
+		visibility: hidden;
 	}
 
 	#rover-view, button {
 		display: none;
-		visibility: hidden; 
+		visibility: hidden;
 	}
 
 
@@ -86,7 +75,7 @@
 	/**************************************/
 	/*.home-view {
 		display: none;
-		visibility: hidden; 
+		visibility: hidden;
 	}
 
 
@@ -107,4 +96,23 @@
 
 
 
+}
+@media only screen and (max-width: 640px){
+
+    div.m-logo{
+        display: flex;
+        justify-content: center;
+    }
+
+
+    #mobile-logo {
+        display: inline-flex;
+        max-width: 450px;
+        max-height: 160px;
+        /*justify-content: center;*/
+    }
+
+    #logo {
+        visibility: hidden;
+    }
 }
