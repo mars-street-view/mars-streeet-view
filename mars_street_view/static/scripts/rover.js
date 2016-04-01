@@ -145,6 +145,7 @@ function fetchPhotos(rover) {
             current_camera = RoverCams.navcam;
             switchMain(current_camera, count)
             buildInfo(response)
+            console.log(response);
             // fetchPhotos(rover, sol);
         }
     })
@@ -155,20 +156,16 @@ function switchMain(camera, count){
 }
 
 function Info(response) {
-    this.label_sol = response.sol,
+    this.label_sol = response.rover,
     this.rover = response.rover,
     this.cam_name = current_camera
 }
 
-Info.prototype.compileFooter = function(){
+function buildInfo(response){
     var source = $('#cam-details').html();
     template = Handlebars.compile(source)
-    return template(this)
-}
-
-function buildInfo(response){
     $('#camera-info').empty();
-    $('#camera-info').append(Info.compileFooter(response))
+    $('#camera-info').append(template(new Info(response)))
 }
 
 
