@@ -5,8 +5,7 @@ import pytest
 # from webob import multidict
 from sqlalchemy import create_engine
 from pyramid import testing
-from mars_street_view.models import DBSession, Base
-from mars_street_view.scripts.initializedb import CAMERAS
+from mars_street_view.models import DBSession, Base, Photo, CAMERAS
 
 TEST_DATABASE_URL = 'sqlite:////tmp/test_db.sqlite'
 
@@ -72,13 +71,18 @@ def dbtransaction(request, sqlengine):
 @pytest.fixture()
 def pre_pop_transaction(request, sqlengine):
     """Create database transaction connection."""
-    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
-    from mars_street_view.populate_database import populate_sample_data
+    from mars_street_view.models import init_rovers_and_cameras
+    from mars_street_view.api_call import load_full_sample_data
     connection = sqlengine.connect()
     transaction = connection.begin()
     DBSession.configure(bind=connection, expire_on_commit=False)
     init_rovers_and_cameras()
-    populate_sample_data()
+
+    rov_cam_data = init_rovers_and_cameras()
+    DBSession.add_all(rov_cam_data)
+    sample_data = load_full_sample_data()
+    DBSession.add_all([Photo(**result) for result in sample_data])
+    DBSession.flush()
 
     def teardown():
         transaction.rollback()

@@ -32,7 +32,9 @@ def test_initialize_db(dbtransaction, config_uri, global_environ):
 
 def test_init_rov_cam(dbtransaction, global_environ):
     """Test that initialize_db runs and populates Rovers and cameras."""
-    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
-    init_rovers_and_cameras()
+    from mars_street_view.models import init_rovers_and_cameras
+    object_list = init_rovers_and_cameras()
+    DBSession.add_all(object_list)
+    DBSession.flush()
     assert DBSession.query(Rover).count() == 3
     assert DBSession.query(Camera).count() == 19
