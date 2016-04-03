@@ -2,34 +2,42 @@
 <html>
   <!-- HEAD -->
   <head>
-    <title>
-      Mars Street View
-    </title>
+
+    <title>Mars Street View</title>
+
+    <!-- MEDIA QUERIES -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="../static/normalize.css">
-    <link rel="stylesheet" type="text/css" href="../static/skeleton.css">
-    <link rel="stylesheet" type="text/css" href="../static/base.css">
-    <link rel="stylesheet" type="text/css" href="../static/map.css">
-    <link rel="stylesheet" type="text/css" href="../static/cam.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
+    <!-- CSS SCRIPTS -->
+    <link rel="stylesheet" type="text/css" href="static/vendors/styles/normalize.css">
+    <link rel="stylesheet" type="text/css" href="static/vendors/styles/skeleton.css">
+    <link rel="stylesheet" type="text/css" href="static/styles/base.css">
+    <link rel="stylesheet" type="text/css" href="static/styles/map.css">
+    <link rel="stylesheet" type="text/css" href="static/styles/cam.css">
+    <link rel="stylesheet" type="text/css" href="static/styles/mobile-css.css">
 
+    <!-- HANDLEBARS FOR ROVER PAGE -->
     {% raw %}
     <script id="cam-template" type="text/x-handlebars-template">
-        <div class="camera-button three columns">
+        <div class="camera-button two columns">
           <img src="{{0}}" id="{{short_name}}">
-          <h5>{{name}}<h5>
+          <h5>{{name}}</h5>
         </div>
     </script>
 
     <script id="cam-details" type="text/x-handlebars-template">
-        <div class="camera-info three columns">
-          <h5>Rover: {{rover}}<h5>
-          <h5>Sol: {{label_sol}}<h5>
+        <div class="camera-info twelve columns">
+          <div class="rover-div">
+            <h5 class="rover-title">{{rover}}<h5>
+          </div>
+          <h5>Sol: {{label_sol}}</h5>
         </div>
     </script>
     {% endraw %}
 
   </head>
+
   <!-- BODY -->
   <body>
 
@@ -37,13 +45,17 @@
     <header class="top_header">
       <div>MARS STREET VIEW</div>
     </header>
+    <!-- LOGO / NAVIGATION -->
     <section class='header'>
       <div class="logo">
-        <img id="logo" src="../static/MarsStreetView-FullLogo.png">
+        <img id="logo" src="../static/images/MSV-BLACK.svg">
+      </div>
+      <div hidden class="m-logo">
+        <img id="mobile-logo" src="../static/images/MSV-FINAL-MOBILE.svg">
       </div>
       <nav class="nav">
         <ul>
-          <li class="nav_item"><a href="">HOME</a></li>
+          <li class="nav_item"><a href="" id="home">HOME</a></li>
         </ul>
       </nav>
       <div class="space"></div>
@@ -51,111 +63,194 @@
 
     <!-- HOME CONTAINER -->
     <article class="container">
-    <div class="home-view">
-      <div class="desktop-home">
-      <section class="main-menu row" id="menu-home">
 
-        <!-- MAR GLOBE -->
-  			<section class="planet-menu six columns">
-  				<figure class="mars">
-  					<span class="caps"></span>
-  					<span id="opportunity" class="map-loc"></span>
-  					<span id="curiosity" class="map-loc"></span>
-  					<span id="spirit" class="map-loc"></span>
-  				</figure>
-  			</section>
+      <!-- WEB HOME -->
+      <div class="home-view">
+        <div class="desktop-home">
+          <section class="main-menu row" id="menu-home">
 
-        <!-- ALL ROVER INFO -->
-  			<section class="info six columns">
-                <article class="welcome">
-  					<h2>Click a Rover!</h2>
-                    <ul>
-                    <li>Walk the red planet alongside your favorite little robots. Get ready for some fun in the sun and the dirt and the dust... the dust goes on in every direction forever. Mars is devoid of life!</li>
-                    </ul>
-  				</article>
-  				<article class="rover-info hidden" rover="Opportunity" rover-lower="opportunity">
-  					<h2>Opportunity</h2>
-                      <ul>
-  					   <li>Status: Active</li>
-                       <li>Landing Date: January 25, 2004</li>
-                       <li>Mission Sols: 2208</li>
-                       <li>Total photos: 179081</li>
-                       <li>Cameras: 5</li>
-                       <li>Opportunity landed on Mars 3 weeks after its twin, Spirit. While its mission was planned to last 90 days, Opportunity has operated continuously for 4327 sols (Martian days) as of March 31st, 2016. It has exceeded its planned operational capacity by 11 years and 337</li>
-                     </ul>
-  				</article>
-  				<article class="rover-info hidden" rover="Curiosity" rover-lower="curiosity">
-  					<h2>Curiosity</h2>
-  					<ul>
-                      <li>Status: Active</li>
-                      <li>Landing Date: August 6, 2012</li>
-                      <li>Mission Sols: 1298</li>
-                      <li>Total photos:  312866</li>
-                      <li>Cameras: 17</li>
-                      <li>The purpose of Curiosity was to find out if Mars could or had supported life. It’s arms are over 7 feet and the rover is almost 10 feet long, 9 feet wide and 7 feet tall. </li>
-                    </ul>
-  				</article>
-  				<article class="rover-info hidden" rover="Spirit" rover-lower="spirit">
-  					<h2>Spirit</h2>
-  				    <ul>
-                      <li>Status: Offline permanently</li>
-                      <li>Landing date:  January 4, 2004</li>
-                      <li>Mission sols: 2208</li>
-                      <li>Total photos: 124550</li>
-                      <li>Cameras: 5</li>
-                      <li>Spirit landed on Mars 3 weeks before its twin, Opportunity. While its mission was planned to last 90 days, Spirit continued to operate for 2208 sols (Martian days). Spirit became stuck in a sand pit on May 2009, then gradually ceased to function as its solar panels became covered with dust. Its last communication to Earth was March 22, 2010.</li>
-                    </ul>
-  				</article>
-  			</section>
-  		</section>
-    </div>
-    <div class="mobile-home hidden">
-    <h1 class="rover-title-mobile">Curiosity</h1>
-        <div>
-            <img src="/static/Mars-Curiosity-Rover.jpg" class="rover-thumbnail">
+            <!-- MAR GLOBE -->
+      			<section class="planet-menu six columns">
+      				<figure class="mars">
+      					<span class="caps"></span>
+      					<span id="opportunity" class="map-loc"></span>
+      					<span id="curiosity" class="map-loc"></span>
+      					<span id="spirit" class="map-loc"></span>
+      				</figure>
+      			</section>
+
+            <!-- ALL ROVER INFO -->
+      			<section class="info six columns">
+
+              <!-- HOME INTRO -->
+              <article class="welcome">
+      					<h2>Welcome to Mars Street View!</h2>
+                <ul>
+                  <li>Walk the red planet alongside your favorite little robots. Get ready for some fun in the sun and the dirt and the dust... the dust goes on in every direction forever. Mars is devoid of life! <strong>Click a rover to begin!</strong></li>
+                </ul>
+      				</article>
+
+              <!-- OPPORTUNITY HOME -->
+      				<article class="rover-info hidden" rover="Opportunity" rover-lower="opportunity">
+      					<h2>Opportunity</h2>
+                  <ul>
+      					   <li><strong>Status</strong>: Active</li>
+                   <li><strong>Landing Date</strong>: January 25, 2004</li>
+                   <li><strong>Mission Sols</strong>: 2208</li>
+                   <li><strong>Total photos</strong>: 179081</li>
+                   <li><strong>Cameras</strong>: 5</li>
+                   <li>Opportunity landed on Mars 3 weeks after its twin, Spirit. While its mission was planned to last 90 days, Opportunity has operated continuously for 4327 sols (Martian days) as of March 31st, 2016. It has exceeded its planned operational capacity by 11 years and 337</li>
+                 </ul>
+      				</article>
+
+
+
+              <!-- CURIOSITY HOME -->
+      				<article class="rover-info hidden" rover="Curiosity" rover-lower="curiosity">
+      					<h2>Curiosity</h2>
+      					<ul>
+                  <li><strong>Status</strong>: Active</li>
+                  <li><strong>Landing Date</strong>: August 6, 2012</li>
+                  <li><strong>Mission Sols</strong>: 1298</li>
+                  <li><strong>Total photos</strong>:  312866</li>
+                  <li><strong>Cameras</strong>: 7</li>
+                  <li>The purpose of Curiosity was to find out if Mars could or had supported life. It’s arms are over 7 feet and the rover is almost 10 feet long, 9 feet wide and 7 feet tall.</li>
+                </ul>
+      				</article>
+
+              <!-- SPIRIT HOME -->
+      				<article class="rover-info hidden" rover="Spirit" rover-lower="spirit">
+      					<h2>Spirit</h2>
+    				    <ul>
+                  <li><strong>Status</strong>: Offline permanently</li>
+                  <li><strong>Landing date</strong>:  January 4, 2004</li>
+                  <li><strong>Mission sols</strong>: 2208</li>
+                  <li><strong>Total photos</strong>: 124550</li>
+                  <li><strong>Cameras</strong>: 5</li>
+                  <li>Spirit landed on Mars 3 weeks before its twin, Opportunity. While its mission was planned to last 90 days, Spirit continued to operate for 2208 sols (Martian days). Spirit became stuck in a sand pit on May 2009, then gradually ceased to function as its solar panels became covered with dust. Its last communication to Earth was March 22, 2010.</li>
+                </ul>
+      				</article>
+
+        		</section>
+        	</section>
         </div>
-    <h1 class="rover-title-mobile">Opportunity</h1>
-        <div>
-            <img src="/static/NASA_Mars_Rover.jpg" class="rover-thumbnail">
+
+        <!-- MOBILE HOME -->
+        <div class="mobile-home" hidden>
+
+          <article class="welcome">
+            <h2>Welcome to Mars Street View!</h2>
+            <ul>
+              <li>Walk the red planet alongside your favorite little robots. Get ready for some fun in the sun and the dirt and the dust... the dust goes on in every direction forever. Mars is devoid of life! <strong>Mobile site coming soon. Go away, nobody likes you.</strong></li>
+            </ul>
+          </article>
+
+          <!-- CURIOSITY MOBILE -->
+          <div class="title-mobile">
+            <h1 class="rover-title-mobile Curiosity">Curiosity</h1>
+          </div>
+          <div class="title-mobile">
+            <img src="/static/images/Mars-Curiosity-Rover.jpg" class="rover-thumbnail">
+          </div>
+          <div class="mobile-info">
+            <ul>
+              <li><strong>Status</strong>: Active</li>
+              <li><strong>Landing Date</strong>: August 6, 2012</li>
+              <li><strong>Mission Sols</strong>: 1298</li>
+              <li><strong>Total photos</strong>:  312866</li>
+              <li><strong>Cameras</strong>: 7</li>
+              <li>The purpose of Curiosity was to find out if Mars could or had supported life. It’s arms are over 7 feet and the rover is almost 10 feet long, 9 feet wide and 7 feet tall.</li>
+            </ul>
+          </div>
+
+          <!-- OPPORTUNITY MOBILE -->
+          <div class="title-mobile">
+            <h1 class="rover-title-mobile Opportunity">Opportunity</h1>
+          </div>
+          <div class="title-mobile">
+            <img src="/static/images/NASA_Mars_Rover.jpg" class="rover-thumbnail">
+          </div>
+          <div class="mobile-info">
+            <ul>
+              <li><strong>Status</strong>: Active</li>
+              <li><strong>Landing Date</strong>: January 25, 2004</li>
+              <li><strong>Mission Sols</strong>: 2208</li>
+              <li><strong>Total photos</strong>: 179081</li>
+              <li><strong>Cameras</strong>: 5</li>
+              <li>Opportunity landed on Mars 3 weeks after its twin, Spirit. While its mission was planned to last 90 days, Opportunity has operated continuously for 4327 sols (Martian days) as of March 31st, 2016. It has exceeded its planned operational capacity by 11 years and 337.</li>
+            </ul>
+          </div>
+
+          <!-- SPIRIT MOBILE -->
+          <div class="title-mobile">
+            <h1 class="rover-title-mobile Spirit">Spirit</h1>
+          </div>
+          <div class="title-mobile">
+            <img src="/static/images/rover21-full.jpg" class="rover-thumbnail">
+          </div>
+          <div class="mobile-info">
+            <ul>
+              <li><strong>Status</strong>: Offline Permanently</li>
+              <li><strong>Landing Date</strong>:  January 4, 2004</li>
+              <li><strong>Mission Sols</strong>: 2208</li>
+              <li><strong>Total Photos</strong>: 124550</li>
+              <li><strong>Cameras</strong>: 5</li>
+              <li>Spirit landed on Mars 3 weeks before its twin, Opportunity. While its mission was planned to last 90 days, Spirit continued to operate for 2208 sols (Martian days). Spirit became stuck in a sand pit on May 2009, then gradually ceased to function as its solar panels became covered with dust. Its last communication to Earth was March 22, 2010.</li>
+            </ul>
+          </div>
         </div>
-    <h1 class="rover-title-mobile">Spirit</h1>
-        <div>
-            <img src="/static/rover21-full.jpg" class="rover-thumbnail">
-        </div>
-    </div>
+      </div>
+
       <!-- ROVER PAGE -->
       <section id="rover-view" class="hidden">
+        <section class="camera-info"></section>
         <form class="rover-form">
-
           <article class="next">
-              <button type="button" name="button" id="next-photo" class="button red">Next Photo</button>
-              <button type="button" name="button" id="next-sol" class="button right red">Next Sol</button>
-              <!-- <button type="button" name="button" id="next-ten" class="button-primary">Next Ten</button>
-              <button type="button" name="button" id="next-hundred" class="button-primary">Next Hundred</button> -->
-            <!-- <img src="../static/arrow-up.png" id="next-photo">
-            <img src="../static/arrow-up.png" id="next-sol"> -->
+            <button type="button" name="button" id="next-photo" class="button-primary">Next Photo</button>
+            <button type="button" name="button" id="next-sol" class="button-primary right">Next Sol</button>
+            <!-- <button type="button" name="button" id="next-ten" class="button-primary">Next Ten</button>
+            <button type="button" name="button" id="next-hundred" class="button-primary">Next Hundred</button> -->
           </article>
-          <section class="main-section">
+            <section class="main-section">
               <img src="" id='main-photo'/>
-          </section>
+            </section>
           <article class="prev">
-              <button type="button" name="button" id="prev-photo" class="button red">Previous Photo</button>
-              <button type="button" name="button" id="prev-sol" class="button right red">Previous Sol</button>
-            <!-- <img src="../static/arrow-down.png" id="prev-photo">
-            <img src="../static/arrow-up.png" id="prev-sol"> -->
+            <button type="button" name="button" id="prev-photo" class="button-primary">Previous Photo</button>
+            <button type="button" name="button" id="prev-sol" class="button-primary right">Previous Sol</button>
           </article>
-
           <section class="cam-buttons u-full-width"></section>
         </form>
-        <section class="camera-info"></section>
       </section>
-      </div>
+
+      <section id="mobile-rover-view" class="hidden">
+        <section class="camera-info"></section>
+        <form class="rover-form">
+          <article class="next">
+            <button type="button" name="button" id="next-photo" class="button-primary">Next Photo</button>
+            <button type="button" name="button" id="next-sol" class="button-primary right">Next Sol</button>
+            <!-- <button type="button" name="button" id="next-ten" class="button-primary">Next Ten</button>
+            <button type="button" name="button" id="next-hundred" class="button-primary">Next Hundred</button> -->
+          </article>
+            <section class="main-section">
+              <img src="" id='main-photo'/>
+            </section>
+          <article class="prev">
+            <button type="button" name="button" id="prev-photo" class="button-primary">Previous Photo</button>
+            <button type="button" name="button" id="prev-sol" class="button-primary right">Previous Sol</button>
+          </article>
+          <section class="cam-buttons u-full-width"></section>
+        </form>
+      </section>
+
+
+
+
     </article>
 
 
     <!-- FOOTER -->
-  	<!-- <footer class="footer row">
-      &copy; 2016 | Mars Street View
+<!--   	<footer class="footer row">
+      &copy; 2016 | GitHub: <a href="https://github.com/mars-street-view">Mars Street View</a>
   	</footer> -->
 
     <!-- SCRIPT TAGS -->
