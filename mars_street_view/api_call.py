@@ -1,86 +1,106 @@
 # _*_ Coding: utf-8 _*_
+"""Call the NASA Mars Rover Photo API and return image data."""
 from __future__ import unicode_literals
 
 import os
 import io
 import requests
 import json
-# from sys import argv
+import time
 
-CURIOSITY = 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos'
-OPPORTUNITY = 'https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos'
-SPIRIT = 'https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos'
-NASA_API = os.environ.get('NASA_API_KEY')
 
-INSPECTION_PARAMS = {
-    'sol': "",
-    'api_key': NASA_API,
-    'page': "",
+SAMPLE_DATA_PATH = os.environ.get('SAMPLE_DATA_PATH')
+
+BASE_URL = 'https://api.nasa.gov/mars-photos/api/v1/rovers/'
+
+ROVERS = {
+    'Curiosity': ''.join((BASE_URL, 'curiosity/photos')),
+    'Opportunity': ''.join((BASE_URL, 'opportunity/photos')),
+    'Spirit': ''.join((BASE_URL, 'spirit/photos')),
 }
+NASA_API_KEY = os.environ.get('NASA_API_KEY')
 
 
-def get_inspection_page(rover, sol, page):
+def fetch_photo_data(rover, sol, camera=None):
     """Make API call to NASA."""
-    url = ""
-    if rover == 'spirit':
-        url = SPIRIT
-    elif rover == 'opportunity':
-        url = OPPORTUNITY
-    else:
-        url = CURIOSITY
-
-    params = INSPECTION_PARAMS.copy()
-    # for key, val in kwargs.items():
-    #     if key in INSPECTION_PARAMS:
-    #         params[key] = val
-    params['sol'] = sol
-    params['page'] = page
-    resp = requests.get(url, params=params)
-    resp.raise_for_status()  # <- This is a no-op if there is no HTTP error
-    # remember, in requests `content` is bytes and `text` is unicode
-    return resp.content, resp.encoding
-
-
-def write_to_file(resp, file_name):
-    """Save JSON to a file."""
-    content, encoding = resp
-    file = io.open(file_name, encoding='utf-8', mode='w')
-    file.write(content.decode(encoding))
-    file.close()
-
-
-def read_json(file):
-    """Parse JSON."""
-    text = io.open(file, encoding='utf-8', mode='r')
-    unparsed = text.read()
-    parsed = json.loads(unparsed)
-    return parsed['photos']
-
-
-def get_one_sol(rover, sol):
-    """Return all photos for one sol, given rover and sol."""
-    page = 0
-    content, encoding = get_inspection_page(rover, sol, page)
-    content = content.decode('utf-8')
-    pcontent = json.loads(content)
-    lst = list(pcontent['photos'])
-    while pcontent['photos'] != []:
+    try:
+        url = ROVERS[rover]
+    except KeyError:
+        raise ValueError('Incorrect rover name provided.')
+    page = 1
+    lst = []
+    found_ids = set()
+    while True:
+        params = {
+            'sol': sol,
+            'page': page,
+            'api_key': NASA_API_KEY,
+        }
+        if camera:
+            params['camera'] = camera
+        resp = requests.get(url, params=params)
+        if resp.status_code == 400:
+            params['camera'] = camera or ''
+            print('400 response for {0} {camera} sol {sol} page={page}'
+                  ''.format(rover, **params))
+            break
+        content, encoding = resp.content, resp.encoding or 'utf-8'
+        photo_data = json.loads(content.decode(encoding))
+        photos = photo_data.get('photos', [])
+        if not photos:
+            break
+        for photo in photos:
+            if photo['id'] not in found_ids:
+                lst.append(photo)
+                found_ids.add(photo['id'])
         page += 1
-        new_content, encoding = get_inspection_page(rover, sol, page)
-        new_content = new_content.decode('utf-8')
-        pcontent = json.loads(new_content)
-        lst.extend(pcontent['photos'])
-        # print("test 25: " + str(pcontent))
-        # print("******************")
-        # print('len: ' + str(len(lst)))
-    print(lst[-1])
-    print('length of list:')
-    print(len(lst))
+
     return lst
 
 
+def fetch_and_save_data_sample():
+    """Download and save json data sample of the first day of each mission."""
+    import pdb; pdb.set_trace()
+    photo_list = []
+    for rover in ROVERS:
+        for sol in range(0, 5):
+            photo_list.extend(get_one_sol(rover, sol, True))
+            time.sleep(1)
+    data = {'photos': photo_list}
+    write_to_json_file(data, SAMPLE_DATA_PATH)
+    print('Successfully saved {} photo objects to {}.'
+          ''.format(len(photo_list), SAMPLE_DATA_PATH))
 
-if __name__ == '__main__':
-    # write_to_file(get_inspection_page('curiostiy', 1000, 1), 'sample_data.json')
-    # read_json('sample_data.json')
-    get_one_sol('curiosity', 780)
+
+def load_photo_data(rover, sol):
+    """Load list of related photos from sample json file instead."""
+    data = read_json_from_file(SAMPLE_DATA_PATH)
+    return [photo for photo in data['photos']
+            if photo['rover']['name'] == rover and photo['sol'] == sol]
+
+
+def load_full_sample_data():
+    """Load list of related photos from sample json file instead."""
+    data = read_json_from_file(SAMPLE_DATA_PATH)
+    return data['photos']
+
+
+def write_to_json_file(data, file_name, encoding='utf-8'):
+    """Save JSON to a file."""
+    with io.open(file_name, encoding=encoding, mode='w') as file:
+        json.dump(data, file)
+
+
+def read_json_from_file(file_name, encoding='utf-8'):
+    """Parse JSON."""
+    with io.open(file_name, encoding=encoding, mode='r') as file:
+        return json.load(file)
+
+
+def get_one_sol(rover, sol, fetch=False, camera=None):
+    """Return all photos for one sol, given rover and sol."""
+    if fetch:
+        photo_list = fetch_photo_data(rover, sol, camera)
+    else:
+        photo_list = load_photo_data(rover, sol)
+    return photo_list

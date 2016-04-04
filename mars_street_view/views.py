@@ -1,23 +1,48 @@
 """Establish view functions for Mars Street View web app."""
+from __future__ import unicode_literals, print_function
 from pyramid.response import Response
 from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
 from .models import (
+    MyModel,  # Put this back in so tets pass.
     DBSession,
-    MyModel,
+    Photo
 )
 
 
-@view_config(route_name='home', renderer='templates/home.jinja2')
+@view_config(route_name='home', renderer='templates/index.jinja2')
 def home_view(request):
     """Home page view."""
     try:
         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
     except DBAPIError:
-        return Response(conn_err_msg, content_type='text/plain', status_int=500)
+        return Response(conn_err_msg, content_type='text/plain',
+                        status_int=500)
     return {'one': one, 'project': 'mars-street-view'}
+
+
+class DummyPhoto(object):
+    """Object for testing an expected Photo object."""
+
+    url = 'http://i.telegraph.co.uk/multimedia/archive/02445/mars_2445397b.jpg'
+    id = 7
+
+    def __json__(self, request):
+        """Return dict object suitable for converting into json."""
+        return {'url': self.url}
+
+
+@view_config(route_name='rover', renderer='json')
+def rover_view(request):
+    """Return appropriate pictures for a rover request."""
+    rover = request.matchdict['rover_name']
+    # Photo.get_rov_sol returns a dictionary with keys 'rov', 'sol',
+    # and photos_by_cam
+    sol = int(request.matchdict['sol'])
+    data = Photo.get_rov_sol(rover, sol)
+    return data
 
 
 conn_err_msg = """\
