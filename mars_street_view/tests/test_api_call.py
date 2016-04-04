@@ -6,12 +6,12 @@ import pytest
 JSON_TEST_FILE = os.path.join(os.path.dirname(__file__), 'jsontest.json')
 
 
-def test_fetch_photo_data():
-    """Test that the url returns content for one rover."""
-    from mars_street_view.api_call import fetch_photo_data
-    rover_name = 'Curiosity'
-    data = fetch_photo_data(rover_name, 1)
-    assert isinstance(data, list)
+# def test_fetch_photo_data():
+#     """Test that the url returns content for one rover."""
+#     from mars_street_view.api_call import fetch_photo_data
+#     rover_name = 'Curiosity'
+#     data = fetch_photo_data(rover_name, 1)
+#     assert isinstance(data, list)
 
 
 def test_fetch_photo_data_fail():
@@ -54,11 +54,11 @@ def test_write_read_json():
     assert read_json_from_file(JSON_TEST_FILE) == data
 
 
-def test_fetch_and_save_data_sample():
-    """Test that function fetches data directly from API and save to json."""
-    from mars_street_view.api_call import (
-        fetch_and_save_data_sample, read_json_from_file)
-    fetch_and_save_data_sample(JSON_TEST_FILE, ['Curiosity'], range(1))
-    data = read_json_from_file(JSON_TEST_FILE)
-    photos = data.get('photos', None)
-    assert isinstance(photos, list) and len(photos) > 10
+# def test_fetch_and_save_data_sample():
+#     """Test that function fetches data directly from API and save to json."""
+#     from mars_street_view.api_call import (
+#         fetch_and_save_data_sample, read_json_from_file)
+#     fetch_and_save_data_sample(JSON_TEST_FILE, ['Curiosity'], range(1))
+#     data = read_json_from_file(JSON_TEST_FILE)
+#     photos = data.get('photos', None)
+#     assert isinstance(photos, list) and len(photos) > 10

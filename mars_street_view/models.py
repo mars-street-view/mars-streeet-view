@@ -50,7 +50,7 @@ class Photo(Base):
         try:
             rover_name = rover['name']
             kwargs['rover_name'] = rover_name
-        except AttributeError:
+        except TypeError:
             raise KeyError('Photo must be initialized with a rover obj.')
         except KeyError:
             raise KeyError('Given rover object does not have a name.')
