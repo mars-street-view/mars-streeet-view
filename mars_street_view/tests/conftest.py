@@ -9,8 +9,6 @@ from pyramid import testing
 from mars_street_view.models import (
     DBSession,
     Base,
-    Rover,
-    Camera,
     Photo,
     CAMERAS
 )
@@ -141,8 +139,9 @@ def rov_cam_transaction(request, sqlengine):
     return connection
 
 
-@pytest.fixture(params=range(1, 4))
+@pytest.fixture(params=range(1, 5))
 def sol(request):
+    """Establish a small range of sols over which to test."""
     return request.param
 
 
@@ -197,21 +196,25 @@ def model_test_params():
 
 @pytest.fixture(scope='session')
 def rover_params():
+    """Establish parameters to initalize a Rover model."""
     return ROVER_PARAMS
 
 
 @pytest.fixture(scope='session')
 def photo_params():
+    """Establish parameters to initializ a Photo model."""
     return PHOTO_PARAMS
 
 
 @pytest.fixture(scope='session')
 def camera_params():
+    """Establish parameters to initialize a Camera model."""
     return CAMERA_PARAMS
 
 
 @pytest.fixture()
 def full_photo_params(photo_params, rover_params, camera_params):
+    """Establish a full data object similar to those available through API."""
     full_params = {
         'id': 549762,
         'sol': 1294,
@@ -221,7 +224,9 @@ def full_photo_params(photo_params, rover_params, camera_params):
             'rover_name': 'Curiosity',
             'full_name': "Front Hazard Avoidance Camera"
         },
-        'img_src': "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01294/opgs/edr/fcam/FLB_512366594EDR_F0532406FHAZ00323M_.JPG",
+        'img_src': ("http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/"
+                    "ods/surface/sol/01294/opgs/edr/fcam/FLB_512366594EDR_F053"
+                    "2406FHAZ00323M_.JPG"),
         'earth_date': "2016-03-27",
         'rover': {
             'id': 5,
@@ -233,6 +238,17 @@ def full_photo_params(photo_params, rover_params, camera_params):
         }
     }
     return full_params
+
+
+class DummyPhoto(object):
+    """Object for testing an expected Photo object."""
+
+    url = 'http://i.telegraph.co.uk/multimedia/archive/02445/mars_2445397b.jpg'
+    id = 7
+
+    def __json__(self, request):
+        """Return dict object suitable for converting into json."""
+        return {'url': self.url}
 
 
 @pytest.fixture()
@@ -250,7 +266,6 @@ def app(request, global_environ, config_uri):
 
     request.addfinalizer(teardown)
     return test_app
-
 
 
 @pytest.fixture()

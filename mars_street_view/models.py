@@ -5,7 +5,6 @@ from sqlalchemy import (
     Integer,
     String,
     ForeignKey,
-    Text,
     func
 )
 from zope.sqlalchemy import ZopeTransactionExtension
@@ -30,15 +29,6 @@ LOW_RES_SPI_OPP = '%ESF_____________-BR.JPG'
 BAD_CUR_1 = '%_M_______NCAM_______.JPG'
 BAD_CUR_2 = '%SAPP_______.JPG'
 BAD_CUR_3 = '%_D_______TRAV_______.JPG'
-
-
-class MyModel(Base):
-    """Test model."""
-
-    __tablename__ = 'models'
-    id = Column(Integer, primary_key=True)
-    name = Column(Text)
-    value = Column(Integer)
 
 
 class Photo(Base):
