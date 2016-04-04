@@ -1,5 +1,6 @@
 """Test SQLAlchemy database and Pyramid app initialization."""
 import os
+import pytest
 from mars_street_view.models import DBSession, Rover, Camera, Photo
 
 
@@ -22,12 +23,19 @@ def test_db_empty(dbtransaction):
                 DBSession.query(Photo).count() == 0])
 
 
-# def test_initialize_db(dbtransaction, config_uri, global_environ):
-#     """Test that initialize_db runs and populates Rovers and cameras."""
-#     from mars_street_view.scripts.initializedb import main
-#     main(['initialize_db', config_uri])
-#     assert DBSession.query(Rover).count() == 3
-#     assert DBSession.query(Camera).count() == 19
+def test_initialize_db_fail(dbtransaction, config_uri, empty_environ):
+    """Test initialize_db fails when no config_uri is passed."""
+    from mars_street_view.scripts.initializedb import main
+    with pytest.raises(SystemExit):
+        main(['initialize_db'])
+
+
+def test_initialize_db(dbtransaction, config_uri, global_environ):
+    """Test that initialize_db runs without crashing."""
+    from mars_street_view.scripts.initializedb import main
+    main(['initialize_db', config_uri])
+    assert DBSession.query(Rover).count() == 3
+    assert DBSession.query(Camera).count() == 19
 
 
 def test_init_rov_cam(dbtransaction, global_environ):

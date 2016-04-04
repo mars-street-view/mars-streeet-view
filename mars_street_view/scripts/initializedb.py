@@ -5,10 +5,7 @@ import transaction
 
 from sqlalchemy import engine_from_config
 
-from pyramid.paster import (
-    get_appsettings,
-    setup_logging,
-)
+from pyramid.paster import get_appsettings, setup_logging
 
 from pyramid.scripts.common import parse_vars
 
@@ -35,6 +32,7 @@ def main(argv=sys.argv):
     options = parse_vars(argv[2:])
     setup_logging(config_uri)
     settings = get_appsettings(config_uri, options=options)
+    # import pdb; pdb.set_trace()
     if not settings.get('sqlalchemy.url'):
         try:
             settings['sqlalchemy.url'] = os.environ['MARS_DATABASE_URL']

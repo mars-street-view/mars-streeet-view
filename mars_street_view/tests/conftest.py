@@ -23,11 +23,24 @@ except KeyError:
     sys.exit()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def global_environ(request):
     """Establish test database url as a fixture for entire session."""
     prior = os.environ.get('MARS_DATABASE_URL', '')
     os.environ['MARS_DATABASE_URL'] = TEST_DATABASE_URL
+
+    def revert():
+        os.environ['MARS_DATABASE_URL'] = prior
+
+    request.addfinalizer(revert)
+    return True
+
+
+@pytest.fixture()
+def empty_environ(request):
+    """Establish test database url as a fixture for entire session."""
+    prior = os.environ.get('MARS_DATABASE_URL', '')
+    os.environ['MARS_DATABASE_URL'] = ''
 
     def revert():
         os.environ['MARS_DATABASE_URL'] = prior
