@@ -24,6 +24,20 @@ def test_photo_init_error_no_rover_name(full_photo_params):
         Photo(**full_photo_params)
 
 
+def test_photo_init_error_no_camera(full_photo_params):
+    """Ensure that Photo throws an error when initializing without a camera."""
+    del full_photo_params['camera']
+    with pytest.raises(KeyError):
+        Photo(**full_photo_params)
+
+
+def test_photo_init_error_no_camera_name(full_photo_params):
+    """Ensure that Photo throws an error when camera has no name."""
+    del full_photo_params['camera']['name']
+    with pytest.raises(KeyError):
+        Photo(**full_photo_params)
+
+
 def test_db_add(dbtransaction, model_test_params):
     """Test that one of each type of model can be added to the DB."""
     for model_name, params in model_test_params:

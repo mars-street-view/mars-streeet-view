@@ -46,7 +46,7 @@ class Photo(Base):
             raise KeyError('Given rover object does not have a name.')
         try:
             kwargs['camera_name'] = '_'.join((rover_name, camera['name']))
-        except AttributeError:
+        except TypeError:
             raise KeyError('Photo must be initialized with a camera obj.')
         except KeyError:
             raise KeyError('Given camera object does not have a name.')
