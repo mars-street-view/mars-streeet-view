@@ -60,6 +60,7 @@ def fetch_photo_data(rover, sol, camera=None):
 
 def fetch_and_save_data_sample():
     """Download and save json data sample of the first day of each mission."""
+    import pdb; pdb.set_trace()
     photo_list = []
     for rover in ROVERS:
         for sol in range(0, 5):
