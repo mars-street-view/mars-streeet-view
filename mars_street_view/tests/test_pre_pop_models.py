@@ -2,6 +2,35 @@
 from mars_street_view.models import DBSession, Rover, Photo, Camera
 
 
+def test_pre_populate_sample_data_photos(pre_pop_transaction, global_environ):
+    """Test that sample data can be loaded into DB."""
+    from mars_street_view.api_call import load_full_sample_data
+    sample_data = load_full_sample_data()
+    assert DBSession.query(Photo).count() == len(sample_data)
+
+
+def test_populated_rel_photo_rover(pre_pop_transaction, global_environ):
+    """Test that Rover-Photo relationships of prepopulated DB are correct."""
+    for photo in DBSession.query(Photo).all():
+        assert photo.rover_name
+    for rover in DBSession.query(Rover).all():
+        assert rover.photos.count() > 1
+
+
+def test_populated_rel_photo_camera(pre_pop_transaction, global_environ):
+    """Test that Camera-Photo relationships of prepopulated DB are correct."""
+    for photo in DBSession.query(Photo).all():
+        assert photo.camera_name
+
+
+def test_populated_rel_rover_camera(pre_pop_transaction, global_environ):
+    """Test that Rover-Camera relationships of prepopulated DB are correct."""
+    for camera in DBSession.query(Camera).all():
+        assert camera.rover_name
+    for rover in DBSession.query(Rover).all():
+        assert rover.cameras.count() > 1
+
+
 def test_rov_sol_lots(pre_pop_transaction, global_environ, rover_name,
                       sol):
     """Test get_rov_sol returns correct camera names on pre-populated DB."""
