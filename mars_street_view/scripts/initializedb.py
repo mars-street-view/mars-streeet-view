@@ -9,12 +9,8 @@ from pyramid.paster import get_appsettings, setup_logging
 
 from pyramid.scripts.common import parse_vars
 
-from ..models import (
-    DBSession,
-    Base,
-    init_rovers_and_cameras,
-)
-
+from ..models import DBSession, Base
+from ..populate_database import populate_rovers_cameras
 
 def usage(argv):
     """Print message to stdout explaining correct usage syntax."""
@@ -43,10 +39,4 @@ def main(argv=sys.argv):
         except KeyError:
             print('Required NASA_API_KEY not set in global os environment.')
             sys.exit()
-    engine = engine_from_config(settings, 'sqlalchemy.')
-    DBSession.configure(bind=engine)
-    Base.metadata.create_all(engine)
-    objects_list = init_rovers_and_cameras()
-    with transaction.manager:
-        DBSession.add_all(objects_list)
-        DBSession.flush()
+    populate_rovers_cameras()
