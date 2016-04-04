@@ -31,3 +31,12 @@ def test_left_lens_only(pre_pop_transaction, global_environ, rover_name,
     assert photo_list and all([photo.img_src[-11] != 'R'
                                for photo in photo_list])
 
+
+def test_photo_model_json(pre_pop_transaction, global_environ, photo_params,
+                          dummy_request):
+    """Assert Photo __json__ value can be converted to and from json."""
+    import json
+    photo = DBSession.query(Photo).first()
+    json_string = json.dumps(photo.__json__(dummy_request))
+    assert isinstance(json_string, str)
+    assert isinstance(json.loads(json_string), dict)

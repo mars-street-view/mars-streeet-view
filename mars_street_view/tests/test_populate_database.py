@@ -2,6 +2,28 @@
 from mars_street_view.models import DBSession, Photo, Rover, Camera
 
 
+def test_db_url(global_environ):
+    """Test that tests are correctly using the test datbase."""
+    import os
+    from conftest import TEST_DATABASE_URL
+    assert os.environ['MARS_DATABASE_URL'] == TEST_DATABASE_URL
+
+
+def test_db_empty(dbtransaction, global_environ):
+    """Check that test database initializes empty each time."""
+    assert all([DBSession.query(Rover).count() == 0,
+                DBSession.query(Camera).count() == 0,
+                DBSession.query(Photo).count() == 0])
+
+
+def test_populate_rov_cam(dbtransaction, global_environ):
+    """Test that populate_rovers_cameras works as expected."""
+    from mars_street_view.populate_database import populate_rovers_cameras
+    populate_rovers_cameras()
+    assert DBSession.query(Rover).count() == 3
+    assert DBSession.query(Camera).count() == 19
+
+
 def test_populate_one_sol(dbtransaction, rover_name, global_environ):
     """Test that main function populates database."""
     from mars_street_view.populate_database import populate_one_sol

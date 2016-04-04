@@ -117,18 +117,6 @@ def test_rov_sol_one_photo(dbtransaction, global_environ, rover_params,
     assert Photo.get_rov_sol(rover, sol) == expected
 
 
-def test_photo_model_json(dbtransaction, global_environ, photo_params,
-                          dummy_request):
-    """Assert Photo __json__ value can be converted to and from json."""
-    import json
-    photo = Photo(**photo_params)
-    DBSession.add(photo)
-    DBSession.flush()
-    json_string = json.dumps(photo.__json__(dummy_request))
-    assert isinstance(json_string, str)
-    assert isinstance(json.loads(json_string), dict)
-
-
 def test_get_rov_sol_blank_day(dbtransaction, global_environ, photo_params,
                                rover_params, camera_params):
     """Compare sol with no photos to next sol with photos.  Should be equal."""
