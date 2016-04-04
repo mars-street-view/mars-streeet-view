@@ -12,7 +12,7 @@ def test_db_is_empty(dbtransaction, model_name):
 
 def test_db_add(dbtransaction, model_test_params):
     """Test that one of each type of model can be added to the DB."""
-    for model_name, params in model_test_params.items():
+    for model_name, params in model_test_params:
         model = globals()[model_name]
         instance = model(**params)
         DBSession.add(instance)

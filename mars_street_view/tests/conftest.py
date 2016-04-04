@@ -155,9 +155,9 @@ PHOTO_PARAMS = {
 @pytest.fixture(scope='session')
 def model_test_params():
     """Establish parameters for all the Model types."""
-    return {'Rover': ROVER_PARAMS,
-            'Camera': CAMERA_PARAMS,
-            'Photo': PHOTO_PARAMS}
+    return [('Rover', ROVER_PARAMS),
+            ('Camera', CAMERA_PARAMS),
+            ('Photo', PHOTO_PARAMS)]
 
 
 @pytest.fixture(scope='session')
