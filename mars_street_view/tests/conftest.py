@@ -1,13 +1,26 @@
 # -*- coding: utf-8 -*-
 """Configure fixtures for unit and functional tests."""
 import os
+import sys
 import pytest
 # from webob import multidict
 from sqlalchemy import create_engine
 from pyramid import testing
-from mars_street_view.models import DBSession, Base, Photo, CAMERAS
+from mars_street_view.models import (
+    DBSession,
+    Base,
+    Rover,
+    Camera,
+    Photo,
+    CAMERAS
+)
 
-TEST_DATABASE_URL = 'sqlite:////tmp/test_db.sqlite'
+
+try:
+    TEST_DATABASE_URL = os.environ['TEST_DATABASE_URL']
+except KeyError:
+    print('No TEST_DATABASE_URL set in os.environ.')
+    sys.exit()
 
 
 @pytest.fixture(scope='session')
@@ -38,7 +51,7 @@ def sample_data_uri():
     return os.environ.get('SAMPLE_DATA_PATH')
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def sqlengine(request):
     """Return sql engine."""
     engine = create_engine(TEST_DATABASE_URL)
@@ -57,7 +70,7 @@ def dbtransaction(request, sqlengine):
     """Create database transaction connection."""
     connection = sqlengine.connect()
     transaction = connection.begin()
-    DBSession.configure(bind=connection, expire_on_commit=False)
+    DBSession.configure(bind=connection)
 
     def teardown():
         transaction.rollback()
@@ -68,14 +81,14 @@ def dbtransaction(request, sqlengine):
     return connection
 
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def pre_pop_transaction(request, sqlengine):
     """Create database transaction connection."""
     from mars_street_view.models import init_rovers_and_cameras
     from mars_street_view.api_call import load_full_sample_data
     connection = sqlengine.connect()
     transaction = connection.begin()
-    DBSession.configure(bind=connection, expire_on_commit=False)
+    DBSession.configure(bind=connection)
     init_rovers_and_cameras()
 
     rov_cam_data = init_rovers_and_cameras()
@@ -137,16 +150,14 @@ PHOTO_PARAMS = {
     'rover': ROVER_PARAMS,
     'camera': CAMERA_PARAMS
 }
-TEST_PARAMS = [
-    ('Photo', PHOTO_PARAMS),
-    ('Rover', ROVER_PARAMS),
-    ('Camera', CAMERA_PARAMS),
-]
 
 
-@pytest.fixture(params=TEST_PARAMS)
-def model_test_params(request):
-    return request.param
+@pytest.fixture(scope='session')
+def model_test_params():
+    """Establish parameters for all the Model types."""
+    return {'Rover': ROVER_PARAMS,
+            'Camera': CAMERA_PARAMS,
+            'Photo': PHOTO_PARAMS}
 
 
 @pytest.fixture(scope='session')
