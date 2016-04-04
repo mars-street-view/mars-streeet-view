@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 import os
-import io
 import requests
 import json
 import time
@@ -78,7 +77,7 @@ def fetch_and_save_data_sample(file_path, rovers, sol_range):
     for rover in rovers:
         for sol in sol_range:
             photo_list.extend(get_one_sol(rover, sol, True))
-            time.sleep(1)
+            time.sleep(0.5)
     data = {'photos': photo_list}
     write_to_json_file(data, file_path)
     print('Successfully saved {} photo objects to {}.'
@@ -98,13 +97,13 @@ def load_full_sample_data():
     return data['photos']
 
 
-def write_to_json_file(data, file_name, encoding='utf-8'):
+def write_to_json_file(data, file_name):
     """Save JSON to a file."""
-    with io.open(file_name, encoding=encoding, mode='w') as file:
+    with open(file_name, mode='w') as file:
         json.dump(data, file)
 
 
-def read_json_from_file(file_name, encoding='utf-8'):
+def read_json_from_file(file_name):
     """Parse JSON."""
-    with io.open(file_name, encoding=encoding, mode='r') as file:
+    with open(file_name, mode='r') as file:
         return json.load(file)

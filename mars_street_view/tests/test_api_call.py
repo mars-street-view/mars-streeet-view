@@ -49,7 +49,7 @@ def test_write_read_json():
     """Test that data will be written to and read from a json file."""
     from mars_street_view.api_call import (
         write_to_json_file, read_json_from_file)
-    data = {'key1': 'val', 'key2': {'subkey': ['a', 'list', 'of', 'stuff']}}
+    data = {'key1': 'val', 'key2': {'subkey': ['a', 'list']}}
     write_to_json_file(data, JSON_TEST_FILE)
     assert read_json_from_file(JSON_TEST_FILE) == data
 
