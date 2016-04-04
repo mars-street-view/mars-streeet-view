@@ -10,6 +10,20 @@ def test_db_is_empty(dbtransaction, model_name):
     assert query.count() == 0
 
 
+# def test_photo_init_error_no_rover(full_photo_params):
+#     """Ensure that Photo throws an error when initializing without a rover."""
+#     del full_photo_params['rover']
+#     with pytest.raises(KeyError):
+#         Photo(**full_photo_params)
+
+
+# def test_photo_init_error_no_rover_name(full_photo_params):
+#     """Ensure that Photo throws an error when rover has no name."""
+#     del full_photo_params['rover']['rover_name']
+#     with pytest.raises(KeyError):
+#         Photo(**full_photo_params)
+
+
 def test_db_add(dbtransaction, model_test_params):
     """Test that one of each type of model can be added to the DB."""
     for model_name, params in model_test_params:

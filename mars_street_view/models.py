@@ -5,25 +5,21 @@ from sqlalchemy import (
     Integer,
     String,
     ForeignKey,
-    Text
+    Text,
+    func
 )
-
+from zope.sqlalchemy import ZopeTransactionExtension
 from sqlalchemy.ext.declarative import declarative_base
-
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
     relationship
 )
-
 from sqlalchemy.orm.exc import (
     MultipleResultsFound,
     NoResultFound,
 )
 
-from zope.sqlalchemy import ZopeTransactionExtension
-
-from sqlalchemy import func
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
