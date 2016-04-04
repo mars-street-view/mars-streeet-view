@@ -117,28 +117,6 @@ def pre_pop_transaction(request, sqlengine):
     return connection
 
 
-@pytest.fixture(scope='module')
-def rov_cam_transaction(request, sqlengine):
-    """Create database transaction connection."""
-    from mars_street_view.models import init_rovers_and_cameras
-    connection = sqlengine.connect()
-    transaction = connection.begin()
-    DBSession.configure(bind=connection)
-    init_rovers_and_cameras()
-
-    rov_cam_data = init_rovers_and_cameras()
-    DBSession.add_all(rov_cam_data)
-    DBSession.flush()
-
-    def teardown():
-        transaction.rollback()
-        connection.close()
-        DBSession.remove()
-
-    request.addfinalizer(teardown)
-    return connection
-
-
 @pytest.fixture(params=range(1, 5))
 def sol(request):
     """Establish a small range of sols over which to test."""

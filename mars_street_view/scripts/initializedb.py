@@ -1,16 +1,10 @@
 """Initialize database for SQLAlchemy and Pyramid."""
 import os
 import sys
-import transaction
-
-from sqlalchemy import engine_from_config
-
 from pyramid.paster import get_appsettings, setup_logging
-
 from pyramid.scripts.common import parse_vars
-
-from ..models import DBSession, Base
 from ..populate_database import populate_rovers_cameras
+
 
 def usage(argv):
     """Print message to stdout explaining correct usage syntax."""
