@@ -1,26 +1,14 @@
 """Establish view functions for Mars Street View web app."""
 from __future__ import unicode_literals, print_function
-from pyramid.response import Response
 from pyramid.view import view_config
 
-from sqlalchemy.exc import DBAPIError
-
-from .models import (
-    MyModel,  # Put this back in so tets pass.
-    DBSession,
-    Photo
-)
+from .models import Photo
 
 
 @view_config(route_name='home', renderer='templates/index.jinja2')
 def home_view(request):
     """Home page view."""
-    try:
-        one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
-    except DBAPIError:
-        return Response(conn_err_msg, content_type='text/plain',
-                        status_int=500)
-    return {'one': one, 'project': 'mars-street-view'}
+    return {'project': 'mars-street-view'}
 
 
 class DummyPhoto(object):
