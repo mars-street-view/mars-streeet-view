@@ -183,7 +183,7 @@ def full_photo_params(photo_params, rover_params, camera_params):
         'camera': {
             'id': 20,
             'name': "FHAZ",
-            'rover_id': 5,
+            'rover_name': 'Curiosity',
             'full_name': "Front Hazard Avoidance Camera"
         },
         'img_src': "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01294/opgs/edr/fcam/FLB_512366594EDR_F0532406FHAZ00323M_.JPG",

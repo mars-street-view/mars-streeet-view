@@ -65,13 +65,14 @@ def test_photo_camera_relationship(dbtransaction, rover_params, camera_params, p
 
 def test_full_params(dbtransaction, full_photo_params):
     """Test that a full set of params from NASA API will construct models."""
-    rover_name = full_photo_params['rover']['name']
-    cam_short_name = full_photo_params['camera']['name']
-    camera_name = '_'.join((rover_name, cam_short_name))
+    rover = Rover(**full_photo_params['rover'])
+    camera = Camera(**full_photo_params['camera'])
+    # cam_short_name = full_photo_params['camera']['name']
+    # camera_name = '_'.join((rover_name, cam_short_name))
     photo = Photo(**full_photo_params)
-    DBSession.add(photo)
+    DBSession.add_all([rover, camera, photo])
     DBSession.flush()
-    assert photo.rover_name == rover_name and photo.camera_name == camera_name
+    assert photo.rover_name == rover.name and photo.camera_name == camera.name
 
 
 def test_rov_sol_empty(dbtransaction, global_environ, rover_params, sol):
