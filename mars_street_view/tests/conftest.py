@@ -1,21 +1,44 @@
 # -*- coding: utf-8 -*-
 """Configure fixtures for unit and functional tests."""
 import os
+import sys
 import pytest
 # from webob import multidict
 from sqlalchemy import create_engine
 from pyramid import testing
-from mars_street_view.models import DBSession, Base
+from mars_street_view.models import (
+    DBSession,
+    Base,
+    Photo,
+    CAMERAS
+)
 
 
-TEST_DATABASE_URL = 'sqlite:////tmp/test_db.sqlite'
+try:
+    TEST_DATABASE_URL = os.environ['TEST_DATABASE_URL']
+except KeyError:
+    print('No TEST_DATABASE_URL set in os.environ.')
+    sys.exit()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def global_environ(request):
     """Establish test database url as a fixture for entire session."""
     prior = os.environ.get('MARS_DATABASE_URL', '')
     os.environ['MARS_DATABASE_URL'] = TEST_DATABASE_URL
+
+    def revert():
+        os.environ['MARS_DATABASE_URL'] = prior
+
+    request.addfinalizer(revert)
+    return True
+
+
+@pytest.fixture()
+def empty_environ(request):
+    """Establish test database url as a fixture for entire session."""
+    prior = os.environ.get('MARS_DATABASE_URL', '')
+    del os.environ['MARS_DATABASE_URL']
 
     def revert():
         os.environ['MARS_DATABASE_URL'] = prior
@@ -39,7 +62,7 @@ def sample_data_uri():
     return os.environ.get('SAMPLE_DATA_PATH')
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def sqlengine(request):
     """Return sql engine."""
     engine = create_engine(TEST_DATABASE_URL)
@@ -58,7 +81,7 @@ def dbtransaction(request, sqlengine):
     """Create database transaction connection."""
     connection = sqlengine.connect()
     transaction = connection.begin()
-    DBSession.configure(bind=connection, expire_on_commit=False)
+    DBSession.configure(bind=connection)
 
     def teardown():
         transaction.rollback()
@@ -69,16 +92,21 @@ def dbtransaction(request, sqlengine):
     return connection
 
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def pre_pop_transaction(request, sqlengine):
     """Create database transaction connection."""
-    from mars_street_view.scripts.initializedb import init_rovers_and_cameras
-    from mars_street_view.populate_database import populate_sample_data
+    from mars_street_view.models import init_rovers_and_cameras
+    from mars_street_view.api_call import load_full_sample_data
     connection = sqlengine.connect()
     transaction = connection.begin()
-    DBSession.configure(bind=connection, expire_on_commit=False)
+    DBSession.configure(bind=connection)
     init_rovers_and_cameras()
-    populate_sample_data()
+
+    rov_cam_data = init_rovers_and_cameras()
+    DBSession.add_all(rov_cam_data)
+    sample_data = load_full_sample_data()
+    DBSession.add_all([Photo(**result) for result in sample_data])
+    DBSession.flush()
 
     def teardown():
         transaction.rollback()
@@ -89,14 +117,21 @@ def pre_pop_transaction(request, sqlengine):
     return connection
 
 
-@pytest.fixture(params=range(1, 4))
+@pytest.fixture(params=range(1, 5))
 def sol(request):
+    """Establish a small range of sols over which to test."""
     return request.param
 
 
 @pytest.fixture(params=['Spirit', 'Curiosity', 'Opportunity'])
 def rover_name(request):
     """Establish all rover names to iterate over in tests."""
+    return request.param
+
+
+@pytest.fixture(params=CAMERAS.keys())
+def camera(request):
+    """Establish all camera names as fixtures."""
     return request.param
 
 
@@ -127,45 +162,49 @@ PHOTO_PARAMS = {
     'rover': ROVER_PARAMS,
     'camera': CAMERA_PARAMS
 }
-TEST_PARAMS = [
-    ('Photo', PHOTO_PARAMS),
-    ('Rover', ROVER_PARAMS),
-    ('Camera', CAMERA_PARAMS),
-]
 
 
-@pytest.fixture(params=TEST_PARAMS)
-def model_test_params(request):
-    return request.param
+@pytest.fixture(scope='session')
+def model_test_params():
+    """Establish parameters for all the Model types."""
+    return [('Rover', ROVER_PARAMS),
+            ('Camera', CAMERA_PARAMS),
+            ('Photo', PHOTO_PARAMS)]
 
 
 @pytest.fixture(scope='session')
 def rover_params():
+    """Establish parameters to initalize a Rover model."""
     return ROVER_PARAMS
 
 
 @pytest.fixture(scope='session')
 def photo_params():
+    """Establish parameters to initializ a Photo model."""
     return PHOTO_PARAMS
 
 
 @pytest.fixture(scope='session')
 def camera_params():
+    """Establish parameters to initialize a Camera model."""
     return CAMERA_PARAMS
 
 
 @pytest.fixture()
 def full_photo_params(photo_params, rover_params, camera_params):
+    """Establish a full data object similar to those available through API."""
     full_params = {
         'id': 549762,
         'sol': 1294,
         'camera': {
             'id': 20,
             'name': "FHAZ",
-            'rover_id': 5,
+            'rover_name': 'Curiosity',
             'full_name': "Front Hazard Avoidance Camera"
         },
-        'img_src': "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01294/opgs/edr/fcam/FLB_512366594EDR_F0532406FHAZ00323M_.JPG",
+        'img_src': ("http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/"
+                    "ods/surface/sol/01294/opgs/edr/fcam/FLB_512366594EDR_F053"
+                    "2406FHAZ00323M_.JPG"),
         'earth_date': "2016-03-27",
         'rover': {
             'id': 5,
@@ -177,6 +216,17 @@ def full_photo_params(photo_params, rover_params, camera_params):
         }
     }
     return full_params
+
+
+class DummyPhoto(object):
+    """Object for testing an expected Photo object."""
+
+    url = 'http://i.telegraph.co.uk/multimedia/archive/02445/mars_2445397b.jpg'
+    id = 7
+
+    def __json__(self, request):
+        """Return dict object suitable for converting into json."""
+        return {'url': self.url}
 
 
 @pytest.fixture()
@@ -194,7 +244,6 @@ def app(request, global_environ, config_uri):
 
     request.addfinalizer(teardown)
     return test_app
-
 
 
 @pytest.fixture()

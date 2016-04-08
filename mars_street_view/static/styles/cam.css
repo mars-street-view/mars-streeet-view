@@ -1,25 +1,17 @@
 .camera-button {
 	display: inline-block;
-	width: 150px;
-    height: 150px;
-    padding-bottom: 15em;
+	width: 200px;
+    height: 200px;
 }
 
 .camera-button img {
 	width: 100%;
 	height: auto;
-    position: relative;
-}
-
-.camera-button h5 {
-    position: absolute;
-    color: white;
 }
 
 .right {
 	float: right;
 }
-
 #main-photo {
 	max-height: 600px;
 	display: block;
