@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 import os
-import io
 import requests
 import json
 import time
@@ -19,6 +18,15 @@ ROVERS = {
     'Spirit': ''.join((BASE_URL, 'spirit/photos')),
 }
 NASA_API_KEY = os.environ.get('NASA_API_KEY')
+
+
+def get_one_sol(rover, sol, fetch=False, camera=None):
+    """Return all photos for one sol, given rover and sol."""
+    if fetch:
+        photo_list = fetch_photo_data(rover, sol, camera)
+    else:
+        photo_list = load_photo_data(rover, sol)
+    return photo_list
 
 
 def fetch_photo_data(rover, sol, camera=None):
@@ -58,18 +66,22 @@ def fetch_photo_data(rover, sol, camera=None):
     return lst
 
 
-def fetch_and_save_data_sample():
-    """Download and save json data sample of the first day of each mission."""
-    import pdb; pdb.set_trace()
+def sample_nasa():
+    """Function to be called by console script entry point."""
+    fetch_and_save_data_sample(SAMPLE_DATA_PATH, ROVERS, range(0, 5))
+
+
+def fetch_and_save_data_sample(file_path, rovers, sol_range):
+    """Download and save json data sample for given sols of each mission."""
     photo_list = []
-    for rover in ROVERS:
-        for sol in range(0, 5):
+    for rover in rovers:
+        for sol in sol_range:
             photo_list.extend(get_one_sol(rover, sol, True))
-            time.sleep(1)
+            time.sleep(0.5)
     data = {'photos': photo_list}
-    write_to_json_file(data, SAMPLE_DATA_PATH)
+    write_to_json_file(data, file_path)
     print('Successfully saved {} photo objects to {}.'
-          ''.format(len(photo_list), SAMPLE_DATA_PATH))
+          ''.format(len(photo_list), file_path))
 
 
 def load_photo_data(rover, sol):
@@ -85,22 +97,13 @@ def load_full_sample_data():
     return data['photos']
 
 
-def write_to_json_file(data, file_name, encoding='utf-8'):
+def write_to_json_file(data, file_name):
     """Save JSON to a file."""
-    with io.open(file_name, encoding=encoding, mode='w') as file:
+    with open(file_name, mode='w') as file:
         json.dump(data, file)
 
 
-def read_json_from_file(file_name, encoding='utf-8'):
+def read_json_from_file(file_name):
     """Parse JSON."""
-    with io.open(file_name, encoding=encoding, mode='r') as file:
+    with open(file_name, mode='r') as file:
         return json.load(file)
-
-
-def get_one_sol(rover, sol, fetch=False, camera=None):
-    """Return all photos for one sol, given rover and sol."""
-    if fetch:
-        photo_list = fetch_photo_data(rover, sol, camera)
-    else:
-        photo_list = load_photo_data(rover, sol)
-    return photo_list

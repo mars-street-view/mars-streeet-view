@@ -3,7 +3,7 @@
 Ever wonder what it's like to explore the wide open red plains of Mars? Do you tire of tedious Earth streets with their painted lines and traffic jams? Mars Street View puts you in the treads of three NASA rovers: Curiosity, Opportunity and Spirit.
 
 Pulling images directly from [NASA's Mars Rover Photos API](https://api.nasa.gov/api.html#MarsPhotos), Mars Street View allows you to navigate along the paths of the rovers, while switching between each rover's multiple camera angles.
-
+[Automated API Call](https://github.com/palindromed/scheduler)
 
 ### Core Features:
 * Switch between the three rovers.
